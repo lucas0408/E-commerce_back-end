@@ -1,15 +1,21 @@
 defmodule BatchEcommerce.Accounts.User do
   use Ecto.Schema
   import Ecto.Changeset
+  require IEx
+  alias BatchEcommerce.Accounts
+
+  @unique_fields [:email, :cpf, :phone]
+
+  @primary_key {:id, :binary_id, autogenerate: true}
 
   schema "users" do
-    field :name, :string
     field :cpf, :string
+    field :name, :string
+    belongs_to :address, BatchEcommerce.Accounts.Address
     field :email, :string
     field :phone, :string
-    field :password, :string, virtual: true
     field :password_hash, :string
-    belongs_to :address, BatchEcommerce.Accounts.Address
+    field :password, :string, virtual: true
 
     timestamps(type: :utc_datetime)
   end
@@ -17,9 +23,13 @@ defmodule BatchEcommerce.Accounts.User do
   @doc false
   def changeset(user, attrs) do
     user
-    |> cast(attrs, [:cpf, :name, :address_id, :email, :phone, :password, :password_hash])
-    |> validate_required([:cpf, :name, :address_id, :email, :phone, :password])
-    |> unique_constraint([:email, :cpf, :phone])
+    |> cast(attrs, [:cpf, :name, :email, :phone, :password, :password_hash])
+    |> validate_required([:cpf, :name, :email, :phone, :password])
+    |> cast_assoc(:address)
+    |> unique_constraint(:email)
+    |> unique_constraint(:cpf)
+    |> unique_constraint(:phone)
+    |> validate_uniqueness_of_fields(@unique_fields)
     |> password_hash()
   end
 
@@ -29,48 +39,15 @@ defmodule BatchEcommerce.Accounts.User do
 
   defp password_hash(changeset), do: changeset
 
-  defp validate_email(user),
-  do: user |> validate_format(:email, ~r/^[^\s]+@[^\s]+$/, message: "Enter a valid email")
+  defp validate_uniqueness_of_fields(changeset, fields) do
+    Enum.reduce(fields, changeset, fn field, acc_changeset ->
+      changes = get_change(acc_changeset, field)
 
-  defp validate_unique_email(user) do
-    user
-    |> unsafe_validate_unique(:email, HomerSalgateria.Repo, message: "This Email is already in use")
-    |> unique_constraint(:email, name: :users_email_index)
+      if changes && Accounts.user_exists_with_field?(field, changes) do
+        add_error(acc_changeset, field, "already in use")
+      else
+        acc_changeset
+      end
+    end)
   end
-
-  defp validate_cpf(user),
-    do: user |> validate_length(:cpf, is: 11, message: "Enter a valid CPF")
-
-  defp validate_unique_cpf(user) do
-    user
-    |> unsafe_validate_unique(:cpf, HomerSalgateria.Repo, message: "This CPF is already in use")
-    |> unique_constraint(:cpf, name: :users_cpf_index)
-  end
-
-  defp validate_numero_phone(user),
-  do:
-    validate_length(user, :numero_telefone,
-      is: 11,
-      message: "Enter a valid phone number"
-    )
-
-  defp validate_unique_phone(user) do
-    user
-      |> unsafe_validate_unique(:phone, BatchEcommerce.Repo, message: "This phone is already in use")
-      |> unique_constraint(:cpf, name: :users_cpf_index)
-  end
-
-  defp validate_nome(user),
-    do: validate_length(user, :nome, min: 2, max: 60, message: "Enter a valid phone name")
-
-  defp validate_senha(user) do
-    user
-    |> validate_length(:senha,
-      min: 8,
-      max: 60,
-      message: "Insira uma senha com no mínimo 8 caracteres"
-      )
-      |> validate_confirmation(:senha, message: "As senhas não são iguais")
-      |> put_password_hash()
-    end
 end

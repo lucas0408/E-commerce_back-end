@@ -2,7 +2,8 @@ defmodule BatchEcommerce.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
   def change do
-    create table(:users) do
+    create table(:users, primary_key: false) do
+      add :id, :uuid, primary_key: true
       add :cpf, :string
       add :name, :string
       add :address_id, references(:addresses)
@@ -13,6 +14,8 @@ defmodule BatchEcommerce.Repo.Migrations.CreateUsers do
       timestamps(type: :utc_datetime)
     end
 
-    create unique_index(:users, [:email, :cpf, :phone])
+    create unique_index(:users, :email)
+    create unique_index(:users, :cpf)
+    create unique_index(:users, :phone)
   end
 end

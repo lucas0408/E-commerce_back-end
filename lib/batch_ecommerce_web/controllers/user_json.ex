@@ -1,6 +1,6 @@
 defmodule BatchEcommerceWeb.UserJSON do
-  alias BatchEcommerce.Accounts.{User, Address}
-  alias BatchEcommerce.Repo
+  alias BatchEcommerce.Accounts.{User}
+
   @doc """
   Renders a list of users.
   """
@@ -21,6 +21,7 @@ defmodule BatchEcommerceWeb.UserJSON do
 
   defp data(%User{} = user) do
     IO.inspect(user)
+
     %{
       id: user.id,
       name: user.name,
@@ -28,7 +29,7 @@ defmodule BatchEcommerceWeb.UserJSON do
       cpf: user.cpf,
       phone: user.phone,
       address: %{
-        address_id: user.address_id,
+        id: user.address.id,
         address: user.address.address,
         cep: user.address.cep,
         city: user.address.city,
@@ -42,13 +43,11 @@ defmodule BatchEcommerceWeb.UserJSON do
 
   defp data(%User{} = user, token) do
     IO.inspect(user)
+
     %{
       id: user.id,
-      name: user.name,
-      email: user.email,
       cpf: user.cpf,
-      phone: user.phone,
-      token: token,
+      name: user.name,
       address: %{
         address_id: user.address_id,
         address: user.address.address,
@@ -58,7 +57,10 @@ defmodule BatchEcommerceWeb.UserJSON do
         district: user.address.district,
         home_number: user.address.home_number,
         uf: user.address.uf
-      }
+      },
+      email: user.email,
+      phone: user.phone,
+      token: token
     }
   end
 end

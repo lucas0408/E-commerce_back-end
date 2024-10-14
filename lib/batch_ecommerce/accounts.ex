@@ -4,7 +4,6 @@ defmodule BatchEcommerce.Accounts do
   """
 
   import Ecto.Query, warn: false
-  require IEx
   alias BatchEcommerce.Repo
 
   alias BatchEcommerce.Accounts.User

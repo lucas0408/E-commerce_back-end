@@ -1,6 +1,5 @@
 defmodule BatchEcommerce.Accounts.Guardian do
   use Guardian, otp_app: :batch_ecommerce
-  require IEx
   alias BatchEcommerce.Accounts.User
   alias BatchEcommerce.Accounts
 
@@ -11,7 +10,6 @@ defmodule BatchEcommerce.Accounts.Guardian do
   def resource_from_claims(%{"sub" => id}) do
     case Accounts.get_user(id) do
       %User{} = user ->
-        IEx.pry()
         {:ok, user}
 
       nil ->

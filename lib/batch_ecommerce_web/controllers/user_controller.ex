@@ -7,8 +7,13 @@ defmodule BatchEcommerceWeb.UserController do
 
   def index(conn, _params) do
     case Accounts.list_users() do
-      [] -> {:error, :not_found}
-      users -> render(conn, :index, users: users)
+      [] ->
+        {:error, :not_found}
+
+      users ->
+        conn
+        |> put_status(:found)
+        |> render(:index, users: users)
     end
   end
 
@@ -28,16 +33,25 @@ defmodule BatchEcommerceWeb.UserController do
 
   def show(conn, %{"id" => id}) do
     case Accounts.get_user(id) do
-      %User{} = user -> render(conn, :show, user: user)
-      nil -> {:error, :not_found}
-      _unkown_error -> {:error, :internal_server_error}
+      %User{} = user ->
+        conn
+        |> put_status(:found)
+        |> render(:show, user: user)
+
+      nil ->
+        {:error, :not_found}
+
+      _unkown_error ->
+        {:error, :internal_server_error}
     end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
     with %User{} = user <- Accounts.get_user(id),
          {:ok, %User{} = user_updated} <- Accounts.update_user(user, user_params) do
-      render(conn, :show, user: user_updated)
+      conn
+      |> put_status(:ok)
+      |> render(:show, user: user_updated)
     else
       nil -> {:error, :not_found}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}

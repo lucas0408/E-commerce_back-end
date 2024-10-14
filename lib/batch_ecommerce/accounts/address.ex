@@ -1,6 +1,9 @@
 defmodule BatchEcommerce.Accounts.Address do
   use Ecto.Schema
   import Ecto.Changeset
+  import EctoCommons.PostalCodeValidator
+
+  @required [:cep, :uf, :city, :district, :address, :complement, :home_number]
 
   schema "addresses" do
     field :address, :string
@@ -18,7 +21,11 @@ defmodule BatchEcommerce.Accounts.Address do
   @doc false
   def changeset(address, attrs) do
     address
-    |> cast(attrs, [:cep, :uf, :city, :district, :address, :complement, :home_number])
-    |> validate_required([:cep, :uf, :city, :district, :address, :complement, :home_number])
+    |> cast(attrs, @required)
+    |> validate_required(@required)
+    |> validate_postal_code(:cep, country: "br")
+    |> validate_uf()
   end
+
+  defp validate_uf(changeset), do: changeset |> validate_length(:uf, is: 2)
 end

@@ -15,7 +15,7 @@ defmodule BatchEcommerceWeb.AddressJSON do
     %{data: data(address)}
   end
 
-  defp data(%Address{} = address) do
+  def data(%Address{} = address) do
     %{
       id: address.id,
       cep: address.cep,

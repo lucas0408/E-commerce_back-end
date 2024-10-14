@@ -1,9 +1,9 @@
 defmodule BatchEcommerceWeb.UserController do
   use BatchEcommerceWeb, :controller
   require IEx
-  alias BatchEcommerce.Repo
+  alias BatchEcommerce.Accounts.{User, Guardian}
   alias BatchEcommerce.Accounts
-  alias BatchEcommerce.Accounts.{User, Address, Guardian}
+  alias BatchEcommerce.Repo
 
   action_fallback BatchEcommerceWeb.FallbackController
 
@@ -26,21 +26,26 @@ defmodule BatchEcommerceWeb.UserController do
   end
 
   def show(conn, %{"id" => id}) do
-    user = Accounts.get_user!(id) |> Repo.preload(:address)
-    render(conn, :show, user: user)
+    try do
+      user = Accounts.get_user!(id) |> Repo.preload(:address)
+      render(conn, :show, user: user)
+    rescue
+      _ in Ecto.NoResultsError ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Usuário não encontrado"})
+
+      _ ->
+        conn
+        |> put_status(:internal_server_error)
+        |> json(%{error: "Um erro inesperado aconteceu"})
+    end
   end
 
   def update(conn, %{"id" => id, "user" => user_params}) do
-    %User{}
-    |> Accounts.change_user(user_params |> Map.put("address_id", 1))
+    user = Repo.preload(Accounts.get_user!(id), :address)
 
-    Accounts.change_address(%Address{}, user_params["address"])
-
-    user = Accounts.get_user!(id)
-    address = Accounts.get_address!(user.address_id)
-
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params),
-         Accounts.update_address(address, user_params["address"]) do
+    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
       user = Repo.preload(user, :address)
 
       render(conn, :show, user: user)

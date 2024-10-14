@@ -10,7 +10,6 @@ defmodule BatchEcommerce.Repo.Migrations.CreateUsers do
       add :phone_number, :string
       add :birth_date, :date
       add :password_hash, :string
-      add :address_id, references(:addresses)
 
       timestamps(type: :utc_datetime)
     end

@@ -19,9 +19,7 @@ defmodule BatchEcommerce.Accounts do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
-  end
+  def list_users, do: Repo.all(User) |> Repo.preload([:address])
 
   @doc """
   Gets a single user.
@@ -37,7 +35,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:address)
 
   @doc """
   Creates a user.
@@ -158,7 +156,13 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_address!(id), do: Repo.get!(Address, id)
+  def get_address(id) do
+    case Repo.get(Address, id) do
+      %Address{} = address -> {:ok, address}
+      nil -> {:error, :not_found}
+      _ -> {:error, :internal_server_error}
+    end
+  end
 
   @doc """
   Creates a address.

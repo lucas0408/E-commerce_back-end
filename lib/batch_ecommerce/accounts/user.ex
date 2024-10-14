@@ -17,7 +17,8 @@ defmodule BatchEcommerce.Accounts.User do
     field :birth_date, :date
     field :password_hash, :string
     field :password, :string, virtual: true
-    belongs_to :address, BatchEcommerce.Accounts.Address, on_replace: :nilify
+
+    has_one :address, BatchEcommerce.Accounts.Address, on_replace: :update
 
     timestamps(type: :utc_datetime)
   end

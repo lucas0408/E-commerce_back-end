@@ -22,4 +22,24 @@ defmodule BatchEcommerce.AccountsFixtures do
 
     user
   end
+
+  @doc """
+  Generate a address.
+  """
+  def address_fixture(attrs \\ %{}) do
+    {:ok, address} =
+      attrs
+      |> Enum.into(%{
+        address: "some address",
+        cep: "some cep",
+        city: "some city",
+        complement: "some complement",
+        district: "some district",
+        home_number: "some home_number",
+        uf: "some uf"
+      })
+      |> BatchEcommerce.Accounts.create_address()
+
+    address
+  end
 end

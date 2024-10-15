@@ -5,7 +5,7 @@ defmodule BatchEcommerce.MixProject do
     [
       app: :batch_ecommerce,
       version: "0.1.0",
-      elixir: "~> 1.14",
+      elixir: "~> 1.17.3",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -56,7 +56,8 @@ defmodule BatchEcommerce.MixProject do
       {:bandit, "~> 1.2"},
       {:bcrypt_elixir, "~> 3.1.0"},
       {:guardian, "~> 2.3.2"},
-      {:credo, "~> 1.7.8", only: [:dev, :test], runtime: false}
+      {:credo, "~> 1.7.8", only: [:dev, :test], runtime: false},
+      {:ecto_commons, "~> 0.3.4"}
     ]
   end
 

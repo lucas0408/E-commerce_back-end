@@ -17,9 +17,7 @@ defmodule BatchEcommerce.Accounts do
       [%User{}, ...]
 
   """
-  def list_users do
-    Repo.all(User)
-  end
+  def list_users, do: Repo.all(User) |> Repo.preload([:address])
 
   @doc """
   Gets a single user.
@@ -35,7 +33,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user!(id), do: Repo.get!(User, id)
+  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:address)
 
   @doc """
   Creates a user.
@@ -51,8 +49,13 @@ defmodule BatchEcommerce.Accounts do
   """
   def create_user(attrs \\ %{}) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.insert_changeset(attrs)
     |> Repo.insert()
+  end
+
+  def user_exists_with_field?(field, value) do
+    query = from u in User, where: field(u, ^field) == ^value
+    Repo.exists?(query)
   end
 
   @doc """
@@ -69,7 +72,7 @@ defmodule BatchEcommerce.Accounts do
   """
   def update_user(%User{} = user, attrs) do
     user
-    |> User.changeset(attrs)
+    |> User.update_changeset(attrs)
     |> Repo.update()
   end
 
@@ -87,19 +90,6 @@ defmodule BatchEcommerce.Accounts do
   """
   def delete_user(%User{} = user) do
     Repo.delete(user)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
-
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{data: %User{}}
-
-  """
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
   end
 
   def authenticate_user(email, plain_text_password) do

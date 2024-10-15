@@ -55,6 +55,7 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.insert()
   end
 
+
   @doc """
   Updates a user.
 

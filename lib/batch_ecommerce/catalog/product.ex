@@ -11,14 +11,21 @@ defmodule BatchEcommerce.Catalog.Product do
   end
 
   @doc false
-  def changeset(product, attrs) do
-    IO.inspect(attrs)
+  def insert_changeset(product, attrs) do
     product
     |> cast(attrs, [:name, :price, :stock_quantity, :category_id])
     |> validate_required([:name, :price, :stock_quantity])
     |> unique_constraint(:name)
     |> assoc_constraint(:category)
     |> validate_uniqueness_of_fields([:name])
+  end
+
+  def update_changeset(product, attrs) do
+    product
+    |> cast(attrs, [:name, :price, :stock_quantity, :category_id])
+    |> validate_required([:name, :price, :stock_quantity])
+    |> unique_constraint(:name)
+    |> assoc_constraint(:category)
   end
 
   defp validate_uniqueness_of_fields(changeset, fields) do

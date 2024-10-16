@@ -120,7 +120,7 @@ defmodule BatchEcommerce.Catalog do
 
   """
   def list_products do
-    Repo.all(Product)
+    Repo.preload(Repo.all(Product), :category)
   end
 
   @doc """
@@ -137,7 +137,7 @@ defmodule BatchEcommerce.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product!(id), do: Repo.get!(Product, id)
+  def get_product!(id), do: Repo.preload(Repo.get!(Product, id), :category)
 
   @doc """
   Creates a product.
@@ -153,9 +153,16 @@ defmodule BatchEcommerce.Catalog do
   """
   def create_product(attrs \\ %{}) do
     %Product{}
-    |> Product.changeset(attrs)
+    |> Product.insert_changeset(attrs)
     |> Repo.insert()
+    |> preload_category()
   end
+
+  defp preload_category({:ok, product}) do
+    {:ok, Repo.preload(product, :category)}
+  end
+
+  defp preload_category(error), do: error
 
   def product_exists_with_field?(field, value) do
     query = from u in Product, where: field(u, ^field) == ^value
@@ -176,8 +183,9 @@ defmodule BatchEcommerce.Catalog do
   """
   def update_product(%Product{} = product, attrs) do
     product
-    |> Product.changeset(attrs)
+    |> Product.update_changeset(attrs)
     |> Repo.update()
+    |> preload_category()
   end
 
   @doc """

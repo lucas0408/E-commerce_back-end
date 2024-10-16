@@ -33,6 +33,7 @@ defmodule BatchEcommerceWeb.UserController do
     with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
       render(conn, :show, user: user)
     end
+    
   end
 
   def delete(conn, %{"id" => id}) do

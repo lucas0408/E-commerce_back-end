@@ -2,6 +2,7 @@ defmodule BatchEcommerceWeb.ProductController do
   use BatchEcommerceWeb, :controller
 
   alias BatchEcommerce.Catalog
+  alias BatchEcommerce.Repo
   alias BatchEcommerce.Catalog.Product
 
   action_fallback BatchEcommerceWeb.FallbackController
@@ -13,8 +14,6 @@ defmodule BatchEcommerceWeb.ProductController do
 
   def create(conn, %{"product" => product_params}) do
     with {:ok, %Product{} = product} <- Catalog.create_product(product_params) do
-
-      IO.inspect(product)
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/products/#{product}")
@@ -24,6 +23,7 @@ defmodule BatchEcommerceWeb.ProductController do
 
   def show(conn, %{"id" => id}) do
     product = Catalog.get_product!(id)
+
     render(conn, :show, product: product)
   end
 
@@ -31,6 +31,7 @@ defmodule BatchEcommerceWeb.ProductController do
     product = Catalog.get_product!(id)
 
     with {:ok, %Product{} = product} <- Catalog.update_product(product, product_params) do
+      IO.inspect(product)
       render(conn, :show, product: product)
     end
   end

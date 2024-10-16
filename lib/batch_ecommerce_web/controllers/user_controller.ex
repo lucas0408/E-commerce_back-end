@@ -54,6 +54,7 @@ defmodule BatchEcommerceWeb.UserController do
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
       _unknown_error -> {:error, :internal_server_error}
     end
+    
   end
 
   def delete(conn, %{"id" => id}) do

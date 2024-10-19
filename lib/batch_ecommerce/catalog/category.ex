@@ -15,8 +15,12 @@ defmodule BatchEcommerce.Catalog.Category do
     |> cast(attrs, [:type])
     |> validate_required([:type])
     |> unique_constraint(:type)
+    |> validate_type()
     |> validate_uniqueness_of_fields([:type])
   end
+
+  defp validate_type(changeset),
+    do: changeset |> validate_length(:type, min: 2, max: 40, message: "enter a valid type")
 
   defp validate_uniqueness_of_fields(changeset, fields) do
     Enum.reduce(fields, changeset, fn field, acc_changeset ->

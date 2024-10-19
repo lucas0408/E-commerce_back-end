@@ -11,22 +11,27 @@ defmodule BatchEcommerce.Catalog.Product do
   end
 
   @doc false
-  def insert_changeset(product, attrs) do
+  def changeset(product, attrs) do
     product
     |> cast(attrs, [:name, :price, :stock_quantity, :category_id])
     |> validate_required([:name, :price, :stock_quantity])
     |> unique_constraint(:name)
+    |> validate_name()
+    |> valiate_price()
+    |> valiate_stock_quantity()
     |> assoc_constraint(:category)
     |> validate_uniqueness_of_fields([:name])
   end
 
-  def update_changeset(product, attrs) do
-    product
-    |> cast(attrs, [:name, :price, :stock_quantity, :category_id])
-    |> validate_required([:name, :price, :stock_quantity])
-    |> unique_constraint(:name)
-    |> assoc_constraint(:category)
-  end
+  defp validate_name(changeset),
+    do: changeset |> validate_length(:name, min: 2, max: 60, menssage: "enter a valid product name")
+
+  defp valiate_price(changeset),
+    do: changeset |> validate_number(:price, greater_than: 0)
+
+  defp valiate_stock_quantity(changeset),
+    do: changeset |> validate_number(:stock_quantity, greater_than: 0)
+
 
   defp validate_uniqueness_of_fields(changeset, fields) do
     Enum.reduce(fields, changeset, fn field, acc_changeset ->

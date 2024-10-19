@@ -66,4 +66,70 @@ defmodule BatchEcommerce.AccountsTest do
       assert %Ecto.Changeset{} = Accounts.change_user(user)
     end
   end
+
+  describe "addresses" do
+    alias BatchEcommerce.Accounts.Address
+
+    import BatchEcommerce.AccountsFixtures
+
+    @invalid_attrs %{address: nil, cep: nil, uf: nil, city: nil, district: nil, complement: nil, home_number: nil}
+
+    test "list_addresses/0 returns all addresses" do
+      address = address_fixture()
+      assert Accounts.list_addresses() == [address]
+    end
+
+    test "get_address!/1 returns the address with given id" do
+      address = address_fixture()
+      assert Accounts.get_address!(address.id) == address
+    end
+
+    test "create_address/1 with valid data creates a address" do
+      valid_attrs = %{address: "some address", cep: "some cep", uf: "some uf", city: "some city", district: "some district", complement: "some complement", home_number: "some home_number"}
+
+      assert {:ok, %Address{} = address} = Accounts.create_address(valid_attrs)
+      assert address.address == "some address"
+      assert address.cep == "some cep"
+      assert address.uf == "some uf"
+      assert address.city == "some city"
+      assert address.district == "some district"
+      assert address.complement == "some complement"
+      assert address.home_number == "some home_number"
+    end
+
+    test "create_address/1 with invalid data returns error changeset" do
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_address(@invalid_attrs)
+    end
+
+    test "update_address/2 with valid data updates the address" do
+      address = address_fixture()
+      update_attrs = %{address: "some updated address", cep: "some updated cep", uf: "some updated uf", city: "some updated city", district: "some updated district", complement: "some updated complement", home_number: "some updated home_number"}
+
+      assert {:ok, %Address{} = address} = Accounts.update_address(address, update_attrs)
+      assert address.address == "some updated address"
+      assert address.cep == "some updated cep"
+      assert address.uf == "some updated uf"
+      assert address.city == "some updated city"
+      assert address.district == "some updated district"
+      assert address.complement == "some updated complement"
+      assert address.home_number == "some updated home_number"
+    end
+
+    test "update_address/2 with invalid data returns error changeset" do
+      address = address_fixture()
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_address(address, @invalid_attrs)
+      assert address == Accounts.get_address!(address.id)
+    end
+
+    test "delete_address/1 deletes the address" do
+      address = address_fixture()
+      assert {:ok, %Address{}} = Accounts.delete_address(address)
+      assert_raise Ecto.NoResultsError, fn -> Accounts.get_address!(address.id) end
+    end
+
+    test "change_address/1 returns a address changeset" do
+      address = address_fixture()
+      assert %Ecto.Changeset{} = Accounts.change_address(address)
+    end
+  end
 end

@@ -1,5 +1,6 @@
 defmodule BatchEcommerceWeb.UserJSON do
   alias BatchEcommerce.Accounts.User
+  alias BatchEcommerceWeb.AddressJSON
 
   @doc """
   Renders a list of users.
@@ -22,25 +23,16 @@ defmodule BatchEcommerceWeb.UserJSON do
   defp data(%User{} = user) do
     %{
       id: user.id,
-      cpf: user.cpf,
       name: user.name,
-      address_id: user.address_id,
       email: user.email,
-      phone: user.phone,
-      password_hash: user.password_hash
+      cpf: user.cpf,
+      phone_number: user.phone_number,
+      birth_date: user.birth_date,
+      address: AddressJSON.data(user.address)
     }
   end
 
   defp data(%User{} = user, token) do
-    %{
-      id: user.id,
-      cpf: user.cpf,
-      name: user.name,
-      address_id: user.address_id,
-      email: user.email,
-      phone: user.phone,
-      password_hash: user.password_hash,
-      token: token
-    }
+    Map.put(data(user), :token, token)
   end
 end

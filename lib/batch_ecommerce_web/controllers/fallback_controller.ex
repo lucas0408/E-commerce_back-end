@@ -21,4 +21,11 @@ defmodule BatchEcommerceWeb.FallbackController do
     |> put_view(html: BatchEcommerceWeb.ErrorHTML, json: BatchEcommerceWeb.ErrorJSON)
     |> render(:"404")
   end
+
+  def call(conn, {:error, :internal_server_error}) do
+    conn
+    |> put_status(:internal_server_error)
+    |> put_view(html: BatchEcommerceWeb.ErrorHTML, json: BatchEcommerceWeb.ErrorJSON)
+    |> render(:"500")
+  end
 end

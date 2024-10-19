@@ -1,5 +1,6 @@
 defmodule BatchEcommerce.Accounts.Guardian do
   use Guardian, otp_app: :batch_ecommerce
+  alias BatchEcommerce.Accounts.User
   alias BatchEcommerce.Accounts
 
   def subject_for_token(user, _claims) do
@@ -7,9 +8,12 @@ defmodule BatchEcommerce.Accounts.Guardian do
   end
 
   def resource_from_claims(%{"sub" => id}) do
-    user = Accounts.get_user!(id)
-    {:ok, user}
-  rescue
-    Ecto.NoResultsError -> {:error, :resource_not_found}
+    case Accounts.get_user(id) do
+      %User{} = user ->
+        {:ok, user}
+
+      nil ->
+        {:error, :not_found}
+    end
   end
 end

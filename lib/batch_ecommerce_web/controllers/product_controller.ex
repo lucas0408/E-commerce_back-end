@@ -8,8 +8,15 @@ defmodule BatchEcommerceWeb.ProductController do
   action_fallback BatchEcommerceWeb.FallbackController
 
   def index(conn, _params) do
-    products = Catalog.list_products()
-    render(conn, :index, products: products)
+    case Catalog.list_products() do
+      [] ->
+        {:error, :not_found}
+
+      products ->
+        conn
+        |> put_status(:found)
+        |> render(:index, products: products)
+    end
   end
 
   def create(conn, %{"product" => product_params}) do
@@ -22,25 +29,36 @@ defmodule BatchEcommerceWeb.ProductController do
   end
 
   def show(conn, %{"id" => id}) do
-    product = Catalog.get_product!(id)
+    with %Product{} = product <- Catalog.get_product(id) do
+      render(conn, :show, product: product)
+    else
+      nil ->
+        {:error, :not_found}
 
-    render(conn, :show, product: product)
+      _unkown_error ->
+        {:error, :internal_server_error}
+    end
+
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    product = Catalog.get_product!(id)
-
-    with {:ok, %Product{} = product} <- Catalog.update_product(product, product_params) do
-      IO.inspect(product)
+    with %Product{} = product <- Catalog.get_product(id),
+         {:ok, %Product{} = product} <- Catalog.update_product(product, product_params) do
       render(conn, :show, product: product)
+    else
+      nil -> {:error, :not_found}
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
+      _unkown_error -> {:error, :internal_server_error}
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    product = Catalog.get_product!(id)
-
-    with {:ok, %Product{}} <- Catalog.delete_product(product) do
+    with %Product{} = product <- Catalog.get_product(id),
+        {:ok, %Product{}} <- Catalog.delete_product(product) do
       send_resp(conn, :no_content, "")
+    else
+      nil -> {:error, :not_found}
+      _unkown_error -> {:error, :internal_server_error}
     end
   end
 end

@@ -59,6 +59,10 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.insert()
   end
 
+  def user_exists_with_field?(field, value) do
+    query = from u in User, where: field(u, ^field) == ^value
+    Repo.exists?(query)
+  end
 
   @doc """
   Updates a user.

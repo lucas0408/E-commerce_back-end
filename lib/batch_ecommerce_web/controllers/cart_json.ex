@@ -18,7 +18,7 @@ defmodule BatchEcommerceWeb.CartJSON do
   defp data(%Cart{} = cart) do
     %{
       id: cart.id,
-      user_uuid: cart.user_uuid
+      user_uuid: cart.user_id
     }
   end
 end

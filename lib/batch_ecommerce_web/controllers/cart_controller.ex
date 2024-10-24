@@ -7,6 +7,7 @@ defmodule BatchEcommerceWeb.CartController do
   action_fallback BatchEcommerceWeb.FallbackController
 
   def index(conn, _params) do
+    IO.inspect(conn.private.guardian_default_resource.cart)
     carts = ShoppingCart.list_carts()
     render(conn, :index, carts: carts)
   end

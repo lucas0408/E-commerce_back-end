@@ -7,6 +7,7 @@ defmodule BatchEcommerce.ShoppingCart do
   alias BatchEcommerce.Repo
 
   alias BatchEcommerce.ShoppingCart.Cart
+  alias BatchEcommerce.Accounts.User
 
   @doc """
   Returns the list of carts.
@@ -53,7 +54,7 @@ defmodule BatchEcommerce.ShoppingCart do
     %Cart{}
     |> Cart.changeset(attrs)
     |> Repo.insert()
-    
+
   end
 
   @doc """
@@ -114,8 +115,11 @@ defmodule BatchEcommerce.ShoppingCart do
       [%CartItem{}, ...]
 
   """
-  def list_cart_items do
-    Repo.all(CartItem)
+  def list_cart_items(conn) do
+    IO.inspect(conn)
+    get_cart_by_user_uuid(conn.private.guardian_default_resource.id)
+     |> Repo.preload(:items)
+     |> Map.get(:items, [])
   end
 
   @doc """
@@ -132,7 +136,44 @@ defmodule BatchEcommerce.ShoppingCart do
       ** (Ecto.NoResultsError)
 
   """
-  def get_cart_item!(id), do: Repo.get!(CartItem, id)
+
+  def get_cart_by_user_uuid(user_id) do
+        Repo.one(
+      from(c in Cart,
+        where: c.user_id == ^user_id,
+        left_join: i in assoc(c, :items),
+        left_join: p in assoc(i, :product),
+        order_by: [asc: i.inserted_at],
+        preload: [items: {i, product: p}]
+      )
+    )
+  end
+
+  def add_item_to_cart(%Cart{} = cart, cart_item_params) do
+
+    case BatchEcommerce.Catalog.get_product(cart_item_params["product_id"]) do
+      nil ->
+        {:error, :not_found}
+
+      product ->
+
+        quantity = String.to_integer(cart_item_params["quantity"] || "0")
+
+        price_when_carted = Decimal.mult(product.price, quantity)
+
+        %CartItem{quantity: quantity, price_when_carted: price_when_carted, cart_id: cart.id, product_id: product.id}
+        |> CartItem.changeset(%{})
+        |> Repo.insert()
+    end
+  end
+
+  def get_cart_item(id) do
+    case Repo.get(CartItem, id) do
+      nil ->
+        {:error, :not_found}
+      cart_item -> cart_item
+    end
+  end
 
   @doc """
   Creates a cart_item.
@@ -164,10 +205,23 @@ defmodule BatchEcommerce.ShoppingCart do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_cart_item(%CartItem{} = cart_item, attrs) do
-    cart_item
-    |> CartItem.changeset(attrs)
-    |> Repo.update()
+  def update_cart_item(%CartItem{} = cart_item, cart_item_params) do
+
+    case BatchEcommerce.Catalog.get_product(cart_item_params["product_id"]) do
+      nil ->
+        {:error, :not_found}
+
+      product ->
+
+        quantity = String.to_integer(cart_item_params["quantity"] || "0")
+
+        price_when_carted = Decimal.mult(product.price, quantity)
+
+        attrs = %{quantity: quantity, price_when_carted: price_when_carted, cart_id: cart_item.cart_id, product_id: product.id}
+        cart_item
+        |> CartItem.changeset(attrs)
+        |> Repo.update()
+    end
   end
 
   @doc """

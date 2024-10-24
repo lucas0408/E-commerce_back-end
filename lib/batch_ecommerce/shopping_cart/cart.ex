@@ -4,7 +4,7 @@ defmodule BatchEcommerce.ShoppingCart.Cart do
 
   schema "carts" do
 
-    belongs_to :user, BatchEcommerce.Accounts.User
+    belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id  
 
     has_many :items, BatchEcommerce.ShoppingCart.CartItem
 
@@ -14,8 +14,8 @@ defmodule BatchEcommerce.ShoppingCart.Cart do
   @doc false
   def changeset(cart, attrs) do
     cart
-    |> cast(attrs, [:user_uuid])
-    |> validate_required([:user_uuid])
-    |> unique_constraint(:user_uuid)
+    |> cast(attrs, [:user_id])
+    |> validate_required([:user_id])
+    |> foreign_key_constraint(:user_id)
   end
 end

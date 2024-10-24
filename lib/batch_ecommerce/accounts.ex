@@ -51,14 +51,7 @@ defmodule BatchEcommerce.Accounts do
     %User{}
     |> User.insert_changeset(attrs)
     |> Repo.insert()
-    |> create_cart()
   end
-
-  defp create_cart({:ok, user}) do
-    ShoppingCart.create_cart(user.id)
-  end
-
-  defp preload_category(error), do: error
 
   def user_exists_with_field?(field, value) do
     query = from u in User, where: field(u, ^field) == ^value

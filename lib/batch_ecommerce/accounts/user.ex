@@ -18,7 +18,9 @@ defmodule BatchEcommerce.Accounts.User do
     field :password_hash, :string
     field :password, :string, virtual: true
 
-    has_one :address, BatchEcommerce.Accounts.Address, on_replace: :update
+    has_one :address, BatchEcommerce.Accounts.Address, on_replace: :update, on_delete: :delete_all
+
+    has_one :cart, BatchEcommerce.ShoppingCart.Cart, on_delete: :delete_all
 
     timestamps(type: :utc_datetime)
   end

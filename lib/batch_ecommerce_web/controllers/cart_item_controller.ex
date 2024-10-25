@@ -7,8 +7,15 @@ defmodule BatchEcommerceWeb.CartItemController do
   action_fallback BatchEcommerceWeb.FallbackController
 
   def index(conn, _params) do
-    with %CartItem{} = cart_item <- ShoppingCart.list_cart_items(conn) do
-    render(conn, :index, cart_items: cart_items)
+    case ShoppingCart.list_cart_items(conn) do
+      [] ->
+        {:error, :not_found}
+
+      cart_items ->
+        conn
+        |> put_status(:found)
+        |> render(:index, cart_items: cart_items)
+    end
   end
 
   def create(conn, %{"cart_item" => cart_item_params}) do

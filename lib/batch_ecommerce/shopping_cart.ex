@@ -116,10 +116,8 @@ defmodule BatchEcommerce.ShoppingCart do
 
   """
   def list_cart_items(conn) do
-    IO.inspect(conn)
-    get_cart_by_user_uuid(conn.private.guardian_default_resource.id)
-     |> Repo.preload(:items)
-     |> Map.get(:items, [])
+    return = get_cart_by_user_uuid(conn.private.guardian_default_resource.id)
+     |> Map.get(:items)
   end
 
   @doc """
@@ -212,7 +210,6 @@ defmodule BatchEcommerce.ShoppingCart do
         {:error, :not_found}
 
       product ->
-
         quantity = String.to_integer(cart_item_params["quantity"] || "0")
 
         price_when_carted = Decimal.mult(product.price, quantity)

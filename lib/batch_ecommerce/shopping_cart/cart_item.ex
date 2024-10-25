@@ -15,10 +15,13 @@ defmodule BatchEcommerce.ShoppingCart.CartItem do
   @doc false
   def changeset(cart_item, attrs) do
     cart_item
-    |> cast(attrs, [:price_when_carted, :quantity])
+    |> cast(attrs, [:price_when_carted, :quantity, :product_id, :cart_id])
     |> validate_required([:price_when_carted, :quantity])
     |> validate_number(:quantity, greater_than_or_equal_to: 0, less_than: 100)
-    |> unique_constraint([:cart_id, :product_id], name: "cart_items_cart_id_product_id_index")
+    |> unique_constraint(
+      [:cart_id, :product_id],
+      message: "Product already exists in cart"
+    )
     |> assoc_constraint(:cart)
     |> assoc_constraint(:product)
   end

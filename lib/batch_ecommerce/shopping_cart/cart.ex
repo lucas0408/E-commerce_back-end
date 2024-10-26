@@ -4,7 +4,7 @@ defmodule BatchEcommerce.ShoppingCart.Cart do
 
   schema "carts" do
 
-    belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id  
+    belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
 
     has_many :items, BatchEcommerce.ShoppingCart.CartItem
 
@@ -16,6 +16,5 @@ defmodule BatchEcommerce.ShoppingCart.Cart do
     cart
     |> cast(attrs, [:user_id])
     |> validate_required([:user_id])
-    |> foreign_key_constraint(:user_id)
   end
 end

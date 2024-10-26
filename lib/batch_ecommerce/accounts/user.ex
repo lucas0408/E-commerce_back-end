@@ -21,7 +21,7 @@ defmodule BatchEcommerce.Accounts.User do
 
     has_one :address, BatchEcommerce.Accounts.Address, on_replace: :update, on_delete: :delete_all
 
-    has_one :cart, BatchEcommerce.ShoppingCart.Cart, on_delete: :delete_all
+    has_one :cart, BatchEcommerce.ShoppingCart.Cart, on_replace: :update, on_delete: :delete_all
 
     timestamps(type: :utc_datetime)
   end
@@ -42,6 +42,7 @@ defmodule BatchEcommerce.Accounts.User do
     )
     |> validate_confirmation(:password, message: "As senhas não correspondem")
     |> cast_assoc(:address)
+    |> cast_assoc(:cart)
     |> unique_constraint(:email)
     |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)

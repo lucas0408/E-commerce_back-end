@@ -6,6 +6,7 @@ defmodule BatchEcommerceWeb.UserController do
   action_fallback BatchEcommerceWeb.FallbackController
 
   def index(conn, _params) do
+    IO.inspect(conn)
     case Accounts.list_users() do
       [] ->
         {:error, :bad_request}
@@ -20,7 +21,7 @@ defmodule BatchEcommerceWeb.UserController do
   def create(conn, %{"user" => user_params}) do
     with {:ok, %User{} = user} <- Accounts.create_user(user_params),
          {:ok, token, _claims} = Guardian.encode_and_sign(user) do
-          
+
       BatchEcommerce.ShoppingCart.create_cart(%{user_id: user.id})
       conn
       |> put_status(:created)

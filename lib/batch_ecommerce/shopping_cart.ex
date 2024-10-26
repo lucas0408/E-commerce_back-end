@@ -7,6 +7,7 @@ defmodule BatchEcommerce.ShoppingCart do
   alias BatchEcommerce.Repo
 
   alias BatchEcommerce.ShoppingCart.Cart
+  alias BatchEcommerce.ShoppingCart.CartItem
   alias BatchEcommerce.Accounts.User
 
   @doc """
@@ -18,6 +19,20 @@ defmodule BatchEcommerce.ShoppingCart do
       [%Cart{}, ...]
 
   """
+
+def total_item_price(%CartItem{} = item) do
+  Decimal.mult(item.product.price, item.quantity)
+end
+
+def total_cart_price(%Cart{} = cart) do
+  IO.inspect(cart)
+  Enum.reduce(cart.items, 0, fn item, acc ->
+    item
+    |> total_item_price()
+    |> Decimal.add(acc)
+  end)
+end
+
   def list_carts do
     Repo.all(Cart)
   end
@@ -91,6 +106,15 @@ defmodule BatchEcommerce.ShoppingCart do
     Repo.delete(cart)
   end
 
+  def prune_cart_items(%Cart{} = cart) do
+    {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
+    {:ok, reload_cart(cart)}
+  end
+
+  defp reload_cart(%Cart{} = cart) do
+    Repo.get!(Cart, cart.id)
+    |> Repo.preload(:items)
+  end
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking cart changes.
 
@@ -116,7 +140,7 @@ defmodule BatchEcommerce.ShoppingCart do
 
   """
   def list_cart_items(conn) do
-    return = get_cart_by_user_uuid(conn.private.guardian_default_resource.id)
+    get_cart_by_user_uuid(conn.private.guardian_default_resource.id)
      |> Map.get(:items)
   end
 

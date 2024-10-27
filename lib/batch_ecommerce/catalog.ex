@@ -155,14 +155,9 @@ defmodule BatchEcommerce.Catalog do
     %Product{}
     |> Product.changeset(attrs)
     |> Repo.insert()
-    |> preload_category()
   end
 
-  defp preload_category({:ok, product}) do
-    {:ok, Repo.preload(product, :category)}
-  end
-
-  defp preload_category(error), do: error
+  def preload_category(product), do: Repo.preload(product, :category)
 
   def product_exists_with_field?(field, value) do
     query = from u in Product, where: field(u, ^field) == ^value

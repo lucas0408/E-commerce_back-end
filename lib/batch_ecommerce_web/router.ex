@@ -30,10 +30,10 @@ defmodule BatchEcommerceWeb.Router do
 
     resources "/categories", CategoryController, except: [:new, :edit]
 
-    resources "/cart_items", CartItemController
+    resources "/cart_items", CartItemController, except: [:index]
 
-    resources "/cart", CartController
-    
+    get "/cart", CartController, :show
+
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

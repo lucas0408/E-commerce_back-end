@@ -72,23 +72,7 @@ end
 
   end
 
-  @doc """
-  Updates a cart.
 
-  ## Examples
-
-      iex> update_cart(cart, %{field: new_value})
-      {:ok, %Cart{}}
-
-      iex> update_cart(cart, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_cart(%Cart{} = cart, attrs) do
-    cart
-    |> Cart.changeset(attrs)
-    |> Repo.update()
-  end
 
   @doc """
   Deletes a cart.
@@ -193,27 +177,10 @@ end
     case Repo.get(CartItem, id) do
       nil ->
         {:error, :not_found}
-      cart_item -> cart_item
+      cart_item -> Repo.preload(cart_item, :product)
     end
   end
 
-  @doc """
-  Creates a cart_item.
-
-  ## Examples
-
-      iex> create_cart_item(%{field: value})
-      {:ok, %CartItem{}}
-
-      iex> create_cart_item(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_cart_item(attrs \\ %{}) do
-    %CartItem{}
-    |> CartItem.changeset(attrs)
-    |> Repo.insert()
-  end
 
   @doc """
   Updates a cart_item.

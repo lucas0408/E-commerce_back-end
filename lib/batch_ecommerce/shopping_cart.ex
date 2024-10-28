@@ -10,48 +10,8 @@ defmodule BatchEcommerce.ShoppingCart do
   alias BatchEcommerce.ShoppingCart.CartItem
   alias BatchEcommerce.Accounts.User
 
-  @doc """
-  Returns the list of carts.
 
-  ## Examples
 
-      iex> list_carts()
-      [%Cart{}, ...]
-
-  """
-
-def total_item_price(%CartItem{} = item) do
-  Decimal.mult(item.product.price, item.quantity)
-end
-
-def total_cart_price(%Cart{} = cart) do
-  IO.inspect(cart)
-  Enum.reduce(cart.items, 0, fn item, acc ->
-    item
-    |> total_item_price()
-    |> Decimal.add(acc)
-  end)
-end
-
-  def list_carts do
-    Repo.all(Cart)
-  end
-
-  @doc """
-  Gets a single cart.
-
-  Raises `Ecto.NoResultsError` if the Cart does not exist.
-
-  ## Examples
-
-      iex> get_cart!(123)
-      %Cart{}
-
-      iex> get_cart!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_cart!(id), do: Repo.get!(Cart, id)
 
   @doc """
   Creates a cart.
@@ -72,23 +32,29 @@ end
 
   end
 
-  @doc """
-  Updates a cart.
-
-  ## Examples
-
-      iex> update_cart(cart, %{field: new_value})
-      {:ok, %Cart{}}
-
-      iex> update_cart(cart, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_cart(%Cart{} = cart, attrs) do
-    cart
-    |> Cart.changeset(attrs)
-    |> Repo.update()
+  def total_item_price(%CartItem{} = item) do
+    Decimal.mult(item.product.price, item.quantity)
   end
+
+  def total_cart_price(%Cart{} = cart) do
+    Enum.reduce(cart.items, 0, fn item, acc ->
+      item
+      |> total_item_price()
+      |> Decimal.add(acc)
+    end)
+  end
+
+  def prune_cart_items(%Cart{} = cart) do
+    {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
+    {:ok, reload_cart(cart)}
+  end
+
+  defp reload_cart(%Cart{} = cart) do
+    Repo.get!(Cart, cart.id)
+    |> Repo.preload(:items)
+  end
+
+
 
   @doc """
   Deletes a cart.
@@ -106,29 +72,7 @@ end
     Repo.delete(cart)
   end
 
-  def prune_cart_items(%Cart{} = cart) do
-    {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
-    {:ok, reload_cart(cart)}
-  end
 
-  defp reload_cart(%Cart{} = cart) do
-    Repo.get!(Cart, cart.id)
-    |> Repo.preload(:items)
-  end
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking cart changes.
-
-  ## Examples
-
-      iex> change_cart(cart)
-      %Ecto.Changeset{data: %Cart{}}
-
-  """
-  def change_cart(%Cart{} = cart, attrs \\ %{}) do
-    Cart.changeset(cart, attrs)
-  end
-
-  alias BatchEcommerce.ShoppingCart.CartItem
 
   @doc """
   Returns the list of cart_items.
@@ -189,31 +133,18 @@ end
     end
   end
 
+  def preload_product(cart_item) do
+    Repo.preload(cart_item, :product)
+  end
+
   def get_cart_item(id) do
     case Repo.get(CartItem, id) do
       nil ->
         {:error, :not_found}
-      cart_item -> cart_item
+      cart_item -> Repo.preload(cart_item, :product)
     end
   end
 
-  @doc """
-  Creates a cart_item.
-
-  ## Examples
-
-      iex> create_cart_item(%{field: value})
-      {:ok, %CartItem{}}
-
-      iex> create_cart_item(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def create_cart_item(attrs \\ %{}) do
-    %CartItem{}
-    |> CartItem.changeset(attrs)
-    |> Repo.insert()
-  end
 
   @doc """
   Updates a cart_item.

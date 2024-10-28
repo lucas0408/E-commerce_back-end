@@ -18,7 +18,9 @@ defmodule BatchEcommerceWeb.CartJSON do
   defp data(%Cart{} = cart) do
     %{
       id: cart.id,
-      user_uuid: cart.user_id
+      user_uuid: cart.user_id,
+      total: BatchEcommerce.ShoppingCart.total_cart_price(cart),
+      cart_items: BatchEcommerceWeb.CartItemJSON.index(cart.items)
     }
   end
 end

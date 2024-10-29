@@ -38,6 +38,8 @@ defmodule BatchEcommerceWeb.Router do
 
     resources "/orders", OrderController, only: [:create, :show]
 
+    resources "/companies", CompanyController
+
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

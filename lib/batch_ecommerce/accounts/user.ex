@@ -23,6 +23,8 @@ defmodule BatchEcommerce.Accounts.User do
 
     has_one :cart, BatchEcommerce.ShoppingCart.Cart, on_replace: :update, on_delete: :delete_all
 
+    has_one :company, BatchEcommerce.Accounts.Company, on_replace: :update, on_delete: :delete_all
+
     timestamps(type: :utc_datetime)
   end
 
@@ -42,7 +44,6 @@ defmodule BatchEcommerce.Accounts.User do
     )
     |> validate_confirmation(:password, message: "As senhas não correspondem")
     |> cast_assoc(:address)
-    |> cast_assoc(:cart)
     |> unique_constraint(:email)
     |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)
@@ -56,8 +57,8 @@ defmodule BatchEcommerce.Accounts.User do
     |> validate_required(@required_fields_update)
     |> validate_cpf()
     |> validate_name()
-    |> validate_email(:email, message: "E-mail inválido")
-    |> validate_phone_number(:phone_number, country: "br", message: "Número de telefone inválido")
+    |> validate_email(:email, message: "Invalid email")
+    |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
     |> validate_date(:birth_date,
       before: validate_date_before(),
       after: validate_date_after(),
@@ -80,7 +81,7 @@ defmodule BatchEcommerce.Accounts.User do
       changes = get_change(acc_changeset, field)
 
       if changes && Accounts.user_exists_with_field?(field, changes) do
-        add_error(acc_changeset, field, "Já esta em uso")
+        add_error(acc_changeset, field, "Already in use")
       else
         acc_changeset
       end
@@ -88,10 +89,10 @@ defmodule BatchEcommerce.Accounts.User do
   end
 
   defp validate_cpf(changeset),
-    do: changeset |> validate_length(:cpf, is: 11, message: "Insira um CPF válido")
+    do: changeset |> validate_length(:cpf, is: 11, message: "Enter a valid CPF")
 
   defp validate_name(changeset),
-    do: changeset |> validate_length(:name, min: 2, max: 60, message: "Insira um nome válido")
+    do: changeset |> validate_length(:name, min: 2, max: 60, message: "Enter a valid name")
 
   defp validate_date_before(), do: Date.utc_today() |> Date.shift(year: -18)
 

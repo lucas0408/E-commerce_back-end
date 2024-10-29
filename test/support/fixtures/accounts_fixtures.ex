@@ -35,4 +35,21 @@ defmodule BatchEcommerce.AccountsFixtures do
 
     Repo.preload(user, :address)
   end
+
+  @doc """
+  Generate a company.
+  """
+  def company_fixture(attrs \\ %{}) do
+    {:ok, company} =
+      attrs
+      |> Enum.into(%{
+        cnpj: "some cnpj",
+        email: "some email",
+        name: "some name",
+        phone_number: "some phone_number"
+      })
+      |> BatchEcommerce.Accounts.create_company()
+
+    company
+  end
 end

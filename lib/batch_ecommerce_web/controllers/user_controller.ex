@@ -27,7 +27,7 @@ defmodule BatchEcommerceWeb.UserController do
     else
       nil -> {:error, :not_found}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
-      _unkown_error -> {:error, :internal_server_error}
+      _unknown_error -> {:error, :internal_server_error}
     end
   end
 
@@ -41,7 +41,7 @@ defmodule BatchEcommerceWeb.UserController do
       nil ->
         {:error, :not_found}
 
-      _unkown_error ->
+      _unknown_error ->
         {:error, :internal_server_error}
     end
   end
@@ -55,7 +55,7 @@ defmodule BatchEcommerceWeb.UserController do
     else
       nil -> {:error, :not_found}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
-      _unkown_error -> {:error, :internal_server_error}
+      _unknown_error -> {:error, :internal_server_error}
     end
   end
 
@@ -66,7 +66,7 @@ defmodule BatchEcommerceWeb.UserController do
     else
       nil -> {:error, :not_found}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
-      _unkown_error -> {:error, :internal_server_error}
+      _unknown_error -> {:error, :internal_server_error}
     end
   end
 end

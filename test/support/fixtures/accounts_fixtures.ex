@@ -1,4 +1,7 @@
 defmodule BatchEcommerce.AccountsFixtures do
+  alias BatchEcommerce.Repo
+  alias BatchEcommerce.Accounts
+
   @moduledoc """
   This module defines test helpers for creating
   entities via the `BatchEcommerce.Accounts` context.
@@ -11,35 +14,26 @@ defmodule BatchEcommerce.AccountsFixtures do
     {:ok, user} =
       attrs
       |> Enum.into(%{
-        address_id: 42,
-        cpf: "some cpf",
-        email: "some email",
-        name: "some name",
-        password_hash: "some password_hash",
-        phone: "some phone"
+        cpf: "52511111111",
+        name: "murilo",
+        email: "murilo@hotmail.com",
+        phone_number: "11979897989",
+        birth_date: ~D[2004-05-06],
+        password: "password",
+        password_hash: "password_hash",
+        address: %{
+          address: "rua elixir",
+          cep: "09071000",
+          uf: "SP",
+          city: "cidade java",
+          district: "vila programação",
+          complement: "casa",
+          home_number: "321"
+        }
       })
-      |> BatchEcommerce.Accounts.create_user()
+      |> Accounts.create_user()
 
     user
-  end
-
-  @doc """
-  Generate a address.
-  """
-  def address_fixture(attrs \\ %{}) do
-    {:ok, address} =
-      attrs
-      |> Enum.into(%{
-        address: "some address",
-        cep: "some cep",
-        city: "some city",
-        complement: "some complement",
-        district: "some district",
-        home_number: "some home_number",
-        uf: "some uf"
-      })
-      |> BatchEcommerce.Accounts.create_address()
-
-    address
+    |> Repo.preload(:address)
   end
 end

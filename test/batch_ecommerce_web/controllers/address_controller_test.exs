@@ -14,6 +14,7 @@ defmodule BatchEcommerceWeb.AddressControllerTest do
     complement: "some complement",
     home_number: "some home_number"
   }
+
   @update_attrs %{
     address: "some updated address",
     cep: "some updated cep",
@@ -23,7 +24,15 @@ defmodule BatchEcommerceWeb.AddressControllerTest do
     complement: "some updated complement",
     home_number: "some updated home_number"
   }
-  @invalid_attrs %{address: nil, cep: nil, uf: nil, city: nil, district: nil, complement: nil, home_number: nil}
+  @invalid_attrs %{
+    address: nil,
+    cep: nil,
+    uf: nil,
+    city: nil,
+    district: nil,
+    complement: nil,
+    home_number: nil
+  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

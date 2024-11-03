@@ -4,6 +4,7 @@ defmodule BatchEcommerce.Accounts do
   """
 
   import Ecto.Query, warn: false
+  require IEx
   alias BatchEcommerce.Repo
 
   alias BatchEcommerce.Accounts.User
@@ -33,7 +34,9 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:address)
+  def get_user(id) do
+    Repo.get(User, id) |> Repo.preload(:address)
+  end
 
   @doc """
   Creates a user.

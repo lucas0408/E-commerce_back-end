@@ -4,33 +4,91 @@ defmodule BatchEcommerceWeb.UserControllerTest do
   import BatchEcommerce.AccountsFixtures
 
   alias BatchEcommerce.Accounts.User
+  alias BatchEcommerce.Accounts
 
   @create_attrs %{
-    name: "some name",
-    cpf: "some cpf",
-    address_id: 42,
-    email: "some email",
-    phone: "some phone",
-    password_hash: "some password_hash"
+    cpf: "52511111111",
+    name: "murilo",
+    email: "murilo@hotmail.com",
+    phone_number: "11979897989",
+    birth_date: "2004-05-06",
+    password: "password",
+    address: %{
+      address: "rua elixir",
+      cep: "09071000",
+      uf: "SP",
+      city: "cidade java",
+      district: "vila programação",
+      complement: "casa",
+      home_number: "321"
+    }
   }
+
   @update_attrs %{
-    name: "some updated name",
-    cpf: "some updated cpf",
-    address_id: 43,
-    email: "some updated email",
-    phone: "some updated phone",
-    password_hash: "some updated password_hash"
+    cpf: "52511111111",
+    name: "murilo updated",
+    email: "murilo@hotmail.com",
+    phone_number: "11979897989",
+    birth_date: "2005-05-06",
+    password: "password",
+    address: %{
+      address: "rua python",
+      cep: "09071001",
+      uf: "MG",
+      city: "cidade ruby",
+      district: "vila destruição",
+      complement: "apartamento",
+      home_number: "123"
+    }
   }
-  @invalid_attrs %{name: nil, cpf: nil, address_id: nil, email: nil, phone: nil, password_hash: nil}
+
+  @invalid_attrs %{
+    cpf: nil,
+    name: nil,
+    email: nil,
+    phone_number: nil,
+    birth_date: nil,
+    password: nil,
+    address: nil
+  }
 
   setup %{conn: conn} do
-    {:ok, conn: put_req_header(conn, "accept", "application/json")}
+    {:ok, user} =
+      %{
+        cpf: "52511111111",
+        name: "murilo",
+        email: "murilo@hotmail.com",
+        phone_number: "11979897989",
+        birth_date: "2004-05-06",
+        password: "password",
+        address: %{
+          address: "rua elixir",
+          cep: "09071000",
+          uf: "SP",
+          city: "cidade java",
+          district: "vila programação",
+          complement: "casa",
+          home_number: "321"
+        }
+      }
+      |> Accounts.create_user()
+
+    {:ok, token, _claims} = BatchEcommerce.Accounts.Guardian.encode_and_sign(user)
+
+    conn =
+      conn
+      |> put_req_header("authorization", "Bearer #{token}")
+      |> put_req_header("accept", "application/json")
+
+    {:ok, conn: conn, user: user, token: token}
   end
 
+  # review
   describe "index" do
     test "lists all users", %{conn: conn} do
       conn = get(conn, ~p"/api/users")
-      assert json_response(conn, 200)["data"] == []
+      [users] = conn.assigns[:users]
+      assert json_response(conn, 302)["data"] == [users]
     end
   end
 
@@ -43,13 +101,21 @@ defmodule BatchEcommerceWeb.UserControllerTest do
 
       assert %{
                "id" => ^id,
-               "address_id" => 42,
-               "cpf" => "some cpf",
-               "email" => "some email",
-               "name" => "some name",
-               "password_hash" => "some password_hash",
-               "phone" => "some phone"
-             } = json_response(conn, 200)["data"]
+               "cpf" => "52511111111",
+               "name" => "murilo",
+               "email" => "murilo@hotmail.com",
+               "phone_number" => "11979897989",
+               "birth_date" => "2004-05-06",
+               "address" => %{
+                 "address" => "rua elixir",
+                 "cep" => "09071000",
+                 "uf" => "SP",
+                 "city" => "cidade java",
+                 "district" => "vila programação",
+                 "complement" => "casa",
+                 "home_number" => "321"
+               }
+             } = json_response(conn, 302)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do

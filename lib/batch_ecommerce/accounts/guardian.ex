@@ -3,6 +3,10 @@ defmodule BatchEcommerce.Accounts.Guardian do
   alias BatchEcommerce.Accounts.User
   alias BatchEcommerce.Accounts
 
+  def token_ttl(:access), do: {1, :hour}
+  def token_ttl(:refresh), do: {7, :days}
+  def token_ttl(_), do: {1, :day}
+
   def subject_for_token(user, _claims) do
     {:ok, to_string(user.id)}
   end
@@ -13,7 +17,7 @@ defmodule BatchEcommerce.Accounts.Guardian do
         {:ok, user}
 
       nil ->
-        {:error, :not_found}
+        {:error, :resource_not_found}
     end
   end
 end

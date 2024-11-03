@@ -5,14 +5,12 @@ defmodule BatchEcommerceWeb.SessionController do
   alias BatchEcommerce.{Accounts, Accounts.Guardian}
 
   def login(conn, %{"email" => email, "password" => password}) do
-    case Accounts.authenticate_user(email, password) do
-      {:ok, user} ->
-        {:ok, token, _claims} = Guardian.encode_and_sign(user)
-
-        conn
-        |> put_status(:ok)
-        |> render(:user_token, user: user, token: token)
-
+    with {:ok, user} <- Accounts.authenticate_user(email, password),
+         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
+      conn
+      |> put_status(:ok)
+      |> render(:user_token, user: user, token: token)
+    else
       {:error, _reason} ->
         conn
         |> put_status(:unauthorized)

@@ -33,7 +33,6 @@ defmodule BatchEcommerce.AccountsFixtures do
       })
       |> Accounts.create_user()
 
-    user
-    |> Repo.preload(:address)
+    Repo.preload(user, :address)
   end
 end

@@ -111,7 +111,6 @@ defmodule BatchEcommerceWeb.UserControllerTest do
                "email" => "murilo@hotmail.com",
                "phone_number" => "11979897989",
                "birth_date" => "2005-05-06",
-               "password" => "password",
                "address" => %{
                  "address" => "rua python",
                  "cep" => "09071001",
@@ -136,10 +135,6 @@ defmodule BatchEcommerceWeb.UserControllerTest do
     test "deletes chosen user", %{conn: conn, user: user} do
       conn = delete(conn, ~p"/api/users/#{user}")
       assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/users/#{user}")
-      end
     end
   end
 

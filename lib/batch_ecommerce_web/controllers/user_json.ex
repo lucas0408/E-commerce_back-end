@@ -16,6 +16,13 @@ defmodule BatchEcommerceWeb.UserJSON do
     %{data: data(user)}
   end
 
+  @doc """
+  Renders a single user.
+  """
+  def show_update(%{user: user}) do
+    %{data: data(user, :update)}
+  end
+
   def create(%{user: user, token: token}) do
     %{data: data(user, token)}
   end

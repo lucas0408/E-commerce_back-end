@@ -4,7 +4,8 @@ defmodule BatchEcommerce.Accounts.User do
   import EctoCommons.{EmailValidator, PhoneNumberValidator, DateValidator}
   alias BatchEcommerce.Accounts
 
-  @required_fields [:cpf, :name, :email, :phone_number, :birth_date, :password]
+  @required_fields_insert [:cpf, :name, :email, :phone_number, :birth_date, :password]
+  @required_fields_update [:cpf, :name, :email, :phone_number, :birth_date]
   @unique_fields [:email, :cpf, :phone_number]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -26,8 +27,8 @@ defmodule BatchEcommerce.Accounts.User do
   @doc false
   def insert_changeset(user, attrs) do
     user
-    |> cast(attrs, [:password_hash | @required_fields])
-    |> validate_required(@required_fields)
+    |> cast(attrs, [:password_hash | @required_fields_insert])
+    |> validate_required(@required_fields_insert)
     |> validate_cpf()
     |> validate_name()
     |> validate_email(:email, message: "E-mail inválido")
@@ -48,8 +49,8 @@ defmodule BatchEcommerce.Accounts.User do
 
   def update_changeset(user, attrs) do
     user
-    |> cast(attrs, @required_fields)
-    |> validate_required(@required_fields)
+    |> cast(attrs, @required_fields_update)
+    |> validate_required(@required_fields_update)
     |> validate_cpf()
     |> validate_name()
     |> validate_email(:email, message: "E-mail inválido")

@@ -51,7 +51,7 @@ defmodule BatchEcommerceWeb.UserController do
          {:ok, %User{} = user_updated} <- Accounts.update_user(user, user_params) do
       conn
       |> put_status(:ok)
-      |> render(:show, user: user_updated)
+      |> render(:show_update, user: user_updated)
     else
       nil -> {:error, :not_found}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}

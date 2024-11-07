@@ -42,7 +42,7 @@ defmodule BatchEcommerceWeb do
         layouts: [html: BatchEcommerceWeb.Layouts]
 
       import Plug.Conn
-      import BatchEcommerceWeb.Gettext
+      use Gettext, backend: BatchEcommerceWeb.Gettext
 
       unquote(verified_routes())
     end

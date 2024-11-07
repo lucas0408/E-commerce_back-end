@@ -128,5 +128,21 @@ defmodule BatchEcommerce.AccountsTest do
       assert {:ok, %User{}} = Accounts.delete_user(user)
       assert Accounts.get_user(user.id) == nil
     end
+
+    test "authenticate_user/2 with existent email and password authenticate user" do
+      valid_password = %{password: "password"}
+
+      user = user_fixture(valid_password)
+
+      assert {:ok, returned_user} =
+               Accounts.authenticate_user(user.email, valid_password.password)
+
+      assert returned_user.id == user.id
+    end
+
+    test "authenticate_user/2 with non-existent email or password return error" do
+      assert {:error, :invalid_credentials} =
+               Accounts.authenticate_user("naoexiste@exemplo.com", "qualquersenha")
+    end
   end
 end

@@ -60,7 +60,7 @@ defmodule BatchEcommerceWeb.UserControllerTest do
 
     test "lists all users", %{conn: conn, user: user} do
       conn = get(conn, ~p"/api/users")
-      assert json_response(conn, 302)["data"] |> Enum.at(0) |> Map.get("id") == user.id
+      assert json_response(conn, 200)["data"] |> Enum.at(0) |> Map.get("id") == user.id
     end
   end
 
@@ -87,7 +87,7 @@ defmodule BatchEcommerceWeb.UserControllerTest do
                  "complement" => "casa",
                  "home_number" => "321"
                }
-             } = json_response(conn, 302)["data"]
+             } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -120,7 +120,7 @@ defmodule BatchEcommerceWeb.UserControllerTest do
                  "complement" => "apartamento",
                  "home_number" => "123"
                }
-             } = json_response(conn, 302)["data"]
+             } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
@@ -138,9 +138,94 @@ defmodule BatchEcommerceWeb.UserControllerTest do
     end
   end
 
-  defp create_user(_) do
-    user = user_fixture()
-    %{user: user}
+  describe "user area" do
+    test "requires authentication", %{conn: conn} do
+      conn = get(conn, ~p"/api/users")
+      assert conn.resp_body =~ "unauthenticated"
+    end
+
+    test "lists all users when authenticated", %{conn: conn} do
+      user1 =
+        user_fixture(%{
+          cpf: "52511111112",
+          name: "murilo_1",
+          email: "murilo_1@hotmail.com",
+          phone_number: "11979897982",
+          birth_date: ~D[2004-05-06],
+          password: "password_1",
+          address: %{
+            address: "rua elixir_1",
+            cep: "09071001",
+            uf: "PE",
+            city: "cidade java_1",
+            district: "vila programação_1",
+            complement: "casa_1",
+            home_number: "3214"
+          }
+        })
+
+      user2 =
+        user_fixture(%{
+          cpf: "52511111113",
+          name: "lucas",
+          email: "lucas@hotmail.com",
+          phone_number: "11979897983",
+          birth_date: ~D[2004-05-06],
+          password: "password_2",
+          address: %{
+            address: "rua elixir_2",
+            cep: "09071003",
+            uf: "PB",
+            city: "cidade java_2",
+            district: "vila programação_2",
+            complement: "casa_2",
+            home_number: "3215"
+          }
+        })
+
+      conn = Guardian.Plug.sign_in(conn, user1)
+      {:ok, token, _claims} = Guardian.encode_and_sign(user1)
+      conn = get(conn, ~p"/api/users", %{"Authorization" => "Bearer #{token}"})
+
+      assert json_response(conn, 200)["data"] == [
+               %{
+                 "cpf" => user1.cpf,
+                 "email" => user1.email,
+                 "id" => user1.id,
+                 "name" => user1.name,
+                 "phone_number" => user1.phone_number,
+                 "birth_date" => to_string(user1.birth_date),
+                 "address" => %{
+                   "id" => user1.address.id,
+                   "address" => user1.address.address,
+                   "cep" => user1.address.cep,
+                   "uf" => user1.address.uf,
+                   "city" => user1.address.city,
+                   "district" => user1.address.district,
+                   "complement" => user1.address.complement,
+                   "home_number" => user1.address.home_number
+                 }
+               },
+               %{
+                 "cpf" => user2.cpf,
+                 "email" => user2.email,
+                 "id" => user2.id,
+                 "name" => user2.name,
+                 "phone_number" => user2.phone_number,
+                 "birth_date" => to_string(user2.birth_date),
+                 "address" => %{
+                   "id" => user2.address.id,
+                   "address" => user2.address.address,
+                   "cep" => user2.address.cep,
+                   "uf" => user2.address.uf,
+                   "city" => user2.address.city,
+                   "district" => user2.address.district,
+                   "complement" => user2.address.complement,
+                   "home_number" => user2.address.home_number
+                 }
+               }
+             ]
+    end
   end
 
   defp create_session(%{conn: conn}) do

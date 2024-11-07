@@ -8,11 +8,11 @@ defmodule BatchEcommerceWeb.UserController do
   def index(conn, _params) do
     case Accounts.list_users() do
       [] ->
-        {:error, :not_found}
+        {:error, :bad_request}
 
       users ->
         conn
-        |> put_status(:found)
+        |> put_status(:ok)
         |> render(:index, users: users)
     end
   end
@@ -25,7 +25,7 @@ defmodule BatchEcommerceWeb.UserController do
       |> put_resp_header("location", ~p"/api/users/#{user}")
       |> render(:create, user: user, token: token)
     else
-      nil -> {:error, :not_found}
+      nil -> {:error, :bad_request}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
       _unknown_error -> {:error, :internal_server_error}
     end
@@ -35,11 +35,11 @@ defmodule BatchEcommerceWeb.UserController do
     case Accounts.get_user(id) do
       %User{} = user ->
         conn
-        |> put_status(:found)
+        |> put_status(:ok)
         |> render(:show, user: user)
 
       nil ->
-        {:error, :not_found}
+        {:error, :bad_request}
 
       _unknown_error ->
         {:error, :internal_server_error}
@@ -53,7 +53,7 @@ defmodule BatchEcommerceWeb.UserController do
       |> put_status(:ok)
       |> render(:show_update, user: user_updated)
     else
-      nil -> {:error, :not_found}
+      nil -> {:error, :bad_request}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
       _unknown_error -> {:error, :internal_server_error}
     end
@@ -64,7 +64,7 @@ defmodule BatchEcommerceWeb.UserController do
          {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
     else
-      nil -> {:error, :not_found}
+      nil -> {:error, :bad_request}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
       _unknown_error -> {:error, :internal_server_error}
     end

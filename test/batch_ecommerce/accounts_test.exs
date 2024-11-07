@@ -1,6 +1,5 @@
 defmodule BatchEcommerce.AccountsTest do
-  require IEx
-  use BatchEcommerce.DataCase
+  use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.Accounts
 
@@ -29,7 +28,7 @@ defmodule BatchEcommerce.AccountsTest do
 
     test "get_user/1 returns the user with given id" do
       user = user_fixture()
-      found_user = Accounts.get_user(user.id)
+      {:ok, found_user} = Accounts.get_user(user.id)
 
       fields_to_remove = [:password]
       assert Map.drop(found_user, fields_to_remove) == Map.drop(user, fields_to_remove)
@@ -119,14 +118,16 @@ defmodule BatchEcommerce.AccountsTest do
 
       fields_to_drop = [:password]
 
+      {:ok, user_found} = Accounts.get_user(user.id)
+
       assert Map.drop(user, fields_to_drop) ==
-               Map.drop(Accounts.get_user(user.id), fields_to_drop)
+               Map.drop(user_found, fields_to_drop)
     end
 
     test "delete_user/1 deletes the user" do
       user = user_fixture()
       assert {:ok, %User{}} = Accounts.delete_user(user)
-      assert Accounts.get_user(user.id) == nil
+      assert Accounts.get_user(user.id) == {:error, :not_found}
     end
 
     test "authenticate_user/2 with existent email and password authenticate user" do

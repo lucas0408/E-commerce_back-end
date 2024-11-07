@@ -58,7 +58,8 @@ defmodule BatchEcommerce.MixProject do
       {:guardian, "~> 2.3.2"},
       {:credo, "~> 1.7.8", only: [:dev, :test], runtime: false},
       {:ecto_commons, "~> 0.3.4"},
-      {:mox, "~> 1.2", only: :test}
+      {:mox, "~> 1.2", only: :test},
+      {:hammox, "~> 0.7", only: :test}
     ]
   end
 

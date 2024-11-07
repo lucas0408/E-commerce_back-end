@@ -13,10 +13,10 @@ defmodule BatchEcommerce.Accounts.Guardian do
 
   def resource_from_claims(%{"sub" => id}) do
     case Accounts.get_user(id) do
-      %User{} = user ->
+      {:ok, %User{} = user} ->
         {:ok, user}
 
-      nil ->
+      {:error, :not_found} ->
         {:error, :resource_not_found}
     end
   end

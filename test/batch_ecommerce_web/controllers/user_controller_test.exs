@@ -1,5 +1,5 @@
 defmodule BatchEcommerceWeb.UserControllerTest do
-  use BatchEcommerceWeb.ConnCase
+  use BatchEcommerceWeb.ConnCase, async: true
 
   import BatchEcommerce.AccountsFixtures
 
@@ -54,7 +54,6 @@ defmodule BatchEcommerceWeb.UserControllerTest do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
-  # review
   describe "index" do
     setup [:create_session]
 

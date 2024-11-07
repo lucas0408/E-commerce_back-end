@@ -35,7 +35,10 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def get_user(id) do
-    Repo.get(User, id) |> Repo.preload(:address)
+    case Repo.get(User, id) |> Repo.preload(:address) do
+      %User{} = user -> {:ok, user}
+      nil -> {:error, :not_found}
+    end
   end
 
   @doc """

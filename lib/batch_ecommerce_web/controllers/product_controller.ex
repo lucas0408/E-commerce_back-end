@@ -1,10 +1,8 @@
 defmodule BatchEcommerceWeb.ProductController do
   use BatchEcommerceWeb, :controller
 
-  alias BatchEcommerce.Catalog
-  alias BatchEcommerce.Repo
   alias BatchEcommerce.Catalog.Product
-
+  alias BatchEcommerce.Catalog
   action_fallback BatchEcommerceWeb.FallbackController
 
   def index(conn, _params) do
@@ -22,13 +20,13 @@ defmodule BatchEcommerceWeb.ProductController do
   end
 
   def show(conn, %{"id" => id}) do
-    product = Catalog.get_product!(id)
+    product = Catalog.get_product(id)
 
     render(conn, :show, product: product)
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    product = Catalog.get_product!(id)
+    product = Catalog.get_product(id)
 
     with {:ok, %Product{} = product} <- Catalog.update_product(product, product_params) do
       IO.inspect(product)
@@ -37,7 +35,7 @@ defmodule BatchEcommerceWeb.ProductController do
   end
 
   def delete(conn, %{"id" => id}) do
-    product = Catalog.get_product!(id)
+    product = Catalog.get_product(id)
 
     with {:ok, %Product{}} <- Catalog.delete_product(product) do
       send_resp(conn, :no_content, "")

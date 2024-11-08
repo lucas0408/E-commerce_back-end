@@ -36,7 +36,12 @@ defmodule BatchEcommerce.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_category(id), do: Repo.get(Category, id)
+  def get_category(id) do
+    case Repo.get(Category, id) do
+      %Category{} = category -> {:ok, category}
+      nil -> {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a category.
@@ -54,11 +59,6 @@ defmodule BatchEcommerce.Catalog do
     %Category{}
     |> Category.changeset(attrs)
     |> Repo.insert()
-  end
-
-  def category_exists_with_field?(field, value) do
-    query = from u in Category, where: field(u, ^field) == ^value
-    Repo.exists?(query)
   end
 
   @doc """

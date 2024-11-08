@@ -8,7 +8,9 @@ defmodule BatchEcommerceWeb.CompanyController do
 
   def index(conn, _params) do
     companies = Accounts.list_companies()
-    render(conn, :index, companies: companies)
+    conn
+    |> put_status(:ok)
+    |> render(:index, companies: companies)
   end
 
   def create(conn, %{"company" => company_params}) do
@@ -27,7 +29,9 @@ defmodule BatchEcommerceWeb.CompanyController do
 
   def show(conn, %{"id" => id}) do
     with %Company{} = company <- Accounts.get_company(id) do
-      render(conn, :show, company: company)
+      conn
+      |> put_status(:ok)
+      |> render(:show, company: company)
     else
       nil -> {:error, :not_found}
       _unkown_error -> {:error, :internal_server_error}

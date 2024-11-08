@@ -180,7 +180,6 @@ defmodule BatchEcommerce.Catalog do
     product
     |> Product.changeset(attrs)
     |> Repo.update()
-    |> preload_category()
   end
 
   @doc """

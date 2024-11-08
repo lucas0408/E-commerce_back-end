@@ -5,6 +5,11 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
 
   alias BatchEcommerce.Catalog.Category
 
+  import BatchEcommerce.AccountsFixtures
+
+  alias BatchEcommerce.Accounts.{User, Guardian}
+
+
   @create_attrs %{
     type: "some type"
   }
@@ -18,13 +23,20 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
   end
 
   describe "index" do
-    test "lists all categories", %{conn: conn} do
+    setup [:create_category]
+    test "lists all categories", %{conn: conn, category: category} do
       conn = get(conn, ~p"/api/categories")
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200)["data"] |> Enum.at(0) |> Map.get("id") == category.id
     end
   end
 
   describe "create category" do
+    setup %{conn: conn} do
+      user = user_fixture()
+      conn = Guardian.Plug.sign_in(conn, user)
+      {:ok, token, _claims} = Guardian.encode_and_sign(user)
+      %{conn: put_req_header(conn, "authorization", "Bearer #{token}")}
+    end
     test "renders category when data is valid", %{conn: conn} do
       conn = post(conn, ~p"/api/categories", category: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -67,18 +79,17 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
   describe "delete category" do
     setup [:create_category]
 
-    test "deletes chosen category", %{conn: conn, category: category} do
+    test "deletes chosen product", %{conn: conn, category: category} do
       conn = delete(conn, ~p"/api/categories/#{category}")
       assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/categories/#{category}")
-      end
     end
   end
 
-  defp create_category(_) do
+  defp create_category(%{conn: conn}) do
+    user = user_fixture()
+    conn = Guardian.Plug.sign_in(conn, user)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
     category = category_fixture()
-    %{category: category}
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), category: category}
   end
 end

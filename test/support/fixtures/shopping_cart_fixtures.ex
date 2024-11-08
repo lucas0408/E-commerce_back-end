@@ -1,4 +1,7 @@
 defmodule BatchEcommerce.ShoppingCartFixtures do
+
+  import BatchEcommerce.CatalogFixtures
+  alias BatchEcommerce.ShoppingCart
   @moduledoc """
   This module defines test helpers for creating
   entities via the `BatchEcommerce.ShoppingCart` context.
@@ -28,14 +31,14 @@ defmodule BatchEcommerce.ShoppingCartFixtures do
   @doc """
   Generate a cart_item.
   """
-  def cart_item_fixture(attrs \\ %{}) do
-    {:ok, cart_item} =
+  def cart_item_fixture(attrs \\ %{}, conn) do
+    cart_item_params =
       attrs
       |> Enum.into(%{
-        price_when_carted: "120.5",
+        "product_id" => product_fixture().id,
         quantity: 42
       })
-      |> BatchEcommerce.ShoppingCart.create_cart_item()
+      {:ok, cart_item} = ShoppingCart.add_item_to_cart(ShoppingCart.get_cart_by_user_uuid(conn.private.guardian_default_resource.id), cart_item_params)
 
     cart_item
   end

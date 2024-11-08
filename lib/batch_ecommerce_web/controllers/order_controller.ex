@@ -9,14 +9,15 @@ defmodule BatchEcommerceWeb.OrderController do
 
   def index(conn, _params) do
     orders = Orders.list_orders()
-    render(conn, :index, orders: orders)
+    conn
+    |> put_status(:ok)
+    |> render(:index, orders: orders)
   end
 
   def create(conn, %{"order" => order_params}) do
     IO.inspect(conn)
     case Orders.complete_order(conn) do
       {:ok, order} ->
-        IO.inspect(order)
         conn
         |> put_status(:created)
         |> put_resp_header("location", ~p"/api/products/#{order}")
@@ -28,14 +29,18 @@ defmodule BatchEcommerceWeb.OrderController do
 
   def show(conn, %{"id" => id}) do
     order = Orders.get_order!(conn.assigns.current_uuid, id)
-    render(conn, :show, order: order)
+    conn
+    |> put_status(:ok)
+    |> render(:show, order: order)
   end
 
   def update(conn, %{"id" => id, "order" => order_params}) do
     order = Orders.get_order!(id)
 
     with {:ok, %Order{} = order} <- Orders.update_order(order, order_params) do
-      render(conn, :show, order: order)
+      conn
+      |> put_status(:ok)
+      |> render(:show, order: order)
     end
   end
 

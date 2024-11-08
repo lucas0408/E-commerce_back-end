@@ -156,12 +156,14 @@ end
   end
 
   def add_item_to_cart(%Cart{} = cart, cart_item_params) do
+    case cart_item_params["product_id"] do
 
-    case BatchEcommerce.Catalog.get_product(cart_item_params["product_id"]) do
-      nil ->
-        {:error, :not_found}
+      nil -> {:error, :not_found}
 
-      product ->
+      product_id ->
+
+        product = BatchEcommerce.Catalog.get_product(product_id)
+
 
         quantity = String.to_integer(cart_item_params["quantity"] || "0")
 
@@ -181,6 +183,10 @@ end
     end
   end
 
+  def preload_product(item_cart) do
+    Repo.preload(item_cart, :product)
+  end
+
 
   @doc """
   Updates a cart_item.
@@ -196,11 +202,13 @@ end
   """
   def update_cart_item(%CartItem{} = cart_item, cart_item_params) do
 
-    case BatchEcommerce.Catalog.get_product(cart_item_params["product_id"]) do
-      nil ->
-        {:error, :not_found}
+    case cart_item_params["product_id"] do
 
-      product ->
+      nil -> {:error, :not_found}
+
+      product_id ->
+
+        product = BatchEcommerce.Catalog.get_product(product_id)
         quantity = String.to_integer(cart_item_params["quantity"] || "0")
 
         price_when_carted = Decimal.mult(product.price, quantity)

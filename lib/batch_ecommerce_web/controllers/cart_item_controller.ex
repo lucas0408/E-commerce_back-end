@@ -12,12 +12,18 @@ defmodule BatchEcommerceWeb.CartItemController do
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/cart_items/#{cart_item}")
       |> render(:show, cart_item: cart_item)
+    else
+      {:error, :not_found} -> {:error, :not_found}
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
+      _unknown_error -> {:error, :internal_server_error}
     end
   end
 
   def update(conn, %{"id" => id, "cart_item" => cart_item_params}) do
     with %CartItem{} = cart_item <- ShoppingCart.get_cart_item(id), {:ok, %CartItem{} = cart_item} <- ShoppingCart.update_cart_item(cart_item, cart_item_params) do
-      render(conn, :show, cart_item: cart_item)
+      conn
+      |> put_status(:ok)
+      |> render(:show, cart_item: cart_item)
     end
   end
 

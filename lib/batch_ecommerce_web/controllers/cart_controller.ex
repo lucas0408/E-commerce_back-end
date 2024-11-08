@@ -8,7 +8,8 @@ defmodule BatchEcommerceWeb.CartController do
 
   def show(conn, _params) do
     cart = ShoppingCart.get_cart_by_user_uuid(conn.private.guardian_default_resource.id)
-    IO.inspect(cart)
-    render(conn, :show, cart: cart)
+    conn
+    |> put_status(:ok)
+    |> render(:show, cart: cart)
   end
 end

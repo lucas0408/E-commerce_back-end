@@ -1,84 +1,99 @@
 defmodule BatchEcommerceWeb.CartControllerTest do
   use BatchEcommerceWeb.ConnCase
 
+  import BatchEcommerce.CatalogFixtures
+
   import BatchEcommerce.ShoppingCartFixtures
 
-  alias BatchEcommerce.ShoppingCart.Cart
+  alias BatchEcommerce.ShoppingCart.CartItem
+
+  import BatchEcommerce.AccountsFixtures
+
+  alias BatchEcommerce.Accounts.{User, Guardian}
 
   @create_attrs %{
-    user_uuid: "7488a646-e31f-11e4-aace-600308960662"
+    "product_id" => nil,
+    quantity: "42"
   }
   @update_attrs %{
-    user_uuid: "7488a646-e31f-11e4-aace-600308960668"
+    "product_id" => nil,
+    quantity: "43"
   }
-  @invalid_attrs %{user_uuid: nil}
+  @invalid_attrs %{"product_id" => nil, quantity: nil}
+
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "index" do
-    test "lists all carts", %{conn: conn} do
-      conn = get(conn, ~p"/api/carts")
-      assert json_response(conn, 200)["data"] == []
+    setup [:create_cart_item]
+    test "lists all carts", %{conn: conn, cart_item: cart_item} do
+      conn = get(conn, ~p"/api/cart")
+      assert json_response(conn, 200)["data"]["cart_items"] |> Enum.at(0) |> Map.get("id") == cart_item.id
     end
   end
 
-  describe "create cart" do
-    test "renders cart when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/carts", cart: @create_attrs)
+  describe "create cart_item" do
+
+    setup %{conn: conn} do
+      user = user_fixture()
+      conn = Guardian.Plug.sign_in(conn, user)
+      {:ok, token, _claims} = Guardian.encode_and_sign(user)
+      %{conn: put_req_header(conn, "authorization", "Bearer #{token}")}
+    end
+
+    test "renders cart_item when data is valid", %{conn: conn} do
+      product_id = product_fixture().id
+      conn = post(conn, ~p"/api/cart_items", cart_item: %{@create_attrs | "product_id" => product_id})
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, ~p"/api/carts/#{id}")
+      conn = get(conn, ~p"/api/cart")
 
-      assert %{
-               "id" => ^id,
-               "user_uuid" => "7488a646-e31f-11e4-aace-600308960662"
-             } = json_response(conn, 200)["data"]
+      assert json_response(conn, 200)["data"]["cart_items"] |> Enum.at(0) |> Map.get("product_id") == product_id
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/carts", cart: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
+      conn = post(conn, ~p"/api/cart_items", cart_item: @invalid_attrs)
+      assert json_response(conn, 404)["errors"] != %{}
     end
   end
 
-  describe "update cart" do
-    setup [:create_cart]
+  describe "update cart_item" do
 
-    test "renders cart when data is valid", %{conn: conn, cart: %Cart{id: id} = cart} do
-      conn = put(conn, ~p"/api/carts/#{cart}", cart: @update_attrs)
+    setup [:create_cart_item]
+
+    test "renders cart_item when data is valid", %{conn: conn, cart_item: %CartItem{id: id} = cart_item} do
+      update_attrs = %{@update_attrs | "product_id" => cart_item.product_id}
+      conn = put(conn, ~p"/api/cart_items/#{cart_item}", cart_item: update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-      conn = get(conn, ~p"/api/carts/#{id}")
+      conn = get(conn, ~p"/api/cart")
 
-      assert %{
-               "id" => ^id,
-               "user_uuid" => "7488a646-e31f-11e4-aace-600308960668"
-             } = json_response(conn, 200)["data"]
+      assert json_response(conn, 200)["data"]["cart_items"] |> Enum.at(0) |> Map.get("product_id") == update_attrs["product_id"]
     end
 
-    test "renders errors when data is invalid", %{conn: conn, cart: cart} do
-      conn = put(conn, ~p"/api/carts/#{cart}", cart: @invalid_attrs)
-      assert json_response(conn, 422)["errors"] != %{}
+    test "renders errors when data is invalid", %{conn: conn, cart_item: cart_item} do
+
+      conn = put(conn, ~p"/api/cart_items/#{cart_item}", cart_item: @invalid_attrs)
+      assert json_response(conn, 404)["errors"] != %{}
     end
   end
 
-  describe "delete cart" do
-    setup [:create_cart]
+  describe "delete cart_item" do
+    setup [:create_cart_item]
 
-    test "deletes chosen cart", %{conn: conn, cart: cart} do
-      conn = delete(conn, ~p"/api/carts/#{cart}")
+    test "deletes chosen cart_item", %{conn: conn, cart_item: cart_item} do
+      conn = delete(conn, ~p"/api/cart_items/#{cart_item}")
       assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/carts/#{cart}")
-      end
     end
   end
 
-  defp create_cart(_) do
-    cart = cart_fixture()
-    %{cart: cart}
+  defp create_cart_item(%{conn: conn}) do
+    user = user_fixture()
+    conn = Guardian.Plug.sign_in(conn, user)
+    cart_item = cart_item_fixture(%{}, conn)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), cart_item: cart_item}
   end
 end

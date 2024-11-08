@@ -8,7 +8,10 @@ defmodule BatchEcommerceWeb.CategoryController do
 
   def index(conn, _params) do
     categories = Catalog.list_categories()
-    render(conn, :index, categories: categories)
+
+    conn
+    |> put_status(:ok)
+    |> render(:index, categories: categories)
   end
 
   def create(conn, %{"category" => category_params}) do
@@ -35,7 +38,7 @@ defmodule BatchEcommerceWeb.CategoryController do
         |> render(:show, category: category)
 
       {:error, :not_found} ->
-        {:error, :bad_request}
+        {:error, :not_found}
     end
   end
 

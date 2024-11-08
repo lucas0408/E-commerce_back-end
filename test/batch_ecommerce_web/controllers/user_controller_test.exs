@@ -134,6 +134,9 @@ defmodule BatchEcommerceWeb.UserControllerTest do
     test "deletes chosen user", %{conn: conn, user: user} do
       conn = delete(conn, ~p"/api/users/#{user}")
       assert response(conn, 204)
+
+      conn = get(conn, ~p"/api/users/#{user}")
+      assert conn.status == 404
     end
   end
 

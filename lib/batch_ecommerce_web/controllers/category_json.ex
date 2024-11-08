@@ -4,7 +4,7 @@ defmodule BatchEcommerceWeb.CategoryJSON do
   @doc """
   Renders a list of products.
   """
-  def index(%{category: categories}) do
+  def index(%{categories: categories}) do
     %{data: for(category <- categories, do: data(category))}
   end
 

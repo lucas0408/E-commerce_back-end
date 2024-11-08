@@ -1,16 +1,19 @@
 defmodule BatchEcommerceWeb.CategoryControllerTest do
-  use BatchEcommerceWeb.ConnCase
+  use BatchEcommerceWeb.ConnCase, async: true
 
-  import BatchEcommerce.CatalogFixtures
+  import BatchEcommerce.{CatalogFixtures, AccountsFixtures}
 
   alias BatchEcommerce.Catalog.Category
+  alias BatchEcommerce.Accounts.Guardian
 
   @create_attrs %{
-    type: "some type"
+    type: "roupas"
   }
+
   @update_attrs %{
-    type: "some updated type"
+    type: "ferramentas"
   }
+
   @invalid_attrs %{type: nil}
 
   setup %{conn: conn} do
@@ -18,13 +21,17 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
   end
 
   describe "index" do
-    test "lists all categories", %{conn: conn} do
+    setup [:create_session]
+
+    test "lists all categories", %{conn: conn, category: category} do
       conn = get(conn, ~p"/api/categories")
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200)["data"] |> Enum.at(0) |> Map.get("id") == category.id
     end
   end
 
   describe "create category" do
+    setup [:create_session]
+
     test "renders category when data is valid", %{conn: conn} do
       conn = post(conn, ~p"/api/categories", category: @create_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -33,7 +40,7 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
 
       assert %{
                "id" => ^id,
-               "type" => "some type"
+               "type" => "roupas"
              } = json_response(conn, 200)["data"]
     end
 
@@ -44,9 +51,12 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
   end
 
   describe "update category" do
-    setup [:create_category]
+    setup [:create_session]
 
-    test "renders category when data is valid", %{conn: conn, category: %Category{id: id} = category} do
+    test "renders category when data is valid", %{
+      conn: conn,
+      category: %Category{id: id} = category
+    } do
       conn = put(conn, ~p"/api/categories/#{category}", category: @update_attrs)
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
@@ -54,7 +64,7 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
 
       assert %{
                "id" => ^id,
-               "type" => "some updated type"
+               "type" => "ferramentas"
              } = json_response(conn, 200)["data"]
     end
 
@@ -65,20 +75,23 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
   end
 
   describe "delete category" do
-    setup [:create_category]
+    setup [:create_session]
 
     test "deletes chosen category", %{conn: conn, category: category} do
       conn = delete(conn, ~p"/api/categories/#{category}")
       assert response(conn, 204)
 
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/categories/#{category}")
-      end
+      conn = get(conn, ~p"/api/categories/#{category}")
+      assert conn.status == 404
     end
   end
 
-  defp create_category(_) do
+  defp create_session(%{conn: conn}) do
+    user = user_fixture()
+    conn = Guardian.Plug.sign_in(conn, user)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+
     category = category_fixture()
-    %{category: category}
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), category: category}
   end
 end

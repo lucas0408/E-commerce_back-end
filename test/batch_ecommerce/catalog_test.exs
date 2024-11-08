@@ -1,5 +1,5 @@
 defmodule BatchEcommerce.CatalogTest do
-  use BatchEcommerce.DataCase
+  use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.Catalog
 
@@ -15,16 +15,18 @@ defmodule BatchEcommerce.CatalogTest do
       assert Catalog.list_categories() == [category]
     end
 
-    test "get_category!/1 returns the category with given id" do
+    test "get_category/1 returns the category with given id" do
       category = category_fixture()
-      assert Catalog.get_category!(category.id) == category
+
+      assert {:ok, category_found} = Catalog.get_category(category.id)
+      assert category_found == category
     end
 
     test "create_category/1 with valid data creates a category" do
-      valid_attrs = %{type: "some type"}
+      valid_attrs = %{type: "roupas"}
 
       assert {:ok, %Category{} = category} = Catalog.create_category(valid_attrs)
-      assert category.type == "some type"
+      assert category.type == "roupas"
     end
 
     test "create_category/1 with invalid data returns error changeset" do
@@ -33,22 +35,24 @@ defmodule BatchEcommerce.CatalogTest do
 
     test "update_category/2 with valid data updates the category" do
       category = category_fixture()
-      update_attrs = %{type: "some updated type"}
+      update_attrs = %{type: "ferramentas"}
 
       assert {:ok, %Category{} = category} = Catalog.update_category(category, update_attrs)
-      assert category.type == "some updated type"
+      assert category.type == "ferramentas"
     end
 
     test "update_category/2 with invalid data returns error changeset" do
       category = category_fixture()
+
       assert {:error, %Ecto.Changeset{}} = Catalog.update_category(category, @invalid_attrs)
-      assert category == Catalog.get_category!(category.id)
+      assert {:ok, %Category{} = category} == Catalog.get_category(category.id)
     end
 
     test "delete_category/1 deletes the category" do
       category = category_fixture()
+
       assert {:ok, %Category{}} = Catalog.delete_category(category)
-      assert_raise Ecto.NoResultsError, fn -> Catalog.get_category!(category.id) end
+      assert {:error, :not_found} = Catalog.get_category(category.id)
     end
 
     test "change_category/1 returns a category changeset" do
@@ -71,7 +75,7 @@ defmodule BatchEcommerce.CatalogTest do
 
     test "get_product!/1 returns the product with given id" do
       product = product_fixture()
-      assert Catalog.get_product!(product.id) == product
+      assert Catalog.get_product(product.id) == product
     end
 
     test "create_product/1 with valid data creates a product" do

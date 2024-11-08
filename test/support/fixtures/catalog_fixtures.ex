@@ -11,7 +11,7 @@ defmodule BatchEcommerce.CatalogFixtures do
     {:ok, category} =
       attrs
       |> Enum.into(%{
-        type: "some type"
+        type: "roupas"
       })
       |> BatchEcommerce.Catalog.create_category()
 

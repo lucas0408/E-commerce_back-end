@@ -2,6 +2,8 @@ defmodule BatchEcommerce.CatalogTest do
   use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.Catalog
+  alias BatchEcommerce.Catalog.Product
+  import BatchEcommerce.CatalogFixtures
 
   describe "categories" do
     alias BatchEcommerce.Catalog.Category
@@ -73,9 +75,10 @@ defmodule BatchEcommerce.CatalogTest do
       assert Catalog.list_products() == [product]
     end
 
-    test "get_product!/1 returns the product with given id" do
+    test "get_product/1 returns the product with given id" do
       product = product_fixture()
-      assert Catalog.get_product(product.id) == product
+      assert {:ok, %Product{} = product_found} = Catalog.get_product(product.id)
+      assert product_found == product
     end
 
     test "create_product/1 with valid data creates a product" do
@@ -104,18 +107,87 @@ defmodule BatchEcommerce.CatalogTest do
     test "update_product/2 with invalid data returns error changeset" do
       product = product_fixture()
       assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, @invalid_attrs)
-      assert product == Catalog.get_product!(product.id)
+      assert {:ok, product} == Catalog.get_product(product.id)
     end
 
     test "delete_product/1 deletes the product" do
       product = product_fixture()
       assert {:ok, %Product{}} = Catalog.delete_product(product)
-      assert_raise Ecto.NoResultsError, fn -> Catalog.get_product!(product.id) end
+      assert {:error, :not_found} == Catalog.get_product(product.id)
     end
 
     test "change_product/1 returns a product changeset" do
       product = product_fixture()
       assert %Ecto.Changeset{} = Catalog.change_product(product)
     end
+  end
+
+  describe "products with category associated" do
+    setup [:create_categories]
+
+    test "get product returns the product with given id and preloaded category" do
+      product = product_fixture_assoc()
+      assert {:ok, %Product{} = product_found} = Catalog.get_product(product.id)
+      assert product_found == product
+    end
+
+    test "create product with categories associated", %{categories: categories} do
+      category_ids = Enum.map(categories, & &1.id)
+
+      valid_attrs = %{
+        name: "some name",
+        price: "120.5",
+        stock_quantity: 42,
+        category_ids: category_ids
+      }
+
+      assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
+      assert product.name == "some name"
+      assert product.price == Decimal.new("120.5")
+      assert product.stock_quantity == 42
+
+      assert product.categories ==
+               Enum.map(product.categories, fn category ->
+                 {:ok, category_return} = Catalog.get_category(category.id)
+                 category_return
+               end)
+    end
+
+    test "update product with categories associated", %{categories: categories} do
+      category_ids = Enum.map(categories, & &1.id)
+
+      update_attrs = %{
+        name: "some updated name",
+        price: "456.7",
+        stock_quantity: 43,
+        category_ids: category_ids
+      }
+
+      product_assoc = product_fixture_assoc()
+
+      assert {:ok, %Product{} = product} = Catalog.update_product(product_assoc, update_attrs)
+      assert product.name == "some updated name"
+      assert product.price == Decimal.new("456.7")
+      assert product.stock_quantity == 43
+
+      assert product.categories ==
+               Enum.map(product.categories, fn category ->
+                 {:ok, category_return} = Catalog.get_category(category.id)
+                 category_return
+               end)
+    end
+
+    test "delete_product/1 deletes the product" do
+      product = product_fixture_assoc()
+      assert {:ok, %Product{}} = Catalog.delete_product(product)
+      assert {:error, :not_found} == Catalog.get_product(product.id)
+    end
+  end
+
+  defp create_categories(_) do
+    category_1 = category_fixture(%{type: "roupas"})
+    category_2 = category_fixture(%{type: "sapatos"})
+
+    %{categories: [category_1, category_2]}
   end
 end

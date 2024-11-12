@@ -26,18 +26,17 @@ defmodule BatchEcommerceWeb.ProductController do
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
-    product = Catalog.get_product(id)
-
-    with {:ok, %Product{} = product} <- Catalog.update_product(product, product_params) do
-      IO.inspect(product)
-      render(conn, :show, product: product)
+    with {:ok, %Product{} = product_found} <- Catalog.get_product(id),
+         {:ok, %Product{} = product_updated} <-
+           Catalog.update_product(product_found, product_params) do
+      render(conn, :show, product: product_updated)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    product = Catalog.get_product(id)
-
-    with {:ok, %Product{}} <- Catalog.delete_product(product) do
+    with {:ok, %Product{} = product_found} <- Catalog.get_product(id),
+         {:ok, %Product{}} <-
+           Catalog.delete_product(product_found) do
       send_resp(conn, :no_content, "")
     end
   end

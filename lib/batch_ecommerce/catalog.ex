@@ -120,7 +120,8 @@ defmodule BatchEcommerce.Catalog do
 
   """
   def list_products do
-    Repo.preload(Repo.all(Product), :category)
+    Repo.all(Product)
+    |> Repo.preload(:categories)
   end
 
   @doc """
@@ -137,7 +138,16 @@ defmodule BatchEcommerce.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product(id), do: Repo.preload(Repo.get(Product, id), :category)
+  def get_product(id) do
+    case Repo.get(Product, id) do
+      %Product{} = product ->
+        product_preloaded = Repo.preload(product, :categories)
+        {:ok, product_preloaded}
+
+      nil ->
+        {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a product.
@@ -153,20 +163,8 @@ defmodule BatchEcommerce.Catalog do
   """
   def create_product(attrs \\ %{}) do
     %Product{}
-    |> Product.changeset(attrs)
+    |> change_product(attrs)
     |> Repo.insert()
-    |> preload_category()
-  end
-
-  defp preload_category({:ok, product}) do
-    {:ok, Repo.preload(product, :category)}
-  end
-
-  defp preload_category(error), do: error
-
-  def product_exists_with_field?(field, value) do
-    query = from u in Product, where: field(u, ^field) == ^value
-    Repo.exists?(query)
   end
 
   @doc """
@@ -183,9 +181,8 @@ defmodule BatchEcommerce.Catalog do
   """
   def update_product(%Product{} = product, attrs) do
     product
-    |> Product.changeset(attrs)
+    |> change_product(attrs)
     |> Repo.update()
-    |> preload_category()
   end
 
   @doc """
@@ -214,6 +211,18 @@ defmodule BatchEcommerce.Catalog do
 
   """
   def change_product(%Product{} = product, attrs \\ %{}) do
-    Product.changeset(product, attrs)
+    category_ids = Map.get(attrs, :category_ids, [])
+    categories = list_categories_by_id(category_ids)
+
+    product
+    |> Repo.preload(:categories)
+    |> Product.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:categories, categories)
+  end
+
+  def list_categories_by_id(nil), do: []
+
+  def list_categories_by_id(category_ids) do
+    Repo.all(from c in Category, where: c.id in ^category_ids)
   end
 end

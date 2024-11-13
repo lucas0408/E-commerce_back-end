@@ -31,14 +31,15 @@ defmodule BatchEcommerce.ShoppingCartFixtures do
   @doc """
   Generate a cart_item.
   """
-  def cart_item_fixture(attrs \\ %{}, conn) do
+
+  def cart_item_fixture(attrs \\ %{}) do
     cart_item_params =
       attrs
       |> Enum.into(%{
         "product_id" => product_fixture().id,
         quantity: 42
       })
-      {:ok, cart_item} = ShoppingCart.add_item_to_cart(ShoppingCart.get_cart_by_user_uuid(conn.private.guardian_default_resource.id), cart_item_params)
+      {:ok, cart_item} = ShoppingCart.add_item_to_cart(ShoppingCart.get_cart_by_user_uuid(BatchEcommerce.AccountsFixtures.user_fixture().id), cart_item_params)
 
     cart_item
   end

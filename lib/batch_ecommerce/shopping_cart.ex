@@ -32,27 +32,6 @@ def total_cart_price(%Cart{} = cart) do
     |> Decimal.add(acc)
   end)
 end
-
-  def list_carts do
-    Repo.all(Cart)
-  end
-
-  @doc """
-  Gets a single cart.
-
-  Raises `Ecto.NoResultsError` if the Cart does not exist.
-
-  ## Examples
-
-      iex> get_cart!(123)
-      %Cart{}
-
-      iex> get_cart!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_cart!(id), do: Repo.get!(Cart, id)
-
   @doc """
   Creates a cart.
 
@@ -69,26 +48,8 @@ end
     %Cart{}
     |> Cart.changeset(attrs)
     |> Repo.insert()
-
   end
 
-
-
-  @doc """
-  Deletes a cart.
-
-  ## Examples
-
-      iex> delete_cart(cart)
-      {:ok, %Cart{}}
-
-      iex> delete_cart(cart)
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def delete_cart(%Cart{} = cart) do
-    Repo.delete(cart)
-  end
 
   def prune_cart_items(%Cart{} = cart) do
     {_, _} = Repo.delete_all(from(i in CartItem, where: i.cart_id == ^cart.id))
@@ -99,34 +60,10 @@ end
     Repo.get!(Cart, cart.id)
     |> Repo.preload(:items)
   end
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking cart changes.
 
-  ## Examples
 
-      iex> change_cart(cart)
-      %Ecto.Changeset{data: %Cart{}}
 
-  """
-  def change_cart(%Cart{} = cart, attrs \\ %{}) do
-    Cart.changeset(cart, attrs)
-  end
 
-  alias BatchEcommerce.ShoppingCart.CartItem
-
-  @doc """
-  Returns the list of cart_items.
-
-  ## Examples
-
-      iex> list_cart_items()
-      [%CartItem{}, ...]
-
-  """
-  def list_cart_items(conn) do
-    get_cart_by_user_uuid(conn.private.guardian_default_resource.id)
-     |> Map.get(:items)
-  end
 
   @doc """
   Gets a single cart_item.
@@ -236,16 +173,5 @@ end
     Repo.delete(cart_item)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking cart_item changes.
 
-  ## Examples
-
-      iex> change_cart_item(cart_item)
-      %Ecto.Changeset{data: %CartItem{}}
-
-  """
-  def change_cart_item(%CartItem{} = cart_item, attrs \\ %{}) do
-    CartItem.changeset(cart_item, attrs)
-  end
 end

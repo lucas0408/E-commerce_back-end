@@ -10,9 +10,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
     @invalid_attrs %{user_uuid: nil}
 
-    test "total_item_price returns total_item_price" do
-      
-
     test "list_carts/0 returns all carts" do
       cart = cart_fixture()
       assert ShoppingCart.list_carts() == [cart]
@@ -61,18 +58,28 @@ defmodule BatchEcommerce.ShoppingCartTest do
   end
 
   describe "cart_items" do
+
+    import BatchEcommerce.AccountsFixtures
+
+    alias BatchEcommerce.Accounts.{User, Guardian}
+
     alias BatchEcommerce.ShoppingCart.CartItem
 
     import BatchEcommerce.ShoppingCartFixtures
 
     @invalid_attrs %{price_when_carted: nil, quantity: nil}
 
+    test "total_item_price/1 returns total_item_price" do
+      cart_item = cart_item_fixture()
+      ShoppingCart.total_item_price(ShoppingCart.preload_product(cart_item))
+    end
+
     test "list_cart_items/0 returns all cart_items" do
       cart_item = cart_item_fixture()
       assert ShoppingCart.list_cart_items() == [cart_item]
     end
 
-    test "get_cart_item!/1 returns the cart_item with given id" do
+    test "get_cart_item!/1 returns the cart_item with given id", %{conn: conn} do
       cart_item = cart_item_fixture()
       assert ShoppingCart.get_cart_item!(cart_item.id) == cart_item
     end

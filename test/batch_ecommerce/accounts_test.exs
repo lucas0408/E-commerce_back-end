@@ -159,19 +159,19 @@ defmodule BatchEcommerce.AccountsTest do
       assert Accounts.list_companies() == [company]
     end
 
-    test "get_company!/1 returns the company with given id" do
+    test "get_company/1 returns the company with given id" do
       company = company_fixture()
-      assert Accounts.get_company!(company.id) == company
+      assert Accounts.get_company(company.id) == company
     end
 
     test "create_company/1 with valid data creates a company" do
-      valid_attrs = %{name: "some name", cnpj: "some cnpj", email: "some email", phone_number: "some phone_number"}
+      valid_attrs = %{name: "some name", cnpj: "11111111111111", email: "exemploemail@gmail.com", phone_number: "1199999-9999", user_id: user_fixture().id}
 
       assert {:ok, %Company{} = company} = Accounts.create_company(valid_attrs)
       assert company.name == "some name"
-      assert company.cnpj == "some cnpj"
-      assert company.email == "some email"
-      assert company.phone_number == "some phone_number"
+      assert company.cnpj == "11111111111111"
+      assert company.email == "exemploemail@gmail.com"
+      assert company.phone_number == "1199999-9999"
     end
 
     test "create_company/1 with invalid data returns error changeset" do
@@ -180,25 +180,25 @@ defmodule BatchEcommerce.AccountsTest do
 
     test "update_company/2 with valid data updates the company" do
       company = company_fixture()
-      update_attrs = %{name: "some updated name", cnpj: "some updated cnpj", email: "some updated email", phone_number: "some updated phone_number"}
+      update_attrs = %{name: "some update name", cnpj: "11111111111111", email: "exemploupdateemail@gmail.com", phone_number: "1199999-9999"}
 
       assert {:ok, %Company{} = company} = Accounts.update_company(company, update_attrs)
-      assert company.name == "some updated name"
-      assert company.cnpj == "some updated cnpj"
-      assert company.email == "some updated email"
-      assert company.phone_number == "some updated phone_number"
+      assert company.name == "some update name"
+      assert company.cnpj == "11111111111111"
+      assert company.email == "exemploupdateemail@gmail.com"
+      assert company.phone_number == "1199999-9999"
     end
 
     test "update_company/2 with invalid data returns error changeset" do
       company = company_fixture()
       assert {:error, %Ecto.Changeset{}} = Accounts.update_company(company, @invalid_attrs)
-      assert company == Accounts.get_company!(company.id)
+      assert company == Accounts.get_company(company.id)
     end
 
     test "delete_company/1 deletes the company" do
       company = company_fixture()
       assert {:ok, %Company{}} = Accounts.delete_company(company)
-      assert_raise Ecto.NoResultsError, fn -> Accounts.get_company!(company.id) end
+      assert Accounts.get_company(company.id) == nil
     end
 
     test "change_company/1 returns a company changeset" do

@@ -27,8 +27,8 @@ defmodule BatchEcommerce.Accounts.Company do
     |> validate_email(:email, message: "invalid email")
     |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
     |> validate_uniqueness_of_fields([:cnpj, :phone_number, :name])
-    |> assoc_constraint(:user)
     |> cast_assoc(:address)
+    |> assoc_constraint(:user)
   end
 
   defp validate_uniqueness_of_fields(changeset, fields) do
@@ -44,7 +44,7 @@ defmodule BatchEcommerce.Accounts.Company do
   end
 
   defp validate_cnpj(changeset),
-    do: changeset |> validate_length(:cnpj, is: 18, message: "Enter a valid CNPJ")
+    do: changeset |> validate_length(:cnpj, is: 14, message: "Enter a valid CNPJ")
 
   defp validate_name(changeset),
     do: changeset |> validate_length(:name, min: 2, max: 60, message: "Enter a valid name")

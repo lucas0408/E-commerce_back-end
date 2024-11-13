@@ -44,10 +44,20 @@ defmodule BatchEcommerce.AccountsFixtures do
     {:ok, company} =
       attrs
       |> Enum.into(%{
-        cnpj: "some cnpj",
-        email: "some email",
+        cnpj: "11111111111111",
+        email: "murilo@hotmail.com",
         name: "some name",
-        phone_number: "some phone_number"
+        phone_number: "11979897989",
+        user_id: user_fixture().id,
+        address: %{
+          address: "rua elixir",
+          cep: "09071000",
+          uf: "SP",
+          city: "cidade java",
+          district: "vila programação",
+          complement: "casa",
+          home_number: "321"
+        }
       })
       |> BatchEcommerce.Accounts.create_company()
 

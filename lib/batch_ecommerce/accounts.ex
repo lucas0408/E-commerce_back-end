@@ -126,7 +126,7 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def list_companies do
-    Repo.all(Company)
+    Repo.all(Company) |> Repo.preload(:address)
   end
 
   @doc """

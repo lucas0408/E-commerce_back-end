@@ -10,6 +10,9 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
     @invalid_attrs %{user_uuid: nil}
 
+    test "total_item_price returns total_item_price" do
+      
+
     test "list_carts/0 returns all carts" do
       cart = cart_fixture()
       assert ShoppingCart.list_carts() == [cart]

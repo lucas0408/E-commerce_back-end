@@ -67,3 +67,15 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+config :ex_aws,
+  access_key_id: "minioaccesskey",
+  secret_access_key: "miniosecretkey",
+  json_codec: Jason
+
+config :ex_aws, :s3,
+  scheme: "http://",
+  host: "localhost",
+  port: 9000,
+  bucket: "batch-bucket",
+  force_path_style: true

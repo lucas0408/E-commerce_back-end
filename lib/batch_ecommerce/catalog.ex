@@ -2,7 +2,6 @@ defmodule BatchEcommerce.Catalog do
   @moduledoc """
   The Catalog context.
   """
-
   import Ecto.Query, warn: false
   alias BatchEcommerce.Repo
 

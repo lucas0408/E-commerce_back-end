@@ -47,7 +47,7 @@ defmodule BatchEcommerce.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.5"},
-      {:finch, "~> 0.13"},
+      {:finch, "~> 0.19"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
@@ -59,7 +59,13 @@ defmodule BatchEcommerce.MixProject do
       {:credo, "~> 1.7.8", only: [:dev, :test], runtime: false},
       {:ecto_commons, "~> 0.3.4"},
       {:mox, "~> 1.2", only: :test},
-      {:hammox, "~> 0.7", only: :test}
+      {:hammox, "~> 0.7", only: :test},
+      {:ex_aws, "~> 2.5.7"},
+      {:ex_aws_s3, "~> 2.5.5"},
+      {:hackney, "~> 1.9"},
+      {:sweet_xml, "~> 0.7.4"},
+      {:mock, "~> 0.3.8"},
+      {:uuid, "~> 1.1.8"}
     ]
   end
 

@@ -19,7 +19,6 @@ defmodule BatchEcommerceWeb.CompanyController do
     company_params = Map.put(company_params, "user_id", user_id)
 
     with {:ok, %Company{} = company} <- Accounts.create_company(company_params) do
-      IO.inspect(company)
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/companies/#{company}")
@@ -52,7 +51,6 @@ defmodule BatchEcommerceWeb.CompanyController do
   end
 
   def delete(conn, %{"id" => id}) do
-
     with %Company{} = company <- Accounts.get_company(id),
     {:ok, %Company{}} <- Accounts.delete_company(company) do
       send_resp(conn, :no_content, "")

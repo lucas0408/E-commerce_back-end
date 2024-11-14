@@ -25,7 +25,6 @@ def total_item_price(%CartItem{} = item) do
 end
 
 def total_cart_price(%Cart{} = cart) do
-  IO.inspect(cart)
   Enum.reduce(cart.items, 0, fn item, acc ->
     item
     |> total_item_price()
@@ -145,15 +144,21 @@ end
 
       product_id ->
 
-        product = BatchEcommerce.Catalog.get_product(product_id)
-        quantity = String.to_integer(cart_item_params["quantity"] || "0")
+        case BatchEcommerce.Catalog.get_product(product_id) do
 
-        price_when_carted = Decimal.mult(product.price, quantity)
+          nil -> {:error, :not_found}
 
-        attrs = %{quantity: quantity, price_when_carted: price_when_carted, cart_id: cart_item.cart_id, product_id: product.id}
-        cart_item
-        |> CartItem.changeset(attrs)
-        |> Repo.update()
+          product ->
+            
+            quantity = String.to_integer(cart_item_params["quantity"] || "0")
+
+            price_when_carted = Decimal.mult(product.price, quantity)
+
+            attrs = %{quantity: quantity, price_when_carted: price_when_carted, cart_id: cart_item.cart_id, product_id: product.id}
+            cart_item
+            |> CartItem.changeset(attrs)
+            |> Repo.update()
+        end
     end
   end
 

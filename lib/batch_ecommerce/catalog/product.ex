@@ -4,12 +4,13 @@ defmodule BatchEcommerce.Catalog.Product do
 
   alias BatchEcommerce.Catalog.Category
 
-  @required_fields [:name, :price, :stock_quantity]
+  @required_fields [:name, :price, :stock_quantity, :image_url]
 
   schema "products" do
     field :name, :string
     field :price, :decimal
     field :stock_quantity, :integer
+    field :image_url, :string
     many_to_many :categories, Category, join_through: "product_categories", on_replace: :delete
 
     timestamps(type: :utc_datetime)
@@ -19,7 +20,7 @@ defmodule BatchEcommerce.Catalog.Product do
   def changeset(product, attrs) do
     product
     |> cast(attrs, @required_fields)
-    |> validate_required([:name, :price, :stock_quantity])
+    |> validate_required(@required_fields)
     |> unique_constraint(:name)
     |> validate_name()
     |> validate_price()

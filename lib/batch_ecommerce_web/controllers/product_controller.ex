@@ -1,11 +1,9 @@
 defmodule BatchEcommerceWeb.ProductController do
   use BatchEcommerceWeb, :controller
 
-  alias BatchEcommerce.Catalog.{Product, Minio}
   alias BatchEcommerce.Catalog
+  alias BatchEcommerce.Catalog.Product
   action_fallback BatchEcommerceWeb.FallbackController
-
-  @bucket "batch-bucket"
 
   def index(conn, _params) do
     products = Catalog.list_products()
@@ -13,20 +11,34 @@ defmodule BatchEcommerceWeb.ProductController do
   end
 
   def create(conn, %{"product" => product_params}) do
-    with {:ok, url} <- Minio.upload_file(product_params.image, @bucket),
-         {:ok, product} <-
-           Catalog.create_product(Map.put(product_params, :image_url, url)) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/products/#{product}")
-      |> render(:show, product: product)
+    case Catalog.create_product(product_params) do
+      {:ok, product} ->
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/products/#{product}")
+        |> render(:show, product: product)
+
+      nil ->
+        {:error, :bad_request}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
+
+      _unknown_error ->
+        {:error, :internal_server_error}
     end
   end
 
   def show(conn, %{"id" => id}) do
-    product = Catalog.get_product(id)
+    case Catalog.get_product(id) do
+      {:ok, product} ->
+        conn
+        |> put_status(:ok)
+        |> render(:show, product: product)
 
-    render(conn, :show, product: product)
+      {:error, :not_found} ->
+        {:error, :not_found}
+    end
   end
 
   def update(conn, %{"id" => id, "product" => product_params}) do
@@ -34,6 +46,10 @@ defmodule BatchEcommerceWeb.ProductController do
          {:ok, %Product{} = product_updated} <-
            Catalog.update_product(product_found, product_params) do
       render(conn, :show, product: product_updated)
+    else
+      nil -> {:error, :bad_request}
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
+      _unknown_error -> {:error, :internal_server_error}
     end
   end
 
@@ -42,6 +58,10 @@ defmodule BatchEcommerceWeb.ProductController do
          {:ok, %Product{}} <-
            Catalog.delete_product(product_found) do
       send_resp(conn, :no_content, "")
+    else
+      {:error, :not_found} -> {:error, :not_found}
+      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
+      _unknown_error -> {:error, :internal_server_error}
     end
   end
 end

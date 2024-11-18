@@ -21,7 +21,7 @@ defmodule BatchEcommerceWeb.ProductJSON do
       name: product.name,
       price: product.price,
       stock_quantity: product.stock_quantity,
-      categories: BatchEcommerceWeb.CategoryJSON.index(product.categories)
+      categories: BatchEcommerceWeb.CategoryJSON.index(%{categories: product.categories})
     }
   end
 end

@@ -1,16 +1,23 @@
 defmodule BatchEcommerce.Catalog.Minio do
   @behaviour BatchEcommerce.Catalog.MinioBehaviour
 
-  @spec upload_file(map(), String.t()) :: {:ok, String.t()} | {:error, any()}
-  def upload_file(upload, bucket) do
-    filename = "#{UUID.uuid4()}-#{upload.filename}"
-    path = upload.path
+  @bucket "batch-bucket"
 
-    ExAws.S3.put_object(bucket, filename, File.read!(path))
+  @spec upload_file(Plug.Upload.t(), String.t()) :: {:ok, String.t()} | {:error, term()}
+  def upload_file(
+        %Plug.Upload{content_type: content_type, filename: filename} = upload,
+        bucket \\ @bucket
+      ) do
+    new_filename = "#{UUID.uuid4()}-#{filename}"
+
+    ExAws.S3.put_object(bucket, new_filename, upload.path, [
+      {:content_type, content_type},
+      {:acl, :public_read}
+    ])
     |> ExAws.request()
     |> case do
       {:ok, _} ->
-        {:ok, get_file_url(bucket, filename)}
+        {:ok, get_file_url(bucket, new_filename)}
 
       {:error, error} ->
         {:error, error}

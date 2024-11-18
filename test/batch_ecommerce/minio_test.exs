@@ -9,9 +9,10 @@ defmodule BatchEcommerce.MinioTest do
       tmp_path = Path.join(System.tmp_dir!(), "test.jpg")
       File.write!(tmp_path, "test-content")
 
-      upload = %{
+      upload = %Plug.Upload{
+        path: tmp_path,
         filename: "test.jpg",
-        path: tmp_path
+        content_type: "image/jpeg"
       }
 
       on_exit(fn ->

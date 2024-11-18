@@ -210,8 +210,11 @@ defmodule BatchEcommerce.Catalog do
 
   """
   def change_product(%Product{} = product, attrs \\ %{}) do
-    category_ids = Map.get(attrs, :category_ids, [])
-    categories = list_categories_by_id(category_ids)
+    category_ids =
+      Map.get(attrs, "category_ids", [])
+
+    categories =
+      list_categories_by_id(category_ids)
 
     product
     |> Repo.preload(:categories)
@@ -223,5 +226,20 @@ defmodule BatchEcommerce.Catalog do
 
   def list_categories_by_id(category_ids) do
     Repo.all(from c in Category, where: c.id in ^category_ids)
+  end
+
+  def put_image_url(product_id, image_url) do
+    case Repo.get(Product, product_id) do
+      %Product{} = product ->
+        product_with_image =
+          product
+          |> Product.image_url_changeset(image_url)
+          |> Repo.update()
+
+        {:ok, product_with_image}
+
+      nil ->
+        {:error, :not_found}
+    end
   end
 end

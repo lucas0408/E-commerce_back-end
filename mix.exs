@@ -65,7 +65,8 @@ defmodule BatchEcommerce.MixProject do
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.7.4"},
       {:mock, "~> 0.3.8"},
-      {:uuid, "~> 1.1.8"}
+      {:uuid, "~> 1.1.8"},
+      {:cors_plug, "~> 3.0.3"}
     ]
   end
 

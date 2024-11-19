@@ -79,3 +79,5 @@ config :ex_aws, :s3,
   port: 9000,
   bucket: "batch-bucket",
   force_path_style: true
+
+config :batch_ecommerce, origin: ["http://localhost:4200"]

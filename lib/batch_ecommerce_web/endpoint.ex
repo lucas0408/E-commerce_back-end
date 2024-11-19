@@ -48,4 +48,6 @@ defmodule BatchEcommerceWeb.Endpoint do
   plug Plug.Head
   plug Plug.Session, @session_options
   plug BatchEcommerceWeb.Router
+
+  plug CORSPlug, origin: Application.compile_env(:batch_ecommerce, :origin)
 end

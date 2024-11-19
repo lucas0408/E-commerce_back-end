@@ -233,7 +233,7 @@ defmodule BatchEcommerce.Catalog do
       %Product{} = product ->
         product_with_image =
           product
-          |> Product.image_url_changeset(image_url)
+          |> Product.image_url_changeset(%{image_url: image_url})
           |> Repo.update()
 
         {:ok, product_with_image}

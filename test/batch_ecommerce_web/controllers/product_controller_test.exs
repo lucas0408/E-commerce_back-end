@@ -19,7 +19,7 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
     stock_quantity: 43,
     image_url: "some updated image_url"
   }
-  @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, categories: nil}
+  @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, categories: nil, image_url: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

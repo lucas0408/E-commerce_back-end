@@ -1,8 +1,8 @@
 defmodule BatchEcommerceWeb.UploadControllerTest do
   use BatchEcommerceWeb.ConnCase, async: true
 
-  import BatchEcommerce.MinioFixtures
   import BatchEcommerce.AccountsFixtures
+  import BatchEcommerce.CatalogFixtures
   alias BatchEcommerce.Accounts.Guardian
 
   import Hammox
@@ -12,14 +12,15 @@ defmodule BatchEcommerceWeb.UploadControllerTest do
   end
 
   describe "upload_image/1" do
-    setup [:create_session, :create_image]
+    setup [:create_session, :create_image, :create_product]
 
-    test "successfully uploads an image", %{conn: conn, upload: upload} do
+    test "successfully uploads an image", %{conn: conn, upload: upload, product_id: product_id} do
       expect(BatchEcommerce.Catalog.MockMinio, :upload_file, fn ^upload, "test-bucket" ->
         {:ok, "http://localhost:9000/test-bucket/test.jpg"}
       end)
 
-      conn = post(conn, ~p"/api/upload", image: upload)
+      # use by_pass server in the future to test
+      conn = post(conn, ~p"/api/upload", %{image: upload, product_id: product_id})
       response = json_response(conn, 200)
 
       assert String.match?(
@@ -51,5 +52,10 @@ defmodule BatchEcommerceWeb.UploadControllerTest do
     conn = Guardian.Plug.sign_in(conn, user)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
     %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}
+  end
+
+  defp create_product(_) do
+    product = product_fixture()
+    %{product_id: product.id}
   end
 end

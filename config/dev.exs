@@ -80,4 +80,5 @@ config :ex_aws, :s3,
   bucket: "batch-bucket",
   force_path_style: true
 
-config :batch_ecommerce, origin: ["http://localhost:4200"]
+# see a better way to get env config in the future
+# config :batch_ecommerce, origin: ["http://localhost:4200"]

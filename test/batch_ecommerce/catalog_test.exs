@@ -4,7 +4,6 @@ defmodule BatchEcommerce.CatalogTest do
   alias BatchEcommerce.Catalog
   alias BatchEcommerce.Catalog.Product
   import BatchEcommerce.CatalogFixtures
-  import Hammox
 
   describe "categories" do
     alias BatchEcommerce.Catalog.Category

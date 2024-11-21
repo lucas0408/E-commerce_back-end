@@ -5,6 +5,7 @@ defmodule BatchEcommerceWeb.FallbackController do
   See `Phoenix.Controller.action_fallback/1` for more details.
   """
   use BatchEcommerceWeb, :controller
+  require Logger
 
   # This clause handles errors returned by Ecto's insert/update/delete.
   def call(conn, {:error, %Ecto.Changeset{} = changeset}) do
@@ -22,7 +23,9 @@ defmodule BatchEcommerceWeb.FallbackController do
     |> render(:"404")
   end
 
-  def call(conn, {:error, :internal_server_error}) do
+  def call(conn, {:error, error}) do
+    Logger.error("unknown error detected: #{inspect(error)}")
+
     conn
     |> put_status(:internal_server_error)
     |> put_view(html: BatchEcommerceWeb.ErrorHTML, json: BatchEcommerceWeb.ErrorJSON)

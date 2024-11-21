@@ -8,11 +8,6 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
   alias BatchEcommerce.Catalog.Product
   alias BatchEcommerce.Accounts.Guardian
 
-  @create_attrs %{
-    name: "some name",
-    price: "120.5",
-    stock_quantity: 42
-  }
   @update_attrs %{
     name: "some updated name",
     price: "456.7",
@@ -45,15 +40,19 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
 
       {:ok, product_preloaded} = Catalog.get_product(id)
 
-      categories = product_preloaded.categories
+      response_data = json_response(conn, 200)["data"]
 
-      assert %{
-               "id" => ^id,
-               "name" => "some name",
-               "price" => "120.5",
-               "stock_quantity" => 42,
-               "categories" => categories
-             } = json_response(conn, 200)["data"]
+      assert response_data["id"] == id
+      assert response_data["name"] == "some name"
+      assert response_data["price"] == "120.5"
+      assert response_data["stock_quantity"] == 42
+
+      assert length(response_data["categories"]["data"]) == length(product_preloaded.categories)
+
+      Enum.each(response_data["categories"]["data"], fn category ->
+        assert Map.has_key?(category, "id")
+        assert Map.has_key?(category, "type")
+      end)
     end
 
     test "renders errors when data is invalid", %{conn: conn} do

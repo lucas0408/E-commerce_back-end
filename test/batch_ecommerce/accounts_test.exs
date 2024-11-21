@@ -28,7 +28,7 @@ defmodule BatchEcommerce.AccountsTest do
 
     test "get_user/1 returns the user with given id" do
       user = user_fixture()
-      {:ok, found_user} = Accounts.get_user(user.id)
+      %User{} = found_user = Accounts.get_user(user.id)
 
       fields_to_remove = [:password]
       assert Map.drop(found_user, fields_to_remove) == Map.drop(user, fields_to_remove)
@@ -118,7 +118,7 @@ defmodule BatchEcommerce.AccountsTest do
 
       fields_to_drop = [:password]
 
-      {:ok, user_found} = Accounts.get_user(user.id)
+      %User{} = user_found = Accounts.get_user(user.id)
 
       assert Map.drop(user, fields_to_drop) ==
                Map.drop(user_found, fields_to_drop)
@@ -127,7 +127,7 @@ defmodule BatchEcommerce.AccountsTest do
     test "delete_user/1 deletes the user" do
       user = user_fixture()
       assert {:ok, %User{}} = Accounts.delete_user(user)
-      assert Accounts.get_user(user.id) == {:error, :not_found}
+      assert Accounts.get_user(user.id) == nil
     end
 
     test "authenticate_user/2 with existent email and password authenticate user" do

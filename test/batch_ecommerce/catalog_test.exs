@@ -2,12 +2,10 @@ defmodule BatchEcommerce.CatalogTest do
   use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.Catalog
-  alias BatchEcommerce.Catalog.Product
+  alias BatchEcommerce.Catalog.{Product, Category}
   import BatchEcommerce.CatalogFixtures
 
   describe "categories" do
-    alias BatchEcommerce.Catalog.Category
-
     @invalid_attrs %{type: nil}
 
     test "list_categories/0 returns all categories" do
@@ -18,7 +16,7 @@ defmodule BatchEcommerce.CatalogTest do
     test "get_category/1 returns the category with given id" do
       category = category_fixture()
 
-      assert {:ok, category_found} = Catalog.get_category(category.id)
+      assert %Category{} = category_found = Catalog.get_category(category.id)
       assert category_found == category
     end
 
@@ -45,14 +43,14 @@ defmodule BatchEcommerce.CatalogTest do
       category = category_fixture()
 
       assert {:error, %Ecto.Changeset{}} = Catalog.update_category(category, @invalid_attrs)
-      assert {:ok, %Category{} = category} == Catalog.get_category(category.id)
+      assert category == Catalog.get_category(category.id)
     end
 
     test "delete_category/1 deletes the category" do
       category = category_fixture()
 
       assert {:ok, %Category{}} = Catalog.delete_category(category)
-      assert {:error, :not_found} = Catalog.get_category(category.id)
+      assert Catalog.get_category(category.id) == nil
     end
 
     test "change_category/1 returns a category changeset" do
@@ -75,7 +73,7 @@ defmodule BatchEcommerce.CatalogTest do
 
     test "get_product/1 returns the product with given id" do
       product = product_fixture()
-      assert {:ok, %Product{} = product_found} = Catalog.get_product(product.id)
+      assert %Product{} = product_found = Catalog.get_product(product.id)
       assert product_found == product
     end
 
@@ -110,13 +108,13 @@ defmodule BatchEcommerce.CatalogTest do
     test "update_product/2 with invalid data returns error changeset" do
       product = product_fixture()
       assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, @invalid_attrs)
-      assert {:ok, product} == Catalog.get_product(product.id)
+      assert product == Catalog.get_product(product.id)
     end
 
     test "delete_product/1 deletes the product" do
       product = product_fixture()
       assert {:ok, %Product{}} = Catalog.delete_product(product)
-      assert {:error, :not_found} == Catalog.get_product(product.id)
+      assert Catalog.get_product(product.id) == nil
     end
 
     test "change_product/1 returns a product changeset" do
@@ -130,7 +128,7 @@ defmodule BatchEcommerce.CatalogTest do
 
     test "get product returns the product with given id and preloaded category", %{} do
       product = product_fixture_assoc()
-      assert {:ok, %Product{} = product_found} = Catalog.get_product(product.id)
+      assert %Product{} = product_found = Catalog.get_product(product.id)
       assert product_found == product
     end
 
@@ -153,7 +151,7 @@ defmodule BatchEcommerce.CatalogTest do
 
       assert product.categories ==
                Enum.map(product.categories, fn category ->
-                 {:ok, category_return} = Catalog.get_category(category.id)
+                 %Category{} = category_return = Catalog.get_category(category.id)
                  category_return
                end)
     end
@@ -179,7 +177,7 @@ defmodule BatchEcommerce.CatalogTest do
 
       assert product.categories ==
                Enum.map(product.categories, fn category ->
-                 {:ok, category_return} = Catalog.get_category(category.id)
+                 %Category{} = category_return = Catalog.get_category(category.id)
                  category_return
                end)
     end
@@ -187,7 +185,7 @@ defmodule BatchEcommerce.CatalogTest do
     test "delete_product/1 deletes the product" do
       product = product_fixture_assoc()
       assert {:ok, %Product{}} = Catalog.delete_product(product)
-      assert {:error, :not_found} == Catalog.get_product(product.id)
+      assert Catalog.get_product(product.id) == nil
     end
   end
 

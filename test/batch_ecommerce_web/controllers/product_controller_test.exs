@@ -38,7 +38,7 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
 
       conn = get(conn, ~p"/api/products/#{id}")
 
-      {:ok, product_preloaded} = Catalog.get_product(id)
+      %Product{} = product_preloaded = Catalog.get_product(id)
 
       response_data = json_response(conn, 200)["data"]
 

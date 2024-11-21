@@ -36,10 +36,7 @@ defmodule BatchEcommerce.Catalog do
 
   """
   def get_category(id) do
-    case Repo.get(Category, id) do
-      %Category{} = category -> {:ok, category}
-      nil -> {:error, :not_found}
-    end
+    Repo.get(Category, id)
   end
 
   @doc """
@@ -138,14 +135,8 @@ defmodule BatchEcommerce.Catalog do
 
   """
   def get_product(id) do
-    case Repo.get(Product, id) do
-      %Product{} = product ->
-        product_preloaded = Repo.preload(product, :categories)
-        {:ok, product_preloaded}
-
-      nil ->
-        {:error, :not_found}
-    end
+    Repo.get(Product, id)
+    |> Repo.preload(:categories)
   end
 
   @doc """
@@ -236,10 +227,10 @@ defmodule BatchEcommerce.Catalog do
           |> Product.image_url_changeset(%{image_url: image_url})
           |> Repo.update()
 
-        {:ok, product_with_image}
+        product_with_image
 
       nil ->
-        {:error, :not_found}
+        nil
     end
   end
 end

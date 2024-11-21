@@ -23,6 +23,13 @@ defmodule BatchEcommerceWeb.FallbackController do
     |> render(:"404")
   end
 
+  def call(conn, {:error, :bad_request}) do
+    conn
+    |> put_status(:bad_request)
+    |> put_view(html: BatchEcommerceWeb.ErrorHTML, json: BatchEcommerceWeb.ErrorJSON)
+    |> render(:"400")
+  end
+
   def call(conn, {:error, error}) do
     Logger.error("unknown error detected: #{inspect(error)}")
 

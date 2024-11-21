@@ -136,7 +136,7 @@ defmodule BatchEcommerceWeb.UserControllerTest do
       assert response(conn, 204)
 
       conn = get(conn, ~p"/api/users/#{user}")
-      assert conn.status == 404
+      assert conn.status == 400
     end
   end
 

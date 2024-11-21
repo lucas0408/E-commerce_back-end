@@ -1,4 +1,8 @@
 defmodule BatchEcommerce.CatalogTest do
+  @moduledoc """
+  The Catalog test module.
+  """
+
   use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.Catalog

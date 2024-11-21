@@ -1,4 +1,7 @@
 defmodule BatchEcommerce.AccountsTest do
+  @moduledoc """
+  The Accounts context test module.
+  """
   use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.Accounts

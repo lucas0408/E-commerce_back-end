@@ -1,4 +1,7 @@
 defmodule BatchEcommerceWeb.ProductControllerTest do
+  @moduledoc """
+  The Product controller test module.
+  """
   use BatchEcommerceWeb.ConnCase, async: true
 
   import BatchEcommerce.CatalogFixtures

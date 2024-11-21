@@ -1,4 +1,7 @@
 defmodule BatchEcommerceWeb.UserControllerTest do
+  @moduledoc """
+  The User controller test module.
+  """
   use BatchEcommerceWeb.ConnCase, async: true
 
   import BatchEcommerce.AccountsFixtures

@@ -1,4 +1,8 @@
 defmodule BatchEcommerce.Catalog.Category do
+  @moduledoc """
+  The category schema module.
+  """
+
   use Ecto.Schema
   import Ecto.Changeset
 

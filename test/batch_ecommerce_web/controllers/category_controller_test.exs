@@ -1,4 +1,7 @@
 defmodule BatchEcommerceWeb.CategoryControllerTest do
+  @moduledoc """
+  The Category test module.
+  """
   use BatchEcommerceWeb.ConnCase, async: true
 
   import BatchEcommerce.{CatalogFixtures, AccountsFixtures}

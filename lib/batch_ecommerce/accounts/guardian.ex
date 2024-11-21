@@ -1,4 +1,8 @@
 defmodule BatchEcommerce.Accounts.Guardian do
+  @moduledoc """
+  The authenticator module.
+  """
+
   use Guardian, otp_app: :batch_ecommerce
   alias BatchEcommerce.Accounts.User
   alias BatchEcommerce.Accounts

@@ -36,7 +36,7 @@ defmodule BatchEcommerceWeb.Router do
 
     resources "/cart", CartController
 
-    resources "/orders", OrderController, only: [:create, :show]
+    resources "/orders", OrderController, only: [:create, :show, :index]
 
     resources "/companies", CompanyController
 

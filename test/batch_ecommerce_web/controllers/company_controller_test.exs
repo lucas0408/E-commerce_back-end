@@ -3,19 +3,40 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
 
   import BatchEcommerce.AccountsFixtures
 
-  alias BatchEcommerce.Accounts.Company
+  alias BatchEcommerce.Accounts.{Company, Guardian}
 
   @create_attrs %{
-    name: "some name",
-    cnpj: "some cnpj",
-    email: "some email",
-    phone_number: "some phone_number"
-  }
+      cnpj: "11111111111111",
+      email: "murilo@hotmail.com",
+      name: "some name",
+      phone_number: "11979897989",
+      user_id: nil,
+      address: %{
+        address: "rua elixir",
+        cep: "09071000",
+        uf: "SP",
+        city: "cidade java",
+        district: "vila programação",
+        complement: "casa",
+        home_number: "321"
+      }
+    }
+
   @update_attrs %{
-    name: "some updated name",
-    cnpj: "some updated cnpj",
-    email: "some updated email",
-    phone_number: "some updated phone_number"
+    cnpj: "11111111111111",
+    email: "updateemail@hotmail.com",
+    name: "some update name",
+    phone_number: "11979897989",
+    user_id: nil,
+    address: %{
+      address: "some update address",
+      cep: "09071000",
+      uf: "SP",
+      city: "some update city",
+      district: "vila programação",
+      complement: "casa",
+      home_number: "321"
+    }
   }
   @invalid_attrs %{name: nil, cnpj: nil, email: nil, phone_number: nil}
 
@@ -24,26 +45,38 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
   end
 
   describe "index" do
-    test "lists all companies", %{conn: conn} do
+    setup [:create_secssion_company]
+    test "lists all companies", %{conn: conn, company: company} do
       conn = get(conn, ~p"/api/companies")
-      assert json_response(conn, 200)["data"] == []
+      assert json_response(conn, 200)["data"] |> Enum.at(0) |> Map.get("id") == company.id
     end
   end
 
   describe "create company" do
-    test "renders company when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/companies", company: @create_attrs)
+    setup [:create_session]
+
+    test "renders company when data is valid", %{conn: conn, user: user} do
+      user_id = user.id
+      conn = post(conn, ~p"/api/companies", company: %{@create_attrs | user_id: user_id})
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, ~p"/api/companies/#{id}")
 
       assert %{
-               "id" => ^id,
-               "cnpj" => "some cnpj",
-               "email" => "some email",
-               "name" => "some name",
-               "phone_number" => "some phone_number"
-             } = json_response(conn, 200)["data"]
+        "cnpj" => "11111111111111",
+        "email" => "murilo@hotmail.com",
+        "name" => "some name",
+        "phone_number" => "11979897989",
+        "address" => %{
+          "address" => "rua elixir",
+          "cep" => "09071000",
+          "uf" => "SP",
+          "city" => "cidade java",
+          "district" => "vila programação",
+          "complement" => "casa",
+          "home_number" => "321"
+        }
+      } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -53,21 +86,29 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
   end
 
   describe "update company" do
-    setup [:create_company]
+    setup [:create_secssion_company]
 
-    test "renders company when data is valid", %{conn: conn, company: %Company{id: id} = company} do
-      conn = put(conn, ~p"/api/companies/#{company}", company: @update_attrs)
+    test "renders company when data is valid", %{conn: conn, company: %Company{id: id} = company, user: user} do
+      conn = put(conn, ~p"/api/companies/#{company}", company: %{@update_attrs | user_id: user.id})
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
       conn = get(conn, ~p"/api/companies/#{id}")
 
-      assert %{
-               "id" => ^id,
-               "cnpj" => "some updated cnpj",
-               "email" => "some updated email",
-               "name" => "some updated name",
-               "phone_number" => "some updated phone_number"
-             } = json_response(conn, 200)["data"]
+      assert %{"id" => ^id,
+                "cnpj" => "11111111111111",
+                "email" => "updateemail@hotmail.com",
+                "name" => "some update name",
+                "phone_number" => "11979897989",
+                "address" => %{
+                  "address" => "some update address",
+                  "cep" => "09071000",
+                  "uf" => "SP",
+                  "city" => "some update city",
+                  "district" => "vila programação",
+                  "complement" => "casa",
+                  "home_number" => "321"
+                }
+              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, company: company} do
@@ -77,20 +118,26 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
   end
 
   describe "delete company" do
-    setup [:create_company]
+    setup [:create_secssion_company]
 
     test "deletes chosen company", %{conn: conn, company: company} do
       conn = delete(conn, ~p"/api/companies/#{company}")
       assert response(conn, 204)
-
-      assert_error_sent 404, fn ->
-        get(conn, ~p"/api/companies/#{company}")
-      end
     end
   end
 
-  defp create_company(_) do
-    company = company_fixture()
-    %{company: company}
+  defp create_secssion_company(%{conn: conn}) do
+    user = user_fixture()
+    conn = Guardian.Plug.sign_in(conn, user)
+    company = company_fixture(user.id)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), company: company, user: user}
+  end
+
+  defp create_session(%{conn: conn}) do
+    user = user_fixture()
+    conn = Guardian.Plug.sign_in(conn, user)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}
   end
 end

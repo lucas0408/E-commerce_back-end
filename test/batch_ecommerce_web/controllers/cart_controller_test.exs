@@ -36,12 +36,7 @@ defmodule BatchEcommerceWeb.CartControllerTest do
 
   describe "create cart_item" do
 
-    setup %{conn: conn} do
-      user = user_fixture()
-      conn = Guardian.Plug.sign_in(conn, user)
-      {:ok, token, _claims} = Guardian.encode_and_sign(user)
-      %{conn: put_req_header(conn, "authorization", "Bearer #{token}")}
-    end
+    setup [:create_session]
 
     test "renders cart_item when data is valid", %{conn: conn} do
       product_id = product_fixture().id
@@ -95,5 +90,12 @@ defmodule BatchEcommerceWeb.CartControllerTest do
     cart_item = cart_item_fixture(%{}, conn)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
     %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), cart_item: cart_item}
+  end
+
+  defp create_session(%{conn: conn}) do
+    user = user_fixture()
+    conn = Guardian.Plug.sign_in(conn, user)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}")}
   end
 end

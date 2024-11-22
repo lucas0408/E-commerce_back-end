@@ -15,7 +15,6 @@ defmodule BatchEcommerceWeb.OrderController do
   end
 
   def create(conn, %{"order" => order_params}) do
-    IO.inspect(conn)
     case Orders.complete_order(conn) do
       {:ok, order} ->
         conn
@@ -28,27 +27,9 @@ defmodule BatchEcommerceWeb.OrderController do
   end
 
   def show(conn, %{"id" => id}) do
-    order = Orders.get_order!(conn.assigns.current_uuid, id)
+    order = Orders.get_order!(conn.private[:guardian_default_resource].id, id)
     conn
     |> put_status(:ok)
     |> render(:show, order: order)
-  end
-
-  def update(conn, %{"id" => id, "order" => order_params}) do
-    order = Orders.get_order!(id)
-
-    with {:ok, %Order{} = order} <- Orders.update_order(order, order_params) do
-      conn
-      |> put_status(:ok)
-      |> render(:show, order: order)
-    end
-  end
-
-  def delete(conn, %{"id" => id}) do
-    order = Orders.get_order!(id)
-
-    with {:ok, %Order{}} <- Orders.delete_order(order) do
-      send_resp(conn, :no_content, "")
-    end
   end
 end

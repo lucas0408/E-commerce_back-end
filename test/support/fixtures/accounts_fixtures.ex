@@ -40,7 +40,7 @@ defmodule BatchEcommerce.AccountsFixtures do
   @doc """
   Generate a company.
   """
-  def company_fixture(attrs \\ %{}) do
+  def company_fixture(user_id \\ user_fixture().id, attrs \\ %{}) do
     {:ok, company} =
       attrs
       |> Enum.into(%{
@@ -48,7 +48,7 @@ defmodule BatchEcommerce.AccountsFixtures do
         email: "murilo@hotmail.com",
         name: "some name",
         phone_number: "11979897989",
-        user_id: user_fixture().id,
+        user_id: user_id,
         address: %{
           address: "rua elixir",
           cep: "09071000",

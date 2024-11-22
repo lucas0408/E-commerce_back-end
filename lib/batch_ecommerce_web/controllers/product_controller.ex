@@ -34,7 +34,7 @@ defmodule BatchEcommerceWeb.ProductController do
       |> put_status(:ok)
       |> render(:show, product: product)
     else
-      nil ->
+      {:error, :not_found} ->
         {:error, :not_found}
 
       _unkown_error ->

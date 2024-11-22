@@ -36,8 +36,12 @@ defmodule BatchEcommerce.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_category(id), do: Repo.get(Category, id)
-
+  def get_category(id) do
+    case Repo.get(Category, id) do
+      %Category{} = category -> category
+      nil -> {:error, :not_found}
+    end
+  end
   @doc """
   Creates a category.
 
@@ -137,7 +141,12 @@ defmodule BatchEcommerce.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product(id), do: Repo.preload(Repo.get(Product, id), :category)
+  def get_product(id) do
+    case Repo.preload(Repo.get(Product, id), :category) do
+      %Product{} = product -> product
+      nil -> {:error, :not_found}
+    end
+  end
 
   @doc """
   Creates a product.

@@ -7,14 +7,9 @@ defmodule BatchEcommerce.OrdersFixtures do
   @doc """
   Generate a order.
   """
-  def order_fixture(attrs \\ %{}) do
-    {:ok, order} =
-      attrs
-      |> Enum.into(%{
-        total_price: "120.5",
-        user_uuid: "7488a646-e31f-11e4-aace-600308960662"
-      })
-      |> BatchEcommerce.Orders.create_order()
+  def order_fixture(conn) do
+
+    {:ok, order} = BatchEcommerce.Orders.complete_order(conn)
 
     order
   end

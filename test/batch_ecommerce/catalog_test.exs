@@ -15,9 +15,9 @@ defmodule BatchEcommerce.CatalogTest do
       assert Catalog.list_categories() == [category]
     end
 
-    test "get_category!/1 returns the category with given id" do
+    test "get_category/1 returns the category with given id" do
       category = category_fixture()
-      assert Catalog.get_category!(category.id) == category
+      assert Catalog.get_category(category.id) == category
     end
 
     test "create_category/1 with valid data creates a category" do
@@ -42,13 +42,13 @@ defmodule BatchEcommerce.CatalogTest do
     test "update_category/2 with invalid data returns error changeset" do
       category = category_fixture()
       assert {:error, %Ecto.Changeset{}} = Catalog.update_category(category, @invalid_attrs)
-      assert category == Catalog.get_category!(category.id)
+      assert category == Catalog.get_category(category.id)
     end
 
     test "delete_category/1 deletes the category" do
       category = category_fixture()
       assert {:ok, %Category{}} = Catalog.delete_category(category)
-      assert_raise Ecto.NoResultsError, fn -> Catalog.get_category!(category.id) end
+      assert Catalog.get_category(category.id) == {:error, :not_found}
     end
 
     test "change_category/1 returns a category changeset" do
@@ -71,7 +71,7 @@ defmodule BatchEcommerce.CatalogTest do
 
     test "get_product!/1 returns the product with given id" do
       product = product_fixture()
-      assert Catalog.get_product!(product.id) == product
+      assert Catalog.get_product(product.id) == product
     end
 
     test "create_product/1 with valid data creates a product" do
@@ -100,13 +100,13 @@ defmodule BatchEcommerce.CatalogTest do
     test "update_product/2 with invalid data returns error changeset" do
       product = product_fixture()
       assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, @invalid_attrs)
-      assert product == Catalog.get_product!(product.id)
+      assert product == Catalog.get_product(product.id)
     end
 
     test "delete_product/1 deletes the product" do
       product = product_fixture()
       assert {:ok, %Product{}} = Catalog.delete_product(product)
-      assert_raise Ecto.NoResultsError, fn -> Catalog.get_product!(product.id) end
+      assert Catalog.get_product(product.id) == {:error, :not_found}
     end
 
     test "change_product/1 returns a product changeset" do

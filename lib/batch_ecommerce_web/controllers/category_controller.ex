@@ -35,7 +35,7 @@ defmodule BatchEcommerceWeb.CategoryController do
         |> put_status(:ok)
         |> render(:show, category: category)
 
-      nil ->
+      {:error, :not_found} ->
         {:error, :not_found}
 
       _unkown_error ->

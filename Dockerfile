@@ -41,4 +41,3 @@ EXPOSE 4000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["mix", "phx.server"]
-

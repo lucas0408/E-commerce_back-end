@@ -18,6 +18,8 @@ if [ "${1}" = "mix" ]; then
   # Cria e migra o banco de dados
   mix ecto.create
   mix ecto.migrate
+  
+  mix run priv/repo/seeds.exs
 fi
 
 exec "$@"

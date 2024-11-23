@@ -1,46 +1,44 @@
-# Use uma imagem oficial do Elixir como base
-FROM elixir:1.17-alpine AS build
+# Dockerfile
+FROM elixir:1.17-alpine
 
-# Instale dependências de build
-RUN apk add --no-cache build-base npm git
+ARG PHOENIX_VERSION=1.7.14
+ARG MIX_ENV=dev
 
-# Configure o diretório de trabalho
+ENV MIX_ENV=${MIX_ENV}
+ENV ERL_AFLAGS="-kernel shell_history enabled"
+ENV LANG=C.UTF-8
+
+# Instalação de dependências do sistema
+RUN apk add --no-cache \
+    git \
+    postgresql-client \
+    build-base \
+    inotify-tools \
+    && rm -rf /var/cache/apk/*
+
 WORKDIR /app
 
-# Instale o hex e o rebar
 RUN mix local.hex --force && \
-    mix local.rebar --force
+    mix local.rebar --force && \
+    mix archive.install hex phx_new ${PHOENIX_VERSION} --force
 
-# Copie os arquivos de configuração do projeto
+# Copia os arquivos de dependências
 COPY mix.exs mix.lock ./
 COPY config config
 
-# Instale as dependências do Mix
-RUN mix deps.get --only dev
-RUN mix deps.compile
+RUN mix deps.get && \
+    mix deps.compile
 
-# Copie o restante do código fonte
-COPY priv priv
+# Copia o restante do código fonte
 COPY lib lib
+COPY priv priv
 
-# Compile a aplicação
-RUN mix compile
-RUN mix release
+# Script para aguardar o Postgres e iniciar o Phoenix
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Estágio final para reduzir o tamanho da imagem
-FROM elixir:1.17-alpine
-
-# Instale dependências de runtime
-RUN apk add --no-cache openssl ncurses-libs
-
-# Configure o diretório de trabalho
-WORKDIR /app
-
-# Copie o build do estágio anterior
-COPY --from=build /app/_build/dev/rel/batch_ecommerce ./
-
-# Exponha a porta que sua aplicação usa
 EXPOSE 4000
 
-# Comando para iniciar a aplicação
+ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["mix", "phx.server"]
+

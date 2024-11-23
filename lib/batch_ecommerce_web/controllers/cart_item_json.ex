@@ -1,12 +1,6 @@
 defmodule BatchEcommerceWeb.CartItemJSON do
   alias BatchEcommerce.ShoppingCart.CartItem
   alias BatchEcommerce.ShoppingCart
-  @doc """
-  Renders a list of cart_items.
-  """
-  def index(cart_items) do
-    for(cart_item <- cart_items, do: data(cart_item))
-  end
 
   @doc """
   Renders a single cart_item.

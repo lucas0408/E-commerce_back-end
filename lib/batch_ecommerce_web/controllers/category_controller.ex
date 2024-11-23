@@ -20,7 +20,6 @@ defmodule BatchEcommerceWeb.CategoryController do
 
   def create(conn, %{"category" => category_params}) do
     with {:ok, %Category{} = category} <- Catalog.create_category(category_params) do
-      IO.inspect(category)
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/categories/#{category}")

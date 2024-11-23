@@ -14,7 +14,7 @@ defmodule BatchEcommerceWeb.OrderController do
     |> render(:index, orders: orders)
   end
 
-  def create(conn, %{"order" => order_params}) do
+  def create(conn, _params) do
     case Orders.complete_order(conn) do
       {:ok, order} ->
         conn

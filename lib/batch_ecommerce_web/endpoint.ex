@@ -36,7 +36,25 @@ defmodule BatchEcommerceWeb.Endpoint do
     param_key: "request_logger",
     cookie_key: "request_logger"
 
-  plug CORSPlug, origin: ["http://localhost:80", "http://localhost:4200"]
+  plug CORSPlug, origin: ["http://localhost:4200", "http://localhost", "http://localhost:80"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    headers: [
+      "Authorization",
+      "Content-Type",
+      "Accept",
+      "Origin",
+      "User-Agent",
+      "DNT",
+      "Cache-Control",
+      "X-Mx-ReqToken",
+      "Keep-Alive",
+      "X-Requested-With",
+      "If-Modified-Since",
+      "X-CSRF-Token"
+    ],
+    expose: ["content-type", "Authorization"],
+    max_age: 7200
+
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]
 

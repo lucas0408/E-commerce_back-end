@@ -3,6 +3,7 @@ defmodule BatchEcommerce.Catalog do
   The Catalog context.
   """
   import Ecto.Query, warn: false
+  alias BatchEcommerce.Catalog.ProductsCategories
   alias BatchEcommerce.Repo
 
   alias BatchEcommerce.Catalog.Category
@@ -115,11 +116,21 @@ defmodule BatchEcommerce.Catalog do
       [%Product{}, ...]
 
   """
-  def list_products do
-    Repo.all(Product)
-    |> Repo.preload(:categories)
+  def list_products() do
+    params = %{
+      filters: [
+        %{field: :category_type, value: "roupas"}
+      ]
+    }
+
+    ProductsCategories
+    |> join(:inner, [pc], p in assoc(pc, :product))
+    |> join(:inner, [pc], c in assoc(pc, :category), as: :category)
+    |> select([product: p], p)
+    |> Flop.validate_and_run!(params, for: Product)
   end
 
+  @spec get_product(any()) :: nil | [%{optional(atom()) => any()}] | %{optional(atom()) => any()}
   @doc """
   Gets a single product.
 

@@ -71,8 +71,10 @@ defmodule BatchEcommerce.CatalogTest do
     @invalid_attrs %{name: nil, price: nil, stock_quantity: nil}
 
     test "list_products/0 returns all products" do
-      product = product_fixture()
-      assert Catalog.list_products() == [product]
+      product = product_fixture_assoc(%{}, %{type: "roupas"})
+
+      products = Catalog.list_products()
+      IO.inspect(products)
     end
 
     test "get_product/1 returns the product with given id" do

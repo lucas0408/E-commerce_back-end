@@ -12,7 +12,7 @@ defmodule BatchEcommerce.Catalog.Product do
     field :price, :decimal
     field :stock_quantity, :integer
     field :image_url, :string
-    many_to_many :categories, Category, join_through: "product_categories", on_replace: :delete
+    many_to_many :categories, Category, join_through: "products_categories", on_replace: :delete
 
     timestamps(type: :utc_datetime)
   end
@@ -25,14 +25,14 @@ defmodule BatchEcommerce.Catalog.Product do
     |> validate_name()
     |> validate_price()
     |> validate_stock_quantity()
-    |> put_product_categories(attrs)
+    |> put_products_categories(attrs)
   end
 
-  defp put_product_categories(changeset, %{categories: categories}) when is_list(categories) do
+  defp put_products_categories(changeset, %{categories: categories}) when is_list(categories) do
     put_assoc(changeset, :categories, categories)
   end
 
-  defp put_product_categories(changeset, _), do: changeset
+  defp put_products_categories(changeset, _), do: changeset
 
   defp validate_name(changeset),
     do:

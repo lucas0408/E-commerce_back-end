@@ -16,20 +16,18 @@ defmodule BatchEcommerceWeb.Router do
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
 
-    resources "/users", UserController, only: [:create, :show]
+    resources "/users", UserController, only: [:create]
     resources "/products", ProductController, only: [:index]
-    post "/upload", UploadController, :create
-    resources "/users", UserController, except: [:create, :show, :new, :edit]
-    resources "/products", ProductController, except: [:new, :edit]
-    resources "/categories", CategoryController, except: [:new, :edit]
     post "/login", SessionController, :login
     get "/logout", SessionController, :logout
   end
 
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth, :ensure_auth]
-
-
+    post "/upload", UploadController, :create
+    resources "/users", UserController, except: [:show, :new, :edit]
+    resources "/products", ProductController, except: [:new, :edit]
+    resources "/categories", CategoryController, except: [:new, :edit]
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

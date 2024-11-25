@@ -74,7 +74,7 @@ defmodule BatchEcommerce.CatalogTest do
       product = product_fixture_assoc(%{}, %{type: "roupas"})
 
       products = Catalog.list_products()
-      IO.inspect(products)
+      # IO.inspect(products)
     end
 
     test "get_product/1 returns the product with given id" do

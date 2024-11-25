@@ -1,4 +1,7 @@
 defmodule BatchEcommerceWeb.UserControllerTest do
+  @moduledoc """
+  The User controller test module.
+  """
   use BatchEcommerceWeb.ConnCase, async: true
 
   import BatchEcommerce.AccountsFixtures
@@ -134,6 +137,9 @@ defmodule BatchEcommerceWeb.UserControllerTest do
     test "deletes chosen user", %{conn: conn, user: user} do
       conn = delete(conn, ~p"/api/users/#{user}")
       assert response(conn, 204)
+
+      conn = get(conn, ~p"/api/users/#{user}")
+      assert conn.status == 400
     end
   end
 

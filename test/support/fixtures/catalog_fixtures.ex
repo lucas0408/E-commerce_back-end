@@ -11,7 +11,7 @@ defmodule BatchEcommerce.CatalogFixtures do
     {:ok, category} =
       attrs
       |> Enum.into(%{
-        type: "some type"
+        type: "eletronicos"
       })
       |> BatchEcommerce.Catalog.create_category()
 
@@ -31,12 +31,21 @@ defmodule BatchEcommerce.CatalogFixtures do
       attrs
       |> Enum.into(%{
         name: unique_product_name(),
-        price: "12.50",
-        stock_quantity: 42,
-        category_id: category_fixture().id
+        price: "120.5",
+        stock_quantity: 42
       })
       |> BatchEcommerce.Catalog.create_product()
 
-      BatchEcommerce.Catalog.preload_category(product)
+    product
+  end
+
+  def product_fixture_assoc(attrs_prod \\ %{}, attrs_cat \\ %{}) do
+    category = category_fixture(attrs_cat)
+    category_2 = category_fixture(type: "construção")
+    category_3 = category_fixture(type: "banho")
+
+    product_fixture(
+      Map.put(attrs_prod, :category_ids, [category.id, category_2.id, category_3.id])
+    )
   end
 end

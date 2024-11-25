@@ -7,23 +7,23 @@ defmodule BatchEcommerceWeb.CategoryController do
   action_fallback BatchEcommerceWeb.FallbackController
 
   def index(conn, _params) do
-    case Catalog.list_categories() do
-      [] ->
-        {:error, :not_found}
+    categories = Catalog.list_categories()
 
-      categories ->
-        conn
-        |> put_status(:ok)
-        |> render(:index, category: categories)
-    end
+    conn
+    |> put_status(:ok)
+    |> render(:index, categories: categories)
   end
 
   def create(conn, %{"category" => category_params}) do
-    with {:ok, %Category{} = category} <- Catalog.create_category(category_params) do
-      conn
-      |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/categories/#{category}")
-      |> render(:show, category: category)
+    case Catalog.create_category(category_params) do
+      {:ok, category} ->
+        conn
+        |> put_status(:created)
+        |> put_resp_header("location", ~p"/api/categories/#{category}")
+        |> render(:show, category: category)
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
     end
   end
 
@@ -34,35 +34,37 @@ defmodule BatchEcommerceWeb.CategoryController do
         |> put_status(:ok)
         |> render(:show, category: category)
 
-      {:error, :not_found} ->
+      nil ->
         {:error, :not_found}
-
-      _unkown_error ->
-        {:error, :internal_server_error}
     end
   end
 
   def update(conn, %{"id" => id, "category" => category_params}) do
-    with %Category{} = category <- Catalog.get_category(id),
-        {:ok, %Category{} = category}  <- Catalog.update_category(category, category_params) do
+    with %Category{} = category_found <- Catalog.get_category(id),
+         {:ok, category_updated} <-
+           Catalog.update_category(category_found, category_params) do
       conn
       |> put_status(:ok)
-      |> render(:show, category: category)
+      |> render(:show, category: category_updated)
     else
-      nil -> {:error, :not_found}
-      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
-      _unkown_error -> {:error, :internal_server_error}
+      nil ->
+        {:error, :not_found}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    with %Category{} = category <- Catalog.get_category(id),
-        {:ok, %Category{}} <- Catalog.delete_category(category) do
+    with %Category{} = category_found <- Catalog.get_category(id),
+         {:ok, _deleted_category} <- Catalog.delete_category(category_found) do
       send_resp(conn, :no_content, "")
     else
-      nil -> {:error, :not_found}
-      {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
-      _unkown_error -> {:error, :internal_server_error}
+      nil ->
+        {:error, :bad_request}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:error, changeset}
     end
   end
 end

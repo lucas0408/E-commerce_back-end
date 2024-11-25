@@ -2,10 +2,11 @@ import Config
 
 # Configure your database
 config :batch_ecommerce, BatchEcommerce.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
-  database: "batch_ecommerce_dev",
+  username: System.get_env("PGUSER"),
+  password: System.get_env("PGPASSWORD"),
+  database: System.get_env("PGDATABASE"),
+  hostname: System.get_env("PGHOST"),
+  port:     System.get_env("PGPORT"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -19,7 +20,7 @@ config :batch_ecommerce, BatchEcommerce.Repo,
 config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
   # Binding to loopback ipv4 address prevents access from other machines.
   # Change to `ip: {0, 0, 0, 0}` to allow access from other machines.
-  http: [ip: {127, 0, 0, 1}, port: 4000],
+  http: [ip: {0, 0, 0, 0}, port: 4000],
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
@@ -67,3 +68,18 @@ config :phoenix, :plug_init_mode, :runtime
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false
+
+config :ex_aws,
+  access_key_id: "minioaccesskey",
+  secret_access_key: "miniosecretkey",
+  json_codec: Jason
+
+config :ex_aws, :s3,
+  scheme: "http://",
+  host: "localhost",
+  port: 9000,
+  bucket: "batch-bucket",
+  force_path_style: true
+
+# TODO: see a better way to get env config in the future
+# config :batch_ecommerce, origin: ["http://localhost:4200"]

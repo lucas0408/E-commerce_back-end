@@ -1,4 +1,7 @@
 defmodule BatchEcommerce.AccountsTest do
+  @moduledoc """
+  The Accounts context test module.
+  """
   use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.Accounts
@@ -28,7 +31,7 @@ defmodule BatchEcommerce.AccountsTest do
 
     test "get_user/1 returns the user with given id" do
       user = user_fixture()
-      {:ok, found_user} = Accounts.get_user(user.id)
+      %User{} = found_user = Accounts.get_user(user.id)
 
       fields_to_remove = [:password]
       assert Map.drop(found_user, fields_to_remove) == Map.drop(user, fields_to_remove)
@@ -118,7 +121,7 @@ defmodule BatchEcommerce.AccountsTest do
 
       fields_to_drop = [:password]
 
-      {:ok, user_found} = Accounts.get_user(user.id)
+      %User{} = user_found = Accounts.get_user(user.id)
 
       assert Map.drop(user, fields_to_drop) ==
                Map.drop(user_found, fields_to_drop)
@@ -127,7 +130,7 @@ defmodule BatchEcommerce.AccountsTest do
     test "delete_user/1 deletes the user" do
       user = user_fixture()
       assert {:ok, %User{}} = Accounts.delete_user(user)
-      assert Accounts.get_user(user.id) == {:error, :not_found}
+      assert Accounts.get_user(user.id) == nil
     end
 
     test "authenticate_user/2 with existent email and password authenticate user" do
@@ -165,7 +168,13 @@ defmodule BatchEcommerce.AccountsTest do
     end
 
     test "create_company/1 with valid data creates a company" do
-      valid_attrs = %{name: "some name", cnpj: "11111111111111", email: "exemploemail@gmail.com", phone_number: "1199999-9999", user_id: user_fixture().id}
+      valid_attrs = %{
+        name: "some name",
+        cnpj: "11111111111111",
+        email: "exemploemail@gmail.com",
+        phone_number: "1199999-9999",
+        user_id: user_fixture().id
+      }
 
       assert {:ok, %Company{} = company} = Accounts.create_company(valid_attrs)
       assert company.name == "some name"
@@ -180,7 +189,13 @@ defmodule BatchEcommerce.AccountsTest do
 
     test "update_company/2 with valid data updates the company" do
       company = company_fixture()
-      update_attrs = %{name: "some update name", cnpj: "11111111111111", email: "exemploupdateemail@gmail.com", phone_number: "1199999-9999"}
+
+      update_attrs = %{
+        name: "some update name",
+        cnpj: "11111111111111",
+        email: "exemploupdateemail@gmail.com",
+        phone_number: "1199999-9999"
+      }
 
       assert {:ok, %Company{} = company} = Accounts.update_company(company, update_attrs)
       assert company.name == "some update name"

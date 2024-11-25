@@ -1,4 +1,8 @@
 defmodule BatchEcommerce.Accounts.Guardian do
+  @moduledoc """
+  The authenticator module.
+  """
+
   use Guardian, otp_app: :batch_ecommerce
   alias BatchEcommerce.Accounts.User
   alias BatchEcommerce.Accounts
@@ -13,10 +17,10 @@ defmodule BatchEcommerce.Accounts.Guardian do
 
   def resource_from_claims(%{"sub" => id}) do
     case Accounts.get_user(id) do
-      {:ok, %User{} = user} ->
+      %User{} = user ->
         {:ok, user}
 
-      {:error, :not_found} ->
+      nil ->
         {:error, :resource_not_found}
     end
   end

@@ -25,7 +25,7 @@ defmodule BatchEcommerceWeb.Router do
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth, :ensure_auth]
     post "/upload", UploadController, :create
-    resources "/users", UserController, except: [:show, :new, :edit]
+    resources "/users", UserController, except: [:new, :edit]
     resources "/products", ProductController, except: [:new, :edit]
     resources "/categories", CategoryController, except: [:new, :edit]
   end

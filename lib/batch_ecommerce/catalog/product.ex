@@ -4,7 +4,7 @@ defmodule BatchEcommerce.Catalog.Product do
 
   alias BatchEcommerce.Catalog.Category
 
-  @required_fields [:name, :price, :stock_quantity]
+  @required_fields [:name, :price, :stock_quantity, :description]
   @image_url_regex ~r|^http://localhost:9000/batch-bucket/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-.*\.jpg$|
 
   schema "products" do
@@ -12,6 +12,7 @@ defmodule BatchEcommerce.Catalog.Product do
     field :price, :decimal
     field :stock_quantity, :integer
     field :image_url, :string
+    field :description, :string
     many_to_many :categories, Category, join_through: "products_categories", on_replace: :delete
 
     timestamps(type: :utc_datetime)
@@ -25,6 +26,7 @@ defmodule BatchEcommerce.Catalog.Product do
     |> validate_name()
     |> validate_price()
     |> validate_stock_quantity()
+    |> validate_description()
     |> put_products_categories(attrs)
   end
 
@@ -40,6 +42,14 @@ defmodule BatchEcommerce.Catalog.Product do
         min: 2,
         max: 60,
         menssage: "Insira um nome de produto válido"
+      )
+
+  defp validate_description(changeset),
+    do:
+      validate_length(changeset, :description,
+        min: 2,
+        max: 200,
+        menssage: "Insira uma descrição de produto válida"
       )
 
   defp validate_price(changeset),

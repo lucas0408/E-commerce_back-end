@@ -20,6 +20,7 @@ defmodule BatchEcommerce.Catalog.ProductsCategories do
   schema "products_categories" do
     belongs_to :product, BatchEcommerce.Catalog.Product
     belongs_to :category, BatchEcommerce.Catalog.Category
+
     timestamps()
   end
 end

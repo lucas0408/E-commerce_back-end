@@ -19,7 +19,9 @@ defmodule BatchEcommerce.Accounts.User do
     field :password_hash, :string
     field :password, :string, virtual: true
 
-    has_one :address, BatchEcommerce.Accounts.Address, on_replace: :update, on_delete: :delete_all
+    many_to_many :address, BatchEcommerce.Accounts.Address,
+      join_through: "users_addresses",
+      on_replace: :delete
 
     has_one :cart, BatchEcommerce.ShoppingCart.Cart, on_replace: :update, on_delete: :delete_all
 

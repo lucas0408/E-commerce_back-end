@@ -12,7 +12,9 @@ defmodule BatchEcommerce.Accounts.Company do
 
     belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
 
-    has_one :address, BatchEcommerce.Accounts.Address, on_replace: :update, on_delete: :delete_all
+    many_to_many :address, BatchEcommerce.Accounts.Address,
+      join_through: "companies_addresses",
+      on_replace: :delete
 
     timestamps(type: :utc_datetime)
   end

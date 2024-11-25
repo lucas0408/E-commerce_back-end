@@ -25,9 +25,13 @@ defmodule BatchEcommerceWeb.Router do
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth, :ensure_auth]
     post "/upload", UploadController, :create
-    resources "/users", UserController, except: [:show, :new, :edit]
-    resources "/products", ProductController, except: [:new, :edit]
+    resources "/users", UserController, except: [:create, :new, :edit]
+    resources "/products", ProductController, except: [:index, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :edit]
+    resources "/cart_items", CartItemController, except: [:index]
+    resources "/cart", CartController
+    resources "/orders", OrderController, only: [:create, :show, :index]
+    resources "/companies", CompanyController
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

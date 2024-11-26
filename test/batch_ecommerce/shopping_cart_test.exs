@@ -39,8 +39,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
   describe "cart_items" do
     import BatchEcommerce.AccountsFixtures
 
-    alias BatchEcommerce.Accounts.{User, Guardian}
-
     alias BatchEcommerce.ShoppingCart.CartItem
 
     import BatchEcommerce.ShoppingCartFixtures

@@ -5,7 +5,6 @@ defmodule BatchEcommerce.Orders do
 
   import Ecto.Query, warn: false
   alias BatchEcommerce.Repo
-  alias BatchEcommerce.ShoppingCart.Cart
   alias BatchEcommerce.Orders.Order
 
   @doc """
@@ -18,10 +17,10 @@ defmodule BatchEcommerce.Orders do
 
   """
   def complete_order(conn) do
-
-    cart = conn.private.guardian_default_resource
-    |> Repo.preload(cart: [items: [:product]])
-    |> Map.get(:cart)
+    cart =
+      conn.private.guardian_default_resource
+      |> Repo.preload(cart: [items: [:product]])
+      |> Map.get(:cart)
 
     line_items =
       Enum.map(cart.items, fn item ->
@@ -53,7 +52,6 @@ defmodule BatchEcommerce.Orders do
     end
   end
 
-
   def list_orders do
     Repo.all(Order)
   end
@@ -75,7 +73,7 @@ defmodule BatchEcommerce.Orders do
   def get_order!(user_uuid, id) do
     Order
     |> Repo.get_by!(id: id, user_uuid: user_uuid)
-    |> Repo.preload([line_items: [:product]])
+    |> Repo.preload(line_items: [:product])
   end
 
   @doc """
@@ -93,5 +91,4 @@ defmodule BatchEcommerce.Orders do
   def delete_order(%Order{} = order) do
     Repo.delete(order)
   end
-
 end

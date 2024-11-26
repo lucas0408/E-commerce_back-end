@@ -8,24 +8,20 @@ defmodule BatchEcommerce.OrdersFixtures do
   Generate a order.
   """
   def order_fixture(conn) do
-
     {:ok, order} = BatchEcommerce.Orders.complete_order(conn)
 
     order
   end
 
-  @doc """
-  Generate a line_item.
-  """
-  def line_item_fixture(attrs \\ %{}) do
-    {:ok, line_item} =
-      attrs
-      |> Enum.into(%{
-        price: "120.5",
-        quantity: 42
-      })
-      |> BatchEcommerce.Orders.create_line_item()
+  # def line_item_fixture(attrs \\ %{}) do
+  #   {:ok, line_item} =
+  #     attrs
+  #     |> Enum.into(%{
+  #       price: "120.5",
+  #       quantity: 42
+  #     })
+  #     |> BatchEcommerce.Orders.create_line_item()
 
-    line_item
-  end
+  #   line_item
+  # end
 end

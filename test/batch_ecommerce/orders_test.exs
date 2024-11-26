@@ -1,14 +1,13 @@
 defmodule BatchEcommerce.OrdersTest do
-  use BatchEcommerce.DataCase
-  use Phoenix.ConnTest
+  use BatchEcommerce.DataCase, async: true
+
+  import Phoenix.ConnTest
 
   alias BatchEcommerce.Orders
   import BatchEcommerce.ShoppingCartFixtures
   import BatchEcommerce.AccountsFixtures
   alias BatchEcommerce.Orders.Order
   import BatchEcommerce.OrdersFixtures
-
-  @endpoint BatchEcommerce.Endpoint
 
   describe "orders" do
     setup do
@@ -46,5 +45,4 @@ defmodule BatchEcommerce.OrdersTest do
       assert order.total_price == Decimal.new("125.00")
     end
   end
-
 end

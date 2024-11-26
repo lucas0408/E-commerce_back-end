@@ -3,11 +3,9 @@ defmodule BatchEcommerceWeb.OrderControllerTest do
 
   import BatchEcommerce.OrdersFixtures
 
-  alias BatchEcommerce.Orders.Order
-
   import BatchEcommerce.AccountsFixtures
 
-  alias BatchEcommerce.Accounts.{User, Guardian}
+  alias BatchEcommerce.Accounts.Guardian
 
   import BatchEcommerce.ShoppingCartFixtures
 
@@ -40,11 +38,10 @@ defmodule BatchEcommerceWeb.OrderControllerTest do
       assert %{
                "id" => ^id,
                "total_price" => "125.000000",
-               "user_uuid" => user_uuid
+               "user_uuid" => ^user_uuid
              } = json_response(conn, 200)["data"]
     end
   end
-
 
   defp create_session_order(%{conn: conn}) do
     user = user_fixture()

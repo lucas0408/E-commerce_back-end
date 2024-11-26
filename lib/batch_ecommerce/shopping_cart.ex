@@ -80,8 +80,9 @@ defmodule BatchEcommerce.ShoppingCart do
         where: c.user_id == ^user_id,
         left_join: i in assoc(c, :items),
         left_join: p in assoc(i, :product),
+        left_join: ca in assoc(p, :categories),
         order_by: [asc: i.inserted_at],
-        preload: [items: {i, product: p}]
+        preload: [items: {i, product: {p, categories: ca}}]
       )
     )
   end
@@ -130,7 +131,7 @@ defmodule BatchEcommerce.ShoppingCart do
         {:error, :not_found}
 
       cart_item ->
-        Repo.preload(cart_item, :product)
+        Repo.preload(cart_item, product: [:categories])
     end
   end
 

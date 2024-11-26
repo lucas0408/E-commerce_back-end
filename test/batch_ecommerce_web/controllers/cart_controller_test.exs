@@ -56,7 +56,9 @@ defmodule BatchEcommerceWeb.CartControllerTest do
 
       conn = get(conn, ~p"/api/cart/{1}")
 
-      assert json_response(conn, 200)["data"]["cart_items"] |> Enum.at(0) |> Map.get("product_id") ==
+      assert json_response(conn, 200)["data"]["cart_items"]["data"]
+             |> Enum.at(0)
+             |> Map.get("product_id") ==
                product.id
     end
 

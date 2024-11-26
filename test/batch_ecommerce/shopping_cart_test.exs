@@ -64,7 +64,7 @@ defmodule BatchEcommerce.ShoppingCartTest do
     end
 
     test "get_cart_item/1 returns the cart_item with given id" do
-      cart_item = ShoppingCart.preload_product(cart_item_fixture())
+      cart_item = cart_item_fixture()
       assert ShoppingCart.get_cart_item(cart_item.id) == cart_item
     end
 

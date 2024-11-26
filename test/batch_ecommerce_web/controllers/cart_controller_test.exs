@@ -1,5 +1,5 @@
 defmodule BatchEcommerceWeb.CartControllerTest do
-  use BatchEcommerceWeb.ConnCase
+  use BatchEcommerceWeb.ConnCase, async: true
 
   import BatchEcommerce.CatalogFixtures
 
@@ -39,23 +39,30 @@ defmodule BatchEcommerceWeb.CartControllerTest do
   describe "create cart_item" do
     setup [:create_session]
 
-    test "renders cart_item when data is valid", %{conn: conn} do
-      product_id = product_fixture().id
+    test "renders cart_item when data is valid", %{conn: conn, user: user} do
+      product = product_fixture_assoc()
+
+      cart_id = BatchEcommerce.ShoppingCart.create_cart(%{user_id: user.id})
+
+      create_attrs = %{
+        "quantity" => "42",
+        "product_id" => product.id
+      }
 
       conn =
-        post(conn, ~p"/api/cart_items", cart_item: %{@create_attrs | "product_id" => product_id})
+        post(conn, ~p"/api/cart_items", cart_item: create_attrs)
 
       assert %{"id" => _id} = json_response(conn, 201)["data"]
 
-      conn = get(conn, ~p"/api/cart")
+      conn = get(conn, ~p"/api/cart/{1}")
 
       assert json_response(conn, 200)["data"]["cart_items"] |> Enum.at(0) |> Map.get("product_id") ==
-               product_id
+               product.id
     end
 
-    test "renders errors when data is invalid", %{conn: conn} do
+    test "renders errors when data is invalid", %{conn: conn, user: user} do
       conn = post(conn, ~p"/api/cart_items", cart_item: @invalid_attrs)
-      assert json_response(conn, 404)["errors"] != %{}
+      assert json_response(conn, 422)["errors"] != %{}
     end
   end
 
@@ -103,6 +110,6 @@ defmodule BatchEcommerceWeb.CartControllerTest do
     user = user_fixture()
     conn = Guardian.Plug.sign_in(conn, user)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
-    %{conn: put_req_header(conn, "authorization", "Bearer #{token}")}
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}
   end
 end

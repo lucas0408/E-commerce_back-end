@@ -12,7 +12,7 @@ defmodule BatchEcommerceWeb.CartJSON do
     %{
       id: cart.id,
       user_uuid: cart.user_id,
-      cart_items: BatchEcommerceWeb.CartItemJSON.index(cart.items)
+      cart_items: BatchEcommerceWeb.CartItemJSON.index(%{cart_items: cart.items})
     }
   end
 end

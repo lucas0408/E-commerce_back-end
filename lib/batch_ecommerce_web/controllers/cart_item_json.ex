@@ -20,8 +20,8 @@ defmodule BatchEcommerceWeb.CartItemJSON do
       price_when_carted: cart_item.price_when_carted,
       quantity: cart_item.quantity,
       product:
-        BatchEcommerceWeb.ProductJSON.index(%{
-          products: ShoppingCart.preload_product(cart_item).product
+        BatchEcommerceWeb.ProductJSON.show(%{
+          product: ShoppingCart.preload_product(cart_item).product
         })
     }
   end

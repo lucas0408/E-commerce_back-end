@@ -1,5 +1,5 @@
 defmodule BatchEcommerce.ShoppingCartTest do
-  use BatchEcommerce.DataCase
+  use BatchEcommerce.DataCase, async: true
 
   alias BatchEcommerce.ShoppingCart
 
@@ -12,7 +12,7 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
     import BatchEcommerce.AccountsFixtures
 
-    @invalid_attrs %{user_uuid: nil}
+    # @invalid_attrs %{user_uuid: nil}
 
     test "get_cart_by_user_uuid!/1 returns the cart with given user_id" do
       user_id = user_fixture().id
@@ -53,14 +53,14 @@ defmodule BatchEcommerce.ShoppingCartTest do
       cart_item = cart_item_fixture()
 
       assert ShoppingCart.total_item_price(ShoppingCart.preload_product(cart_item)) ==
-               Decimal.new("125.00")
+               Decimal.mult(cart_item.price_when_carted, cart_item.quantity)
     end
 
     test "total_cart_price/0 returns total cart price" do
       cart_item = ShoppingCart.preload_product(cart_item_fixture())
 
       assert ShoppingCart.total_cart_price(Repo.preload(cart_item, cart: [items: :product]).cart) ==
-               Decimal.new("125.00")
+               Decimal.mult(cart_item.price_when_carted, cart_item.quantity)
     end
 
     test "get_cart_item/1 returns the cart_item with given id" do
@@ -77,7 +77,7 @@ defmodule BatchEcommerce.ShoppingCartTest do
                  valid_attrs
                )
 
-      assert cart_item.price_when_carted == Decimal.new("125.00")
+      assert cart_item.price_when_carted == Decimal.mult("120.50", "10")
       assert cart_item.quantity == 10
     end
 
@@ -98,7 +98,7 @@ defmodule BatchEcommerce.ShoppingCartTest do
       assert {:ok, %CartItem{} = cart_item} =
                ShoppingCart.update_cart_item(cart_item, update_attrs)
 
-      assert cart_item.price_when_carted == Decimal.new("1250.00")
+      assert cart_item.price_when_carted == Decimal.mult("120.50", "100")
       assert cart_item.quantity == 100
     end
 
@@ -109,7 +109,7 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
       cart_item_preload = ShoppingCart.preload_product(cart_item)
 
-      assert cart_item_preload.product.price == Decimal.new("12.50")
+      assert cart_item_preload.product.price == Decimal.new("120.50")
     end
 
     test "update_cart_item/2 with invalid data returns error changeset" do

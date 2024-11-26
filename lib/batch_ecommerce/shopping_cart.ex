@@ -20,7 +20,7 @@ defmodule BatchEcommerce.ShoppingCart do
   """
 
   def total_item_price(%CartItem{} = item) do
-    Decimal.mult(item.product.price, item.quantity)
+    Decimal.mult(item.price_when_carted, item.quantity)
   end
 
   def total_cart_price(%Cart{} = cart) do
@@ -87,26 +87,34 @@ defmodule BatchEcommerce.ShoppingCart do
   end
 
   def add_item_to_cart(%Cart{} = cart, cart_item_params) do
-    case cart_item_params["product_id"] do
-      nil ->
-        {:error, :not_found}
+    product_id = Map.get(cart_item_params, "product_id")
 
-      product_id ->
-        product = BatchEcommerce.Catalog.get_product(product_id)
+    product = BatchEcommerce.Catalog.get_product(product_id)
 
-        quantity = String.to_integer(cart_item_params["quantity"] || "0")
+    quantity = String.to_integer(cart_item_params["quantity"] || "0")
 
-        price_when_carted = Decimal.mult(product.price, quantity)
+    price_when_carted = Decimal.mult(product.price, quantity)
 
-        %CartItem{
-          quantity: quantity,
-          price_when_carted: price_when_carted,
-          cart_id: cart.id,
-          product_id: product.id
-        }
-        |> CartItem.changeset(%{})
-        |> Repo.insert()
+    attrs = %{
+      quantity: quantity,
+      price_when_carted: price_when_carted,
+      cart_id: cart.id,
+      product_id: product.id
+    }
+
+    case create_cart_item(attrs) do
+      {:ok, cart_item} ->
+        {:ok, Repo.preload(cart_item, product: [:categories])}
+
+      error ->
+        error
     end
+  end
+
+  def create_cart_item(attrs \\ %{}) do
+    %CartItem{}
+    |> CartItem.changeset(attrs)
+    |> Repo.insert()
   end
 
   def get_cart_item(id) do

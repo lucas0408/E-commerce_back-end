@@ -2,11 +2,10 @@ import Config
 
 # Configure your database
 config :batch_ecommerce, BatchEcommerce.Repo,
-  username: System.get_env("PGUSER"),
-  password: System.get_env("PGPASSWORD"),
-  database: System.get_env("PGDATABASE"),
-  hostname: System.get_env("PGHOST"),
-  port: System.get_env("PGPORT"),
+  username: "postgres",
+  password: "postgres",
+  database: "batch_ecommerce_dev",
+  hostname: "localhost",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

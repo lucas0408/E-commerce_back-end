@@ -52,6 +52,13 @@ defmodule BatchEcommerce.Accounts do
     %User{}
     |> User.insert_changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, user} ->
+        {:ok, Repo.preload(user, :addresses)}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def user_exists_with_field?(field, value) do
@@ -75,6 +82,13 @@ defmodule BatchEcommerce.Accounts do
     user
     |> User.update_changeset(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, user_updated} ->
+        {:ok, Repo.preload(user_updated, :addresses)}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -156,6 +170,13 @@ defmodule BatchEcommerce.Accounts do
     %Company{}
     |> Company.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, company} ->
+        {:ok, Repo.preload(company, :addresses)}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def company_exists_with_field?(field, value) do
@@ -179,6 +200,13 @@ defmodule BatchEcommerce.Accounts do
     company
     |> Company.changeset(attrs)
     |> Repo.update()
+    |> case do
+      {:ok, company_updated} ->
+        {:ok, Repo.preload(company_updated, :addresses)}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """

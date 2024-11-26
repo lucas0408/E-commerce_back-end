@@ -104,7 +104,7 @@ defmodule BatchEcommerce.ShoppingCart do
 
     case create_cart_item(attrs) do
       {:ok, cart_item} ->
-        {:ok, Repo.preload(cart_item, product: [:categories])}
+        {:ok, Repo.preload(cart_item, product: :categories)}
 
       error ->
         error
@@ -115,6 +115,13 @@ defmodule BatchEcommerce.ShoppingCart do
     %CartItem{}
     |> CartItem.changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, cart_item} ->
+        {:ok, Repo.preload(cart_item, product: [:categories])}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   def get_cart_item(id) do

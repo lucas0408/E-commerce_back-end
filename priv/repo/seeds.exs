@@ -19,6 +19,7 @@ products = [
   %{
     name: "Smartphone Galaxy S21",
     price: Decimal.new("3499.99"),
+    description: "Celular potente",
     stock_quantity: 50,
     image_url: "https://example.com/images/galaxy-s21.jpg"
   },
@@ -26,29 +27,34 @@ products = [
     name: "Camiseta Básica",
     price: Decimal.new("59.90"),
     stock_quantity: 200,
+    description: "Camiseta grande",
     image_url: "https://example.com/images/camiseta.jpg"
   },
   %{
     name: "O Senhor dos Anéis",
     price: Decimal.new("89.90"),
+    description: "Ótimo livro",
     stock_quantity: 30,
     image_url: "https://example.com/images/lotr.jpg"
   },
   %{
     name: "Luminária de Mesa",
     price: Decimal.new("129.90"),
+    description: "Luminária fluorescente",
     stock_quantity: 45,
     image_url: "https://example.com/images/luminaria.jpg"
   },
   %{
     name: "Bola de Futebol",
     price: Decimal.new("149.90"),
+    description: "Bola redonda",
     stock_quantity: 100,
     image_url: "https://example.com/images/bola.jpg"
   },
   %{
     name: "LEGO Star Wars",
     price: Decimal.new("499.90"),
+    description: "Jogo bom",
     stock_quantity: 25,
     image_url: "https://example.com/images/lego.jpg"
   }
@@ -59,6 +65,7 @@ Enum.each(products, fn product ->
     name: product.name,
     price: product.price,
     stock_quantity: product.stock_quantity,
+    description: product.description,
     image_url: product.image_url
   })
 end)
@@ -72,7 +79,9 @@ home = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Category, type: "Casa 
 sports = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Category, type: "Esportes")
 toys = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Category, type: "Brinquedos")
 
-smartphone = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "Smartphone Galaxy S21")
+smartphone =
+  BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "Smartphone Galaxy S21")
+
 shirt = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "Camiseta Básica")
 book = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "O Senhor dos Anéis")
 lamp = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "Luminária de Mesa")

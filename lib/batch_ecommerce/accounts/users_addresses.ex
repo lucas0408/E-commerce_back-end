@@ -3,7 +3,7 @@ defmodule BatchEcommerce.Accounts.UsersAddresses do
 
   @primary_key false
   schema "users_addresses" do
-    belongs_to :user, BatchEcommerce.Accounts.User
+    belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
     belongs_to :address, BatchEcommerce.Accounts.Address
 
     timestamps()

@@ -68,7 +68,7 @@ defmodule BatchEcommerce.CatalogTest do
 
     import BatchEcommerce.CatalogFixtures
 
-    @invalid_attrs %{name: nil, price: nil, stock_quantity: nil}
+    @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, description: nil}
 
     test "list_products/0 returns all products" do
       product = product_fixture_assoc(%{}, %{type: "roupas"})
@@ -84,12 +84,18 @@ defmodule BatchEcommerce.CatalogTest do
     end
 
     test "create_product/1 with valid data creates a product" do
-      valid_attrs = %{name: "some name", price: "120.5", stock_quantity: 42}
+      valid_attrs = %{
+        name: "some name",
+        price: "120.5",
+        stock_quantity: 42,
+        description: "some description"
+      }
 
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
       assert product.name == "some name"
       assert product.price == Decimal.new("120.5")
       assert product.stock_quantity == 42
+      assert product.description == "some description"
     end
 
     test "create_product/1 with invalid data returns error changeset" do
@@ -147,7 +153,8 @@ defmodule BatchEcommerce.CatalogTest do
         name: "some name",
         price: "120.5",
         stock_quantity: 42,
-        category_ids: category_ids
+        category_ids: category_ids,
+        description: "some description"
       }
 
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)

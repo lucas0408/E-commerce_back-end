@@ -16,7 +16,7 @@ defmodule BatchEcommerceWeb.Router do
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
 
-    resources "/users", UserController, only: [:create]
+    resources "/users", UserController, only: [:create, :show]
     resources "/products", ProductController, only: [:index]
     post "/login", SessionController, :login
     get "/logout", SessionController, :logout

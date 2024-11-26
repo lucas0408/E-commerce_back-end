@@ -23,7 +23,7 @@ defmodule BatchEcommerceWeb.CompanyJSON do
       name: company.name,
       email: company.email,
       phone_number: company.phone_number,
-      address: AddressJSON.data(company.address)
+      addresses: AddressJSON.index(%{addresses: company.addresses})
     }
   end
 end

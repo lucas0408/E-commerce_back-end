@@ -15,7 +15,8 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
     name: "some updated name",
     price: "456.7",
     stock_quantity: 43,
-    image_url: "some updated image_url"
+    image_url: "some updated image_url",
+    description: "some description"
   }
   @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, categories: nil, image_url: nil}
 
@@ -114,7 +115,8 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
       name: "some name",
       price: "120.5",
       stock_quantity: 42,
-      category_ids: category_ids
+      category_ids: category_ids,
+      description: "some description"
     }
 
     %{product: product}

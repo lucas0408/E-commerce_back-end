@@ -19,7 +19,7 @@ defmodule BatchEcommerce.Accounts.User do
     field :password_hash, :string
     field :password, :string, virtual: true
 
-    many_to_many :address, BatchEcommerce.Accounts.Address,
+    many_to_many :addresses, BatchEcommerce.Accounts.Address,
       join_through: "users_addresses",
       on_replace: :delete
 
@@ -45,7 +45,7 @@ defmodule BatchEcommerce.Accounts.User do
       message: "Data inválida"
     )
     |> validate_confirmation(:password, message: "As senhas não correspondem")
-    |> cast_assoc(:address)
+    |> cast_assoc(:addresses)
     |> unique_constraint(:email)
     |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)
@@ -66,7 +66,7 @@ defmodule BatchEcommerce.Accounts.User do
       after: validate_date_after(),
       message: "Data inválida"
     )
-    |> cast_assoc(:address)
+    |> cast_assoc(:addresses)
     |> unique_constraint(:email)
     |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)

@@ -12,7 +12,7 @@ defmodule BatchEcommerce.Accounts.Company do
 
     belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
 
-    many_to_many :address, BatchEcommerce.Accounts.Address,
+    many_to_many :addresses, BatchEcommerce.Accounts.Address,
       join_through: "companies_addresses",
       on_replace: :delete
 
@@ -29,7 +29,7 @@ defmodule BatchEcommerce.Accounts.Company do
     |> validate_email(:email, message: "invalid email")
     |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
     |> validate_uniqueness_of_fields([:cnpj, :phone_number, :name])
-    |> cast_assoc(:address)
+    |> cast_assoc(:addresses)
     |> assoc_constraint(:user)
   end
 

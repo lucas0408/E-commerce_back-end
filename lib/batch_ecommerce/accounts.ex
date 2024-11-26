@@ -18,7 +18,7 @@ defmodule BatchEcommerce.Accounts do
       [%User{}, ...]
 
   """
-  def list_users, do: Repo.all(User) |> Repo.preload([:address])
+  def list_users, do: Repo.all(User) |> Repo.preload([:addresses])
 
   @doc """
   Gets a single user.
@@ -34,7 +34,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:address)
+  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:addresses)
 
   @doc """
   Creates a user.
@@ -121,7 +121,7 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def list_companies do
-    Repo.all(Company) |> Repo.preload(:address)
+    Repo.all(Company) |> Repo.preload(:addresses)
   end
 
   @doc """
@@ -138,7 +138,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_company(id), do: Repo.get(Company, id) |> Repo.preload(:address)
+  def get_company(id), do: Repo.get(Company, id) |> Repo.preload(:addresses)
 
   @doc """
   Creates a company.
@@ -208,5 +208,78 @@ defmodule BatchEcommerce.Accounts do
   """
   def change_company(%Company{} = company, attrs \\ %{}) do
     Company.changeset(company, attrs)
+  end
+
+  alias BatchEcommerce.Accounts.Address
+
+  @doc """
+  Returns the list of addresses.
+  ## Examples
+      iex> list_addresses()
+      [%Address{}, ...]
+  """
+  def list_addresses do
+    Repo.all(Address)
+  end
+
+  @doc """
+  Gets a single address.
+  Raises `Ecto.NoResultsError` if the Address does not exist.
+  ## Examples
+      iex> get_address!(123)
+      %Address{}
+      iex> get_address!(456)
+      ** (Ecto.NoResultsError)
+  """
+  def get_address(id), do: Repo.get(Address, id)
+
+  @doc """
+  Creates a address.
+  ## Examples
+      iex> create_address(%{field: value})
+      {:ok, %Address{}}
+      iex> create_address(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+  """
+  def create_address(attrs \\ %{}) do
+    %Address{}
+    |> Address.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a address.
+  ## Examples
+      iex> update_address(address, %{field: new_value})
+      {:ok, %Address{}}
+      iex> update_address(address, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+  """
+  def update_address(%Address{} = address, attrs) do
+    address
+    |> Address.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a address.
+  ## Examples
+      iex> delete_address(address)
+      {:ok, %Address{}}
+      iex> delete_address(address)
+      {:error, %Ecto.Changeset{}}
+  """
+  def delete_address(%Address{} = address) do
+    Repo.delete(address)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking address changes.
+  ## Examples
+      iex> change_address(address)
+      %Ecto.Changeset{data: %Address{}}
+  """
+  def change_address(%Address{} = address, attrs \\ %{}) do
+    Address.changeset(address, attrs)
   end
 end

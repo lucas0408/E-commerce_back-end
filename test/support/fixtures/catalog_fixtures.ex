@@ -32,7 +32,8 @@ defmodule BatchEcommerce.CatalogFixtures do
       |> Enum.into(%{
         name: unique_product_name(),
         price: "120.5",
-        stock_quantity: 42
+        stock_quantity: 42,
+        description: "some description"
       })
       |> BatchEcommerce.Catalog.create_product()
 

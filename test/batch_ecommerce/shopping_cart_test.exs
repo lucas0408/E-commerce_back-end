@@ -14,7 +14,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
     @invalid_attrs %{user_uuid: nil}
 
-
     test "get_cart_by_user_uuid!/1 returns the cart with given user_id" do
       user_id = user_fixture().id
       assert %Cart{} = ShoppingCart.get_cart_by_user_uuid(user_id)
@@ -38,7 +37,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
   end
 
   describe "cart_items" do
-
     import BatchEcommerce.AccountsFixtures
 
     alias BatchEcommerce.Accounts.{User, Guardian}
@@ -55,12 +53,16 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
     test "total_item_price/1 returns total item price" do
       cart_item = cart_item_fixture()
-      assert ShoppingCart.total_item_price(ShoppingCart.preload_product(cart_item)) == Decimal.new("125.00")
+
+      assert ShoppingCart.total_item_price(ShoppingCart.preload_product(cart_item)) ==
+               Decimal.new("125.00")
     end
 
     test "total_cart_price/0 returns total cart price" do
       cart_item = ShoppingCart.preload_product(cart_item_fixture())
-      assert ShoppingCart.total_cart_price(Repo.preload(cart_item, [cart: [items: :product]]).cart) == Decimal.new("125.00")
+
+      assert ShoppingCart.total_cart_price(Repo.preload(cart_item, cart: [items: :product]).cart) ==
+               Decimal.new("125.00")
     end
 
     test "get_cart_item/1 returns the cart_item with given id" do
@@ -71,24 +73,33 @@ defmodule BatchEcommerce.ShoppingCartTest do
     test "add_item_to_cart/2 with valid data creates a cart_item" do
       valid_attrs = %{"product_id" => product_fixture().id, "quantity" => "10"}
 
-      assert {:ok, %CartItem{} = cart_item} = ShoppingCart.add_item_to_cart(ShoppingCart.get_cart_by_user_uuid(user_fixture().id), valid_attrs)
+      assert {:ok, %CartItem{} = cart_item} =
+               ShoppingCart.add_item_to_cart(
+                 ShoppingCart.get_cart_by_user_uuid(user_fixture().id),
+                 valid_attrs
+               )
 
       assert cart_item.price_when_carted == Decimal.new("125.00")
       assert cart_item.quantity == 10
     end
 
     test "create_cart_item/1 with invalid data returns error changeset" do
+      invalid_attrs = %{"product_id" => product_fixture().id, "quantity" => "-1"}
 
-      ivalid_attrs = %{"product_id" => product_fixture().id, "quantity" => "-1"}
-
-      assert {:error, %Ecto.Changeset{}} = ShoppingCart.add_item_to_cart(ShoppingCart.get_cart_by_user_uuid(user_fixture().id), ivalid_attrs)
+      assert {:error, %Ecto.Changeset{}} =
+               ShoppingCart.add_item_to_cart(
+                 ShoppingCart.get_cart_by_user_uuid(user_fixture().id),
+                 invalid_attrs
+               )
     end
 
     test "update_cart_item/2 with valid data updates the cart_item" do
       cart_item = cart_item_fixture()
       update_attrs = %{"product_id" => cart_item.product_id, "quantity" => "100"}
 
-      assert {:ok, %CartItem{} = cart_item} = ShoppingCart.update_cart_item(cart_item, update_attrs)
+      assert {:ok, %CartItem{} = cart_item} =
+               ShoppingCart.update_cart_item(cart_item, update_attrs)
+
       assert cart_item.price_when_carted == Decimal.new("1250.00")
       assert cart_item.quantity == 100
     end
@@ -116,6 +127,5 @@ defmodule BatchEcommerce.ShoppingCartTest do
       assert {:ok, %CartItem{}} = ShoppingCart.delete_cart_item(cart_item)
       assert ShoppingCart.get_cart_item(cart_item.id) == {:error, :not_found}
     end
-
   end
 end

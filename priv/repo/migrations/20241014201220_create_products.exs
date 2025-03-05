@@ -7,6 +7,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateProducts do
       add :price, :decimal
       add :stock_quantity, :integer
       add :image_url, :string
+      add :description, :string
       add :category_id, references(:categories)
 
       timestamps(type: :utc_datetime)

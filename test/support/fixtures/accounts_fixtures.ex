@@ -1,6 +1,6 @@
 defmodule BatchEcommerce.AccountsFixtures do
   alias BatchEcommerce.Repo
-  alias BatchEcommerce.Accounts
+  alias BatchEcommerce.{Accounts, ShoppingCart}
 
   @moduledoc """
   This module defines test helpers for creating
@@ -21,18 +21,51 @@ defmodule BatchEcommerce.AccountsFixtures do
         birth_date: ~D[2004-05-06],
         password: "password",
         password_hash: "password_hash",
-        address: %{
-          address: "rua elixir",
-          cep: "09071000",
-          uf: "SP",
-          city: "cidade java",
-          district: "vila programação",
-          complement: "casa",
-          home_number: "321"
-        }
+        addresses: [
+          %{
+            address: "rua elixir",
+            cep: "09071000",
+            uf: "SP",
+            city: "cidade java",
+            district: "vila programação",
+            complement: "casa",
+            home_number: "321"
+          }
+        ]
       })
       |> Accounts.create_user()
 
-    Repo.preload(user, :address)
+    ShoppingCart.create_cart(%{user_id: user.id})
+
+    Repo.preload(user, :addresses)
+  end
+
+  @doc """
+  Generate a company.
+  """
+  def company_fixture(user_id \\ %{}, attrs \\ %{}) do
+    {:ok, company} =
+      attrs
+      |> Enum.into(%{
+        cnpj: "11111111111111",
+        email: "murilo@hotmail.com",
+        name: "some name",
+        phone_number: "11979897989",
+        user_id: user_id,
+        addresses: [
+          %{
+            address: "rua elixir",
+            cep: "09071000",
+            uf: "SP",
+            city: "cidade java",
+            district: "vila programação",
+            complement: "casa",
+            home_number: "321"
+          }
+        ]
+      })
+      |> BatchEcommerce.Accounts.create_company()
+
+    company
   end
 end

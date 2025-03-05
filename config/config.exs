@@ -81,3 +81,5 @@ config :ex_aws, :s3,
   region: "local",
   scheme: "http://",
   port: 9000
+
+config :flop, repo: BatchEcommerce.Repo

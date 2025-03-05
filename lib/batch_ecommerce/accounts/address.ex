@@ -13,7 +13,6 @@ defmodule BatchEcommerce.Accounts.Address do
     field :district, :string
     field :complement, :string
     field :home_number, :string
-    belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
 
     timestamps(type: :utc_datetime)
   end

@@ -35,7 +35,7 @@ defmodule BatchEcommerceWeb.UserJSON do
       cpf: user.cpf,
       phone_number: user.phone_number,
       birth_date: user.birth_date,
-      address: AddressJSON.data(user.address)
+      addresses: AddressJSON.index(%{addresses: user.addresses})
     }
   end
 

@@ -1,5 +1,5 @@
-defmodule BatchEcommerceWeb.CartItemJSON do
-  alias BatchEcommerce.ShoppingCart.CartItem
+defmodule BatchEcommerceWeb.CartProductJSON do
+  alias BatchEcommerce.ShoppingCart.CartProduct
   alias BatchEcommerce.ShoppingCart
 
   def index(%{cart_items: cart_items}) do
@@ -13,7 +13,7 @@ defmodule BatchEcommerceWeb.CartItemJSON do
     %{data: data(cart_item)}
   end
 
-  defp data(%CartItem{} = cart_item) do
+  defp data(%CartProduct{} = cart_item) do
     %{
       id: cart_item.id,
       product_id: cart_item.product_id,

@@ -1,8 +1,8 @@
-defmodule BatchEcommerce.Orders.LineItem do
+defmodule BatchEcommerce.Orders.OrderProducts do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "order_line_items" do
+  schema "order_products" do
     field :price, :decimal
     field :quantity, :integer
 
@@ -13,8 +13,8 @@ defmodule BatchEcommerce.Orders.LineItem do
   end
 
   @doc false
-  def changeset(line_item, attrs) do
-    line_item
+  def changeset(order_product, attrs) do
+    order_product
     |> cast(attrs, [:price, :quantity])
     |> validate_required([:price, :quantity])
   end

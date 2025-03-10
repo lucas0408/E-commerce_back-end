@@ -1,3 +1,81 @@
+# Limpar dados existentes
+BatchEcommerce.Repo.delete_all(BatchEcommerce.Catalog.Product)
+BatchEcommerce.Repo.delete_all(BatchEcommerce.Catalog.Category)
+BatchEcommerce.Repo.delete_all(BatchEcommerce.Accounts.Company)
+BatchEcommerce.Repo.delete_all(BatchEcommerce.Accounts.User)
+# Insere User
+users = [
+  %{
+    cpf: "12345678901",
+    name: "João da Silva",
+    email: "joao.silva@exemplo.com",
+    phone_number: "11987654321",
+    birth_date: ~D[1990-01-15],
+    password: "Senha@123",
+    addresses: [
+      %{
+        cep: "01311-000",
+        uf: "SP",
+        city: "São Paulo",
+        district: "Bela Vista",
+        address: "Avenida Paulista",
+        complement: "Próximo ao MASP",
+        home_number: "1000"
+      }
+    ]
+  }
+]
+
+Enum.each(users, fn user ->
+  %BatchEcommerce.Accounts.User{}
+  |> BatchEcommerce.Accounts.User.insert_changeset(%{
+    cpf: user.cpf,
+    name: user.name,
+    email: user.email,
+    phone_number: user.phone_number,
+    birth_date: user.birth_date,
+    password: user.password,
+    addresses: user.addresses
+  })
+  |> BatchEcommerce.Repo.insert!()
+end)
+
+# inserindo empresa
+
+companies = [
+  %{
+    name: "Tech Solutions LTDA",
+    cnpj: "98765432000121",
+    email: "contato@techsolutions.com.br",
+    phone_number: "11987654322",
+    user_id: BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.User, name: "João da Silva").id,
+    addresses: [
+      %{
+        cep: "01311-000",
+        uf: "SP",
+        city: "São Paulo",
+        district: "Bela Vista",
+        address: "Avenida Paulista",
+        complement: "Próximo ao MASP",
+        home_number: "1000"
+      }
+    ]
+  }
+]
+
+Enum.each(companies, fn company ->
+  BatchEcommerce.Repo.insert!(%BatchEcommerce.Accounts.Company{
+      name: company.name,
+      cnpj: company.cnpj,
+      email: company.email,
+      phone_number: company.phone_number,
+      user_id: company.user_id,
+      addresses: company.addresses
+    })
+  end)
+
+company = BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.Company, name: "Tech Solutions LTDA")
+
 # Inserindo categorias
 categories = [
   %{type: "Eletrônicos"},
@@ -21,6 +99,7 @@ products = [
     price: Decimal.new("3499.99"),
     description: "Celular potente",
     stock_quantity: 50,
+    company_id: company.id,
     image_url: "https://example.com/images/galaxy-s21.jpg"
   },
   %{
@@ -28,6 +107,7 @@ products = [
     price: Decimal.new("59.90"),
     stock_quantity: 200,
     description: "Camiseta grande",
+    company_id: company.id,
     image_url: "https://example.com/images/camiseta.jpg"
   },
   %{
@@ -35,6 +115,7 @@ products = [
     price: Decimal.new("89.90"),
     description: "Ótimo livro",
     stock_quantity: 30,
+    company_id: company.id,
     image_url: "https://example.com/images/lotr.jpg"
   },
   %{
@@ -42,6 +123,7 @@ products = [
     price: Decimal.new("129.90"),
     description: "Luminária fluorescente",
     stock_quantity: 45,
+    company_id: company.id,
     image_url: "https://example.com/images/luminaria.jpg"
   },
   %{
@@ -49,6 +131,7 @@ products = [
     price: Decimal.new("149.90"),
     description: "Bola redonda",
     stock_quantity: 100,
+    company_id: company.id,
     image_url: "https://example.com/images/bola.jpg"
   },
   %{
@@ -56,6 +139,7 @@ products = [
     price: Decimal.new("499.90"),
     description: "Jogo bom",
     stock_quantity: 25,
+    company_id: company.id,
     image_url: "https://example.com/images/lego.jpg"
   }
 ]
@@ -66,6 +150,7 @@ Enum.each(products, fn product ->
     price: product.price,
     stock_quantity: product.stock_quantity,
     description: product.description,
+    company_id: product.company_id,
     image_url: product.image_url
   })
 end)
@@ -87,6 +172,7 @@ book = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "O Senh
 lamp = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "Luminária de Mesa")
 ball = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "Bola de Futebol")
 lego = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Product, name: "LEGO Star Wars")
+
 
 # Associando produtos às suas categorias
 BatchEcommerce.Repo.preload(smartphone, :categories)

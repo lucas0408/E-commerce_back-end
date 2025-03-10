@@ -6,8 +6,8 @@ defmodule BatchEcommerce.Orders.Order do
     field :user_uuid, Ecto.UUID
     field :total_price, :decimal
 
-    has_many :line_items, BatchEcommerce.Orders.LineItem
-    has_many :products, through: [:line_items, :product]
+    has_many :order_products, BatchEcommerce.Orders.OrderProduct
+    has_many :products, through: [:order_products, :product]
 
     timestamps(type: :utc_datetime)
   end

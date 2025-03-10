@@ -11,6 +11,7 @@ defmodule BatchEcommerce.Accounts.Company do
     field :phone_number, :string
 
     belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
+    has_many  :products, BatchEcommerce.Catalog.Product
 
     many_to_many :addresses, BatchEcommerce.Accounts.Address,
       join_through: "companies_addresses",
@@ -28,7 +29,7 @@ defmodule BatchEcommerce.Accounts.Company do
     |> validate_cnpj()
     |> validate_email(:email, message: "invalid email")
     |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
-    |> validate_uniqueness_of_fields([:cnpj, :phone_number, :name])
+    |> validate_uniqueness_of_fields([:cnpj, :phone_number, :name, :user_id])
     |> cast_assoc(:addresses)
     |> assoc_constraint(:user)
   end

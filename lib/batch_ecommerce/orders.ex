@@ -3,14 +3,14 @@ defmodule BatchEcommerce.Orders do
   The Orders context.
   """
 
-  import BatchEcommerce.ShoppingCart, onl: [list_cart_products: 0]
+  import BatchEcommerce.ShoppingCart, only: [list_cart_products: 0]
   import Ecto.Query, warn: false
   alias BatchEcommerce.Repo
   alias BatchEcommerce.Orders.Order
-
+  alias BatchEcommerce.Orders.OrderProduct
 
   def complete_order(conn) do
-    cart_products = list_cart_products
+    cart_products = list_cart_products()
 
     order_products =
       Enum.map(cart_products, fn item ->
@@ -27,7 +27,7 @@ defmodule BatchEcommerce.Orders do
       |> Order.changeset(%{
         user_uuid: order_products.user_uuid,
         total_price: BatchEcommerce.ShoppingCart.total_cart_price(order_products),
-        line_items: line_items
+        order_products: order_products
       })
 
     Ecto.Multi.new()

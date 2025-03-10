@@ -68,7 +68,8 @@ defmodule BatchEcommerce.MixProject do
       {:uuid, "~> 1.1.8"},
       {:cors_plug, "~> 3.0.3"},
       {:plug_crypto, "~> 2.1.0"},
-      {:flop, "~> 0.26.1"}
+      {:flop, "~> 0.26.1"},
+      {:dotenvy, "~> 0.7.0"}
     ]
   end
 

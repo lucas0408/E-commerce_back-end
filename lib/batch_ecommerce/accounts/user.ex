@@ -23,7 +23,7 @@ defmodule BatchEcommerce.Accounts.User do
       join_through: "users_addresses",
       on_replace: :delete
 
-    has_one :cart, BatchEcommerce.ShoppingCart.Cart, on_replace: :update, on_delete: :delete_all
+    has_many :cart_products, BatchEcommerce.ShoppingCart.CartProduct, on_delete: :delete_all
 
     has_one :company, BatchEcommerce.Accounts.Company, on_replace: :update, on_delete: :delete_all
 

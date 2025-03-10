@@ -8,9 +8,24 @@ defmodule BatchEcommerce.ShoppingCart do
 
   alias BatchEcommerce.ShoppingCart.CartProduct
 
-  def list_cart_products, do: Repo.all(User)  |>  preload_product()
+  def list_cart_products, do: Repo.all(CartProduct)  |>  preload_product()
 
-  def create_cart_prodcut(attrs \\ %{}) do
+  def create_cart_prodcut(id, cart_item_params) do
+    product_id = Map.get(cart_item_params, "product_id")
+
+    product = BatchEcommerce.Catalog.get_product(product_id)
+
+    quantity = cart_item_params["quantity"] || "0"
+
+    price_when_carted = Decimal.mult(product.price, quantity)
+
+    attrs = %{
+      quantity: quantity,
+      price_when_carted: price_when_carted,
+      user_id: id,
+      product_id: product.id
+    }
+
     %CartProduct{}
     |> CartProduct.changeset(attrs)
     |> Repo.insert()
@@ -72,17 +87,16 @@ defmodule BatchEcommerce.ShoppingCart do
       |> total_item_price()
       |> Decimal.add(acc)
     end)
-
-  def total_item_price(%Cartproduct{} = item) do
-    Decimal.mult(item.price_when_carted, item.quantity)
   end
 
+  def total_item_price(%CartProduct{} = item) do
+    Decimal.mult(item.price_when_carted, item.quantity)
   end
 
   def prune_cart_items(cart_products) do
     [first_cart_products | _rest] = cart_products
     {_, _} = Repo.delete_all(from(i in CartProduct, where: i.user_uuid == ^first_cart_products.user_uuid))
-    {:ok, _}
+    {:ok}
   end
 
   def delete_cart_product(%CartProduct{} = cart_product) do

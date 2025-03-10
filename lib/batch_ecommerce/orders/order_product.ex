@@ -1,4 +1,4 @@
-defmodule BatchEcommerce.Orders.OrderProducts do
+defmodule BatchEcommerce.Orders.OrderProduct do
   use Ecto.Schema
   import Ecto.Changeset
 

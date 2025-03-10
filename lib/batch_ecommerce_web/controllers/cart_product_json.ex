@@ -2,15 +2,15 @@ defmodule BatchEcommerceWeb.CartProductJSON do
   alias BatchEcommerce.ShoppingCart.CartProduct
   alias BatchEcommerce.ShoppingCart
 
-  def index(%{cart_items: cart_items}) do
-    %{data: for(cart_item <- cart_items, do: data(cart_item))}
+  def index(%{cart_products: cart_products}) do
+    %{data: for(cart_item <- cart_products, do: data(cart_item))}
   end
 
   @doc """
   Renders a single cart_item.
   """
-  def show(%{cart_item: cart_item}) do
-    %{data: data(cart_item)}
+  def show(%{cart_products: cart_product}) do
+    %{data: data(cart_product)}
   end
 
   defp data(%CartProduct{} = cart_item) do

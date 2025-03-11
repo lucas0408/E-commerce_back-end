@@ -4,6 +4,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateOrders do
   def change do
     create table(:orders) do
 
+      add :user_id, references(:users, on_delete: :nothing)
       add :total_price, :decimal, precision: 15, scale: 6, null: false
 
       timestamps(type: :utc_datetime)

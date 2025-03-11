@@ -10,7 +10,7 @@ defmodule BatchEcommerce.ShoppingCart do
 
   def list_cart_products, do: Repo.all(CartProduct)  |>  preload_product()
 
-  def create_cart_prodcut(id, cart_item_params) do
+  def create_cart_prodcut(user_id, cart_item_params) do
     product_id = Map.get(cart_item_params, "product_id")
 
     product = BatchEcommerce.Catalog.get_product(product_id)
@@ -22,7 +22,7 @@ defmodule BatchEcommerce.ShoppingCart do
     attrs = %{
       quantity: quantity,
       price_when_carted: price_when_carted,
-      user_id: id,
+      user_id: user_id,
       product_id: product.id
     }
 
@@ -63,14 +63,14 @@ defmodule BatchEcommerce.ShoppingCart do
             {:error, :not_found}
 
           product ->
-            quantity = String.to_integer(cart_product_params["quantity"] || "0")
+            quantity = cart_product_params["quantity"] || "0"
 
             price_when_carted = Decimal.mult(product.price, quantity)
 
             attrs = %{
               quantity: quantity,
               price_when_carted: price_when_carted,
-              cart_id: cart_product.cart_id,
+              user_id: cart_product.user_id,
               product_id: product.id
             }
 

@@ -9,7 +9,7 @@ defmodule BatchEcommerceWeb.CartProductJSON do
   @doc """
   Renders a single cart_item.
   """
-  def show(%{cart_products: cart_product}) do
+  def show(%{cart_product: cart_product}) do
     %{data: data(cart_product)}
   end
 

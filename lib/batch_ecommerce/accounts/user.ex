@@ -25,6 +25,8 @@ defmodule BatchEcommerce.Accounts.User do
 
     has_many :cart_products, BatchEcommerce.ShoppingCart.CartProduct, on_delete: :delete_all
 
+    has_many :orders, BatchEcommerce.Orders.Order, on_delete: :nothing
+
     has_one :company, BatchEcommerce.Accounts.Company, on_replace: :update, on_delete: :delete_all
 
     timestamps(type: :utc_datetime)

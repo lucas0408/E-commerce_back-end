@@ -3,11 +3,11 @@ defmodule BatchEcommerce.Orders.Order do
   import Ecto.Changeset
 
   schema "orders" do
-    field :user_uuid, Ecto.UUID
     field :total_price, :decimal
 
     has_many :order_products, BatchEcommerce.Orders.OrderProduct
-    has_many :products, through: [:order_products, :product]
+    
+    belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
 
     timestamps(type: :utc_datetime)
   end

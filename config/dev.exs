@@ -1,15 +1,12 @@
 import Config
-IO.puts("PGHOST: #{System.get_env("PGHOST") || "NOT FOUND"}")
-IO.puts("PGUSER: #{System.get_env("PGUSER") || "NOT FOUND"}")
-IO.puts("PGPORT: #{System.get_env("PGPORT") || "NOT FOUND"}")
 
 # Configure your database
 config :batch_ecommerce, BatchEcommerce.Repo,
-  username: System.get_env("PGUSER") || "postgres",
-  password: System.get_env("PGPASSWORD") || "postgres",
-  database: System.get_env("PGDATABASE") || "batch_ecommerce_dev",
-  hostname: System.get_env("PGHOST") || "localhost",
-  port: String.to_integer(System.get_env("PGPORT") || "5432"),
+  username: System.fetch_env!("PGUSER"),
+  password: System.fetch_env!("PGPASSWORD"),
+  database: System.fetch_env!("PGDATABASE"),
+  hostname: System.fetch_env!("PGHOST"),
+  port: String.to_integer(System.fetch_env!("PGPORT")),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10

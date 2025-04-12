@@ -5,7 +5,7 @@ defmodule BatchEcommerce.MixProject do
     [
       app: :batch_ecommerce,
       version: "0.1.0",
-      elixir: "~> 1.17.3",
+      elixir: "~> 1.18.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -68,8 +68,7 @@ defmodule BatchEcommerce.MixProject do
       {:uuid, "~> 1.1.8"},
       {:cors_plug, "~> 3.0.3"},
       {:plug_crypto, "~> 2.1.0"},
-      {:flop, "~> 0.26.1"},
-      {:dotenvy, "~> 0.7.0"}
+      {:flop, "~> 0.26.1"}
     ]
   end
 

@@ -8,7 +8,7 @@ defmodule BatchEcommerce.ShoppingCart do
 
   alias BatchEcommerce.ShoppingCart.CartProduct
 
-  def list_cart_products, do: Repo.all(CartProduct)  |>  preload_product()
+  def list_cart_products, do: Repo.all(CartProduct) |> preload_product()
 
   def create_cart_prodcut(id, cart_item_params) do
     product_id = Map.get(cart_item_params, "product_id")
@@ -70,7 +70,7 @@ defmodule BatchEcommerce.ShoppingCart do
             attrs = %{
               quantity: quantity,
               price_when_carted: price_when_carted,
-              cart_id: cart_product.cart_id,
+              cart_id: cart_product,
               product_id: product.id
             }
 
@@ -95,7 +95,12 @@ defmodule BatchEcommerce.ShoppingCart do
 
   def prune_cart_items(cart_products) do
     [first_cart_products | _rest] = cart_products
-    {_, _} = Repo.delete_all(from(i in CartProduct, where: i.user_uuid == ^first_cart_products.user_uuid))
+
+    {_, _} =
+      Repo.delete_all(
+        from(i in CartProduct, where: i.user_uuid == ^first_cart_products.user_uuid)
+      )
+
     {:ok}
   end
 

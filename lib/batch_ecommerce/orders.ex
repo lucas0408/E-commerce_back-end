@@ -9,7 +9,7 @@ defmodule BatchEcommerce.Orders do
   alias BatchEcommerce.Orders.Order
   alias BatchEcommerce.Orders.OrderProduct
 
-  def complete_order(conn) do
+  def complete_order(_conn) do
     cart_products = list_cart_products()
 
     order_products =
@@ -26,7 +26,7 @@ defmodule BatchEcommerce.Orders do
       %Order{}
       |> Order.changeset(%{
         user_uuid: order_products.user_uuid,
-        total_price: BatchEcommerce.ShoppingCart.total_cart_price(order_products),
+        total_price: 0,
         order_products: order_products
       })
 

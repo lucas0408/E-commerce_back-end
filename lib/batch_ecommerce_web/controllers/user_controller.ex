@@ -1,9 +1,6 @@
 defmodule BatchEcommerceWeb.UserController do
   use BatchEcommerceWeb, :controller
 
-  alias BatchEcommerce.ShoppingCart
-  alias BatchEcommerce.ShoppingCart.Cart
-
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.{User, Guardian}
 

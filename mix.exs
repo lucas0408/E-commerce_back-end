@@ -24,7 +24,7 @@ defmodule BatchEcommerce.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/factories", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
@@ -68,7 +68,8 @@ defmodule BatchEcommerce.MixProject do
       {:uuid, "~> 1.1.8"},
       {:cors_plug, "~> 3.0.3"},
       {:plug_crypto, "~> 2.1.0"},
-      {:flop, "~> 0.26.1"}
+      {:flop, "~> 0.26.1"},
+      {:ex_machina, "~> 2.8.0", only: :test}
     ]
   end
 

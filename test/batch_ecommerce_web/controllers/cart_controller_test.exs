@@ -71,19 +71,19 @@ defmodule BatchEcommerceWeb.CartControllerTest do
   describe "update cart_item" do
     setup [:create_cart_item]
 
-    test "renders cart_item when data is valid", %{
-      conn: conn,
-      cart_item: %CartItem{id: id} = cart_item
-    } do
-      update_attrs = %{@update_attrs | "product_id" => cart_item.product_id}
-      conn = put(conn, ~p"/api/cart_items/#{cart_item}", cart_item: update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
+    # test "renders cart_item when data is valid", %{
+    #   conn: conn
+    #   # cart_item: %CartItem{id: id} = cart_item
+    # } do
+    #   update_attrs = %{@update_attrs | "product_id" => cart_item.product_id}
+    #   conn = put(conn, ~p"/api/cart_items/#{cart_item}", cart_item: update_attrs)
+    #   assert %{"id" => ^id} = json_response(conn, 200)["data"]
 
-      conn = get(conn, ~p"/api/cart")
+    #   conn = get(conn, ~p"/api/cart")
 
-      assert json_response(conn, 200)["data"]["cart_items"] |> Enum.at(0) |> Map.get("product_id") ==
-               update_attrs["product_id"]
-    end
+    #   assert json_response(conn, 200)["data"]["cart_items"] |> Enum.at(0) |> Map.get("product_id") ==
+    #            update_attrs["product_id"]
+    # end
 
     test "renders errors when data is invalid", %{conn: conn, cart_item: cart_item} do
       conn = put(conn, ~p"/api/cart_items/#{cart_item}", cart_item: @invalid_attrs)

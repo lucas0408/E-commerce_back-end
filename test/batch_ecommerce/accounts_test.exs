@@ -4,153 +4,127 @@ defmodule BatchEcommerce.AccountsTest do
   """
   use BatchEcommerce.DataCase, async: true
 
+  import BatchEcommerce.Factory
+
   alias BatchEcommerce.Accounts
+  alias BatchEcommerce.Accounts.User
 
   describe "users" do
-    alias BatchEcommerce.Accounts.User
-
-    import BatchEcommerce.AccountsFixtures
-
-    @invalid_attrs %{
-      cpf: nil,
-      name: nil,
-      email: nil,
-      phone_number: nil,
-      birth_date: nil,
-      password: nil,
-      addresses: [nil]
-    }
-
     test "list_users/0 returns all users" do
-      user = user_fixture()
-      [found_user] = Accounts.list_users()
+      inserted_users = insert_list(3, :user)
+      user_list = Accounts.list_users()
 
       fields_to_remove = [:password]
-      assert [Map.drop(found_user, fields_to_remove)] == [Map.drop(user, fields_to_remove)]
+
+      assert [Enum.map(inserted_users, &Map.drop(&1, fields_to_remove))] == [
+               Enum.map(user_list, &Map.drop(&1, fields_to_remove))
+             ]
     end
 
     test "get_user/1 returns the user with given id" do
-      user = user_fixture()
-      %User{} = found_user = Accounts.get_user(user.id)
+      user = insert(:user)
+      found_user = Accounts.get_user(user.id)
 
       fields_to_remove = [:password]
       assert Map.drop(found_user, fields_to_remove) == Map.drop(user, fields_to_remove)
     end
 
     test "create_user/1 with valid data creates a user" do
-      valid_attrs = %{
-        cpf: "52511111111",
-        name: "murilo",
-        email: "murilo@hotmail.com",
-        phone_number: "11979897989",
-        birth_date: ~D[2004-05-06],
-        password: "password",
-        addresses: [
-          %{
-            address: "rua elixir",
-            cep: "09071000",
-            uf: "SP",
-            city: "cidade java",
-            district: "vila programação",
-            complement: "casa",
-            home_number: "321"
-          }
-        ]
-      }
+      address_attrs = params_for(:address)
+      valid_attrs = params_for(:user)
 
       assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
-      assert user.cpf == "52511111111"
-      assert user.name == "murilo"
-      assert user.email == "murilo@hotmail.com"
-      assert user.phone_number == "11979897989"
-      assert user.birth_date == ~D[2004-05-06]
+
+      assert user.cpf == valid_attrs.cpf
+      assert user.name == valid_attrs.name
+      assert user.email == valid_attrs.email
+      assert user.phone_number == valid_attrs.phone_number
+      assert user.birth_date == valid_attrs.birth_date
       refute is_nil(user.password_hash)
 
-      assert user.addresses ==
-               Enum.map(user.addresses, fn address ->
-                 %BatchEcommerce.Accounts.Address{} =
-                   address_return = Accounts.get_address(address.id)
+      assert Enum.count(user.addresses) == 1
 
-                 address_return
-               end)
+      [created_address] = user.addresses
+
+      assert created_address.address == address_attrs.address
+      assert created_address.cep == address_attrs.cep
+      assert created_address.uf == address_attrs.uf
+      assert created_address.city == address_attrs.city
+      assert created_address.district == address_attrs.district
+      assert created_address.complement == address_attrs.complement
+      assert created_address.home_number == address_attrs.home_number
     end
 
     test "create_user/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(@invalid_attrs)
+      invalid_attrs = invalid_params_for(:user, [:cpf, :email, :password])
+
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_user(invalid_attrs)
     end
 
     test "update_user/2 with valid data updates the user" do
-      user = user_fixture()
+      update_attrs = params_for(:user)
 
-      update_attrs = %{
-        cpf: "52511111111",
-        name: "murilo updated",
-        email: "murilo@hotmail.com",
-        phone_number: "11979897989",
-        birth_date: ~D[2005-05-06],
-        password: "password",
-        addresses: [
-          %{
-            address: "rua python",
-            cep: "09071001",
-            uf: "MG",
-            city: "cidade ruby",
-            district: "vila destruição",
-            complement: "apartamento",
-            home_number: "123"
-          }
-        ]
-      }
+      user = insert(:user)
 
-      assert {:ok, %User{} = user} = Accounts.update_user(user, update_attrs)
-      assert user.cpf == "52511111111"
-      assert user.name == "murilo updated"
-      assert user.email == "murilo@hotmail.com"
-      assert user.phone_number == "11979897989"
-      assert user.birth_date == ~D[2005-05-06]
-      refute is_nil(user.password_hash)
+      [update_address_attrs] = update_attrs.addresses
 
-      assert user.addresses ==
-               Enum.map(user.addresses, fn address ->
-                 %BatchEcommerce.Accounts.Address{} =
-                   address_return = Accounts.get_address(address.id)
+      assert {:ok, %User{} = updated_user} = Accounts.update_user(user, update_attrs)
 
-                 address_return
-               end)
+      assert updated_user.cpf == update_attrs.cpf
+      assert updated_user.name == update_attrs.name
+      assert updated_user.email == update_attrs.email
+      assert updated_user.phone_number == update_attrs.phone_number
+      assert updated_user.birth_date == update_attrs.birth_date
+      refute is_nil(updated_user.password_hash)
+
+      assert Enum.count(updated_user.addresses) == 1
+
+      [updated_address] = updated_user.addresses
+
+      assert updated_address.address == update_address_attrs.address
+      assert updated_address.city == update_address_attrs.city
+      assert updated_address.uf == update_address_attrs.uf
+      assert updated_address.city == update_address_attrs.city
+      assert updated_address.district == update_address_attrs.district
+      assert updated_address.complement == update_address_attrs.complement
+      assert updated_address.home_number == update_address_attrs.home_number
     end
 
     test "update_user/2 with invalid data returns error changeset" do
-      user = user_fixture()
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, @invalid_attrs)
+      invalid_attrs = invalid_params_for(:user, [:cpf, :email, :password])
+      user = insert(:user)
+
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_user(user, invalid_attrs)
 
       fields_to_drop = [:password]
 
-      %User{} = user_found = Accounts.get_user(user.id)
+      user_found = Accounts.get_user(user.id)
 
       assert Map.drop(user, fields_to_drop) ==
                Map.drop(user_found, fields_to_drop)
     end
 
     test "delete_user/1 deletes the user" do
-      user = user_fixture()
+      user = insert(:user)
       assert {:ok, %User{}} = Accounts.delete_user(user)
       assert Accounts.get_user(user.id) == nil
     end
 
-    test "authenticate_user/2 with existent email and password authenticate user" do
-      valid_password = %{password: "password"}
-
-      user = user_fixture(valid_password)
+    test "authenticate_user/2 with existent email and password authenticates user" do
+      user = insert(:user, password: "password")
 
       assert {:ok, returned_user} =
-               Accounts.authenticate_user(user.email, valid_password.password)
+               Accounts.authenticate_user(user.email, "password")
 
       assert returned_user.id == user.id
     end
 
     test "authenticate_user/2 with non-existent email or password return error" do
+      invalid_email = "invalid_email@hotmail.com"
+      invalid_password = "invalid_password"
+
       assert {:error, :invalid_credentials} =
-               Accounts.authenticate_user("naoexiste@exemplo.com", "qualquersenha")
+               Accounts.authenticate_user(invalid_email, invalid_password)
     end
   end
 

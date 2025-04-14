@@ -115,9 +115,6 @@ defmodule BatchEcommerce.Accounts do
         {:error, :invalid_credentials}
 
       user ->
-        IO.puts(user.password_hash)
-        IO.puts(plain_text_password)
-
         if Bcrypt.verify_pass(plain_text_password, user.password_hash) do
           {:ok, user}
         else

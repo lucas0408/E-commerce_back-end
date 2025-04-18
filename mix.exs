@@ -69,7 +69,8 @@ defmodule BatchEcommerce.MixProject do
       {:cors_plug, "~> 3.0.3"},
       {:plug_crypto, "~> 2.1.0"},
       {:flop, "~> 0.26.1"},
-      {:ex_machina, "~> 2.8.0", only: :test}
+      {:ex_machina, "~> 2.8.0", only: :test},
+      {:brcpfcnpj, "~> 2.0.1"}
     ]
   end
 

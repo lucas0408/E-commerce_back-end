@@ -2,7 +2,7 @@ defmodule BatchEcommerce.AccountsTest do
   @moduledoc """
   The Accounts context test module.
   """
-  use BatchEcommerce.DataCase
+  use BatchEcommerce.DataCase, async: true
 
   import BatchEcommerce.Factory
 

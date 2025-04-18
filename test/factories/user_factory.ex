@@ -1,4 +1,4 @@
-defmodule BatchEcommerce.UserFactory do
+defmodule BatchEcommerce.Factories.UserFactory do
   alias BatchEcommerce.Accounts.User
 
   defmacro __using__(_opts) do

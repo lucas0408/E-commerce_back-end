@@ -2,7 +2,7 @@ defmodule BatchEcommerce.AccountsTest do
   @moduledoc """
   The Accounts context test module.
   """
-  use BatchEcommerce.DataCase, async: true
+  use BatchEcommerce.DataCase
 
   import BatchEcommerce.Factory
 
@@ -131,77 +131,60 @@ defmodule BatchEcommerce.AccountsTest do
   describe "companies" do
     alias BatchEcommerce.Accounts.Company
 
-    import BatchEcommerce.AccountsFixtures
-
-    @invalid_attrs %{name: nil, cnpj: nil, email: nil, phone_number: nil}
-
     test "list_companies/0 returns all companies" do
-      user = user_fixture()
-      company = company_fixture(user.id)
+      company = insert(:company)
       assert Accounts.list_companies() == [company]
     end
 
     test "get_company/1 returns the company with given id" do
-      user = user_fixture()
-      company = company_fixture(user.id)
+      company = insert(:company)
       assert Accounts.get_company(company.id) == company
     end
 
     test "create_company/1 with valid data creates a company" do
-      valid_attrs = %{
-        name: "some name",
-        cnpj: "11111111111111",
-        email: "exemploemail@gmail.com",
-        phone_number: "1199999-9999",
-        user_id: user_fixture().id
-      }
+      valid_attrs = params_for(:company)
 
       assert {:ok, %Company{} = company} = Accounts.create_company(valid_attrs)
-      assert company.name == "some name"
-      assert company.cnpj == "11111111111111"
-      assert company.email == "exemploemail@gmail.com"
-      assert company.phone_number == "1199999-9999"
+
+      assert company.name == valid_attrs.name
+      assert company.cnpj == valid_attrs.cnpj
+      assert company.email == valid_attrs.email
+      assert company.phone_number == valid_attrs.phone_number
     end
 
     test "create_company/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Accounts.create_company(@invalid_attrs)
+      invalid_params = invalid_params_for(:company, [:name, :cnpj, :email])
+      assert {:error, %Ecto.Changeset{}} = Accounts.create_company(invalid_params)
     end
 
     test "update_company/2 with valid data updates the company" do
-      user = user_fixture()
-      company = company_fixture(user.id)
+      company = insert(:company)
 
-      update_attrs = %{
-        name: "some update name",
-        cnpj: "11111111111111",
-        email: "exemploupdateemail@gmail.com",
-        phone_number: "1199999-9999"
-      }
+      update_attrs = params_for(:company)
 
       assert {:ok, %Company{} = company} = Accounts.update_company(company, update_attrs)
-      assert company.name == "some update name"
-      assert company.cnpj == "11111111111111"
-      assert company.email == "exemploupdateemail@gmail.com"
-      assert company.phone_number == "1199999-9999"
+      assert company.name == update_attrs.name
+      assert company.cnpj == update_attrs.cnpj
+      assert company.email == update_attrs.email
+      assert company.phone_number == update_attrs.phone_number
     end
 
     test "update_company/2 with invalid data returns error changeset" do
-      user = user_fixture()
-      company = company_fixture(user.id)
-      assert {:error, %Ecto.Changeset{}} = Accounts.update_company(company, @invalid_attrs)
+      company = insert(:company)
+      invalid_attrs = invalid_params_for(:company, [:name, :cnpj, :email])
+
+      assert {:error, %Ecto.Changeset{}} = Accounts.update_company(company, invalid_attrs)
       assert company == Accounts.get_company(company.id)
     end
 
     test "delete_company/1 deletes the company" do
-      user = user_fixture()
-      company = company_fixture(user.id)
+      company = insert(:company)
       assert {:ok, %Company{}} = Accounts.delete_company(company)
       assert Accounts.get_company(company.id) == nil
     end
 
     test "change_company/1 returns a company changeset" do
-      user = user_fixture()
-      company = company_fixture(user.id)
+      company = build(:company)
       assert %Ecto.Changeset{} = Accounts.change_company(company)
     end
   end

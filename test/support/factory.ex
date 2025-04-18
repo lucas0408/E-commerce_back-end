@@ -1,7 +1,8 @@
 defmodule BatchEcommerce.Factory do
   use ExMachina.Ecto, repo: BatchEcommerce.Repo
-  use BatchEcommerce.UserFactory
-  use BatchEcommerce.AddressFactory
+  use BatchEcommerce.Factories.UserFactory
+  use BatchEcommerce.Factories.AddressFactory
+  use BatchEcommerce.Factories.CompanyFactory
 
   def invalid_params_for(factory, fields) do
     params_for(factory)

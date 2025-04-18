@@ -1,4 +1,4 @@
-defmodule BatchEcommerce.AddressFactory do
+defmodule BatchEcommerce.Factories.AddressFactory do
   alias BatchEcommerce.Accounts.Address
 
   defmacro __using__(_opts) do

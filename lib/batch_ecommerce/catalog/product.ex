@@ -14,7 +14,7 @@ defmodule BatchEcommerce.Catalog.Product do
     field :image_url, :string
     field :description, :string
 
-    many_to_many :categories, Category, join_through: "products_categories", on_replace: :delete
+    many_to_many :categories, BatchEcommerce.Catalog.Category, join_through: "products_categories", on_replace: :delete
     belongs_to :company, BatchEcommerce.Accounts.Company
 
     timestamps(type: :utc_datetime)

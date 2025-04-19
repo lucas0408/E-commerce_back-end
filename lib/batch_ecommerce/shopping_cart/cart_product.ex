@@ -16,7 +16,7 @@ defmodule BatchEcommerce.ShoppingCart.CartProduct do
   def changeset(cart_product, attrs) do
     cart_product
     |> cast(attrs, [:price_when_carted, :quantity, :product_id, :user_id])
-    |> validate_required([:price_when_carted, :quantity])
+    |> validate_required([:price_when_carted, :quantity, :user_id])
     |> validate_number(:quantity, greater_than_or_equal_to: 0, less_than_or_equal_to: 100)
     |> unique_constraint(
       [:user_id, :product_id],

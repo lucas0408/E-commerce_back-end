@@ -10,6 +10,11 @@ defmodule BatchEcommerce.ShoppingCart do
 
   def list_cart_products, do: Repo.all(CartProduct) |> preload_product()
 
+  def get_cart_user(user_id) do
+    query = from(i in CartProduct, where: i.user_id == ^user_id)
+    Repo.all(query)
+  end
+
   def create_cart_prodcut(id, cart_item_params) do
     product_id = Map.get(cart_item_params, "product_id")
 

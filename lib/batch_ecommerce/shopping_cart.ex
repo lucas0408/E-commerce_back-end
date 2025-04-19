@@ -68,14 +68,14 @@ defmodule BatchEcommerce.ShoppingCart do
             {:error, :not_found}
 
           product ->
-            quantity = String.to_integer(cart_product_params["quantity"] || "0")
+            quantity = cart_product_params["quantity"] || "0"
 
             price_when_carted = Decimal.mult(product.price, quantity)
 
             attrs = %{
               quantity: quantity,
               price_when_carted: price_when_carted,
-              cart_id: cart_product,
+              user_id: cart_product.user_id,
               product_id: product.id
             }
 
@@ -86,16 +86,10 @@ defmodule BatchEcommerce.ShoppingCart do
     end
   end
 
-  def total_cart_product(cart_products) do
-    Enum.reduce(cart_products, 0, fn item, acc ->
-      item
-      |> total_item_price()
-      |> Decimal.add(acc)
-    end)
-  end
-
-  def total_item_price(%CartProduct{} = item) do
-    Decimal.mult(item.price_when_carted, item.quantity)
+  def total_price_cart_product(cart_products) do
+    Enum.reduce(cart_products, Decimal.new(0), fn cart_product, acc -> 
+            Decimal.add(acc, cart_product.price_when_carted)
+        end)
   end
 
   def prune_cart_items(cart_products) do

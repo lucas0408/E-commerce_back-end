@@ -3,6 +3,10 @@ defmodule BatchEcommerce.Factory do
   use BatchEcommerce.Factories.UserFactory
   use BatchEcommerce.Factories.AddressFactory
   use BatchEcommerce.Factories.CompanyFactory
+  use BatchEcommerce.Factories.CategoryFactory
+  use BatchEcommerce.Factories.ProductFactory
+  use BatchEcommerce.Factories.UserFactory
+  use BatchEcommerce.Factories.CartProductFactory
 
   def invalid_params_for(factory, fields) do
     params_for(factory)
@@ -10,4 +14,5 @@ defmodule BatchEcommerce.Factory do
     |> Enum.map(fn {k, v} -> if k in fields, do: {k, nil}, else: {k, v} end)
     |> Enum.into(%{})
   end
+
 end

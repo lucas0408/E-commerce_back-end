@@ -7,7 +7,7 @@ defmodule BatchEcommerce.Factories.CompanyFactory do
         user = insert(:user)
 
         %Company{
-          name: "Loja Arthur Santos",
+          name: sequence(:name, &"company_test_#{&1}"),
           cnpj: sequence(:cpf, &"5555555555555#{&1}"),
           email: sequence(:email, &"arthursantosloja#{&1}@hotmail.com"),
           phone_number: sequence(:phone_number, &"1199999999#{&1}"),

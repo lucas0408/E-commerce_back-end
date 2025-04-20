@@ -5,6 +5,8 @@ defmodule BatchEcommerce.CatalogTest do
 
   use BatchEcommerce.DataCase, async: true
 
+  import BatchEcommerce.Factory
+
   alias BatchEcommerce.Catalog
   alias BatchEcommerce.Catalog.{Product, Category}
   import BatchEcommerce.CatalogFixtures
@@ -88,7 +90,7 @@ defmodule BatchEcommerce.CatalogTest do
         name: "some name",
         price: "120.5",
         stock_quantity: 42,
-        description: "some description"
+        description: "some description",
       }
 
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
@@ -147,6 +149,7 @@ defmodule BatchEcommerce.CatalogTest do
     test "create product with categories associated", %{
       categories: categories
     } do
+      company = insert(:company)
       category_ids = Enum.map(categories, & &1.id)
 
       valid_attrs = %{
@@ -154,6 +157,7 @@ defmodule BatchEcommerce.CatalogTest do
         price: "120.5",
         stock_quantity: 42,
         category_ids: category_ids,
+        company_id: company.id,
         description: "some description"
       }
 

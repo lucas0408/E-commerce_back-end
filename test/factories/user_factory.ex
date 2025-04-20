@@ -8,7 +8,7 @@ defmodule BatchEcommerce.Factories.UserFactory do
 
         %User{
           id: Ecto.UUID.generate(),
-          cpf: sequence(:cpf, &"5555555555#{&1}"),
+          cpf: Brcpfcnpj.cpf_generate(),
           name: "Arthur Santos",
           email: sequence(:email, &"arthursantos#{&1}@hotmail.com"),
           phone_number: sequence(:phone_number, &"1199999999#{&1}"),

@@ -8,7 +8,7 @@ defmodule BatchEcommerce.Factories.CompanyFactory do
 
         %Company{
           name: "Loja Arthur Santos",
-          cnpj: sequence(:cpf, &"5555555555555#{&1}"),
+          cnpj: Brcpfcnpj.cnpj_generate(),
           email: sequence(:email, &"arthursantosloja#{&1}@hotmail.com"),
           phone_number: sequence(:phone_number, &"1199999999#{&1}"),
           user_id: user.id,

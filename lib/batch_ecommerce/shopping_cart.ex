@@ -97,7 +97,7 @@ defmodule BatchEcommerce.ShoppingCart do
 
     {_, _} =
       Repo.delete_all(
-        from(i in CartProduct, where: i.user_uuid == ^first_cart_products.user_uuid)
+        from(i in CartProduct, where: i.user_id == ^first_cart_products.user_id)
       )
 
     {:ok}

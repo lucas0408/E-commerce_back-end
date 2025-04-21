@@ -1,5 +1,5 @@
 defmodule BatchEcommerceWeb.OrderJSON do
-  alias BatchEcommerce.Orders.Order
+  alias BatchEcommerce.Order.Order
 
   @doc """
   Renders a list of orders.

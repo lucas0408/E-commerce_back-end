@@ -1,4 +1,4 @@
-defmodule BatchEcommerce.Orders.OrderProduct do
+defmodule BatchEcommerce.Order.OrderProduct do
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +6,7 @@ defmodule BatchEcommerce.Orders.OrderProduct do
     field :price, :decimal
     field :quantity, :integer
 
-    belongs_to :order, BatchEcommerce.Orders.Order
+    belongs_to :order, BatchEcommerce.Order.Order
     belongs_to :product, BatchEcommerce.Catalog.Product
 
     timestamps(type: :utc_datetime)
@@ -15,7 +15,8 @@ defmodule BatchEcommerce.Orders.OrderProduct do
   @doc false
   def changeset(order_product, attrs) do
     order_product
-    |> cast(attrs, [:price, :quantity])
-    |> validate_required([:price, :quantity])
+    |> cast(attrs, [:price, :quantity, :product_id, :order_id])
+    |> validate_required([:price, :quantity, :product_id, :order_id])
+    |> assoc_constraint(:order)
   end
 end

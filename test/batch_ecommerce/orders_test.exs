@@ -47,9 +47,6 @@ defmodule BatchEcommerce.OrdersTest do
     end
 
     test "get_order!/2 returns the order with given id and user_id" do
-      normalize_order = fn order ->
-        %{order | total_price: Decimal.normalize(order.total_price)}
-      end
 
       order = insert(:order) |> Repo.preload(order_products: [:product]) |> normalize_order()
 

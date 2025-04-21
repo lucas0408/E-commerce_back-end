@@ -12,17 +12,17 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
 
     test "prune_cart_items/1 delete all cart_items from cart" do
-        list_cart_itens = insert_list(5, :cart_product)
+          normalize_cart_product = fn cart_product ->
+            %{cart_product | price_when_carted: Decimal.normalize(cart_product.price_when_carted)}
+         end
+        user_id = insert(:user).id
+        list_cart_itens = insert_list(5, :cart_product, [user_id: user_id]) |> Enum.map(normalize_cart_product)
 
-        IO.inspect(Enum.at(list_cart_itens, 0).user_id)
+        assert list_cart_itens == ShoppingCart.get_cart_user(user_id) |> Enum.map(normalize_cart_product)
 
-        user_id = Enum.at(list_cart_itens, 0).user_id
+        ShoppingCart.prune_cart_items(user_id)
 
-        assert list_cart_itens == ShoppingCart.get_cart_user(user_id)
-
-        ShoppingCart.prune_cart_items(list_cart_itens)
-
-        assert ShoppingCart.get_cart_user(user_id) == nil
+        assert ShoppingCart.get_cart_user(user_id) == []
     end
 
     test "get_cart_user/1 get user cart" do
@@ -50,8 +50,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
         assert {:ok, %CartProduct{} = cart_product} = ShoppingCart.create_cart_prodcut(valid_attrs.user_id, cart_attrs)
 
-        IO.inspect(cart_product.price_when_carted)
-
         assert cart_product.price_when_carted == Decimal.new("123.0")
 
         assert cart_product.quantity == valid_attrs.quantity
@@ -78,13 +76,12 @@ defmodule BatchEcommerce.ShoppingCartTest do
     end
 
     test "get_cart_product/1 get cart by id" do
-
         cart_product = insert(:cart_product)
 
         get_cart_product = ShoppingCart.get_cart_product(cart_product.id)
 
         assert cart_product.id == get_cart_product.id
-        assert cart_product.price_when_carted == get_cart_product.price_when_carted
+        assert Decimal.normalize(cart_product.price_when_carted) == Decimal.normalize(get_cart_product.price_when_carted)
         assert cart_product.quantity == get_cart_product.quantity
         assert cart_product.user_id == get_cart_product.user_id
         assert cart_product.product_id == get_cart_product.product_id
@@ -135,8 +132,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
         total_price_enum = Enum.reduce(list_cart_product, Decimal.new(0), fn cart_product, acc -> 
             Decimal.add(acc, cart_product.price_when_carted)
         end)
-
-        IO.inspect(total_price_enum)
 
         assert total_price_function == total_price_enum
     end

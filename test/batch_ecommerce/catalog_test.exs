@@ -9,7 +9,6 @@ defmodule BatchEcommerce.CatalogTest do
 
   alias BatchEcommerce.Catalog
   alias BatchEcommerce.Catalog.{Product, Category}
-  import BatchEcommerce.CatalogFixtures
 
   describe "categories" do
 
@@ -165,9 +164,9 @@ defmodule BatchEcommerce.CatalogTest do
       category = insert(:category)
       category = Catalog.get_category(category.id)
       
-      valid_attrs = %{valid_attrs | categories: [category]}
+      valid_attrs = %{valid_attrs | categories: [category.id]}
       
-      assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
+      assert {:ok, %Product{} = product} = Catalog.create_product(Map.new(valid_attrs, fn {key, val} -> {Atom.to_string(key), val} end))
       
       get_product = Catalog.get_product(product.id)
       
@@ -182,21 +181,20 @@ defmodule BatchEcommerce.CatalogTest do
     end
 
     test "update product with categories associated" do
-      categories = [insert(:category), insert(:category)]
+      categories = insert_list(2, :category)
 
-      update_attrs = %{
-        name: "some updated name",
-        price: "456.7",
-        stock_quantity: 43,
-        categories: categories
-      }
+      category_ids = Enum.map(categories, fn category -> category.id end)
+
+      update_attrs = params_for(:product)
+
+      update_attrs_product = %{update_attrs | categories: category_ids}
 
       product = insert(:product)
 
-      assert {:ok, %Product{} = update_product} = Catalog.update_product(product, update_attrs)
-      assert update_product.name == "some updated name"
-      assert update_product.price == Decimal.new("456.7")
-      assert update_product.stock_quantity == 43
+      assert {:ok, %Product{} = update_product} = Catalog.update_product(product, Map.new(update_attrs_product, fn {key, val} -> {Atom.to_string(key), val} end))
+      assert update_product.name == update_attrs.name
+      assert update_product.price == Decimal.from_float(update_attrs.price)
+      assert update_product.stock_quantity == update_attrs.stock_quantity
 
       assert product.categories != update_product.categories
 
@@ -208,7 +206,5 @@ defmodule BatchEcommerce.CatalogTest do
       assert {:ok, %Product{}} = Catalog.delete_product(product)
       assert Catalog.get_product(product.id) == nil
     end
-
-    test "put_image_url/2 "
   end
 end

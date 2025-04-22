@@ -4,10 +4,7 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
   """
   use BatchEcommerceWeb.ConnCase, async: true
 
-    import BatchEcommerce.Factory
-
-  import BatchEcommerce.CatalogFixtures
-  import BatchEcommerce.AccountsFixtures
+  import BatchEcommerce.Factory
 
   alias BatchEcommerce.Catalog
   alias BatchEcommerce.Catalog.Product
@@ -127,7 +124,7 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
   end
 
   defp create_session(%{conn: conn}) do
-    user = user_fixture()
+    user = insert(:user)
     conn = Guardian.Plug.sign_in(conn, user)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
     %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}

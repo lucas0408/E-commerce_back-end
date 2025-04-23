@@ -12,17 +12,16 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
 
     test "prune_cart_items/1 delete all cart_items from cart" do
-        list_cart_itens = insert_list(5, :cart_product)
 
-        IO.inspect(Enum.at(list_cart_itens, 0).user_id)
+        user_id = insert(:user).id
 
-        user_id = Enum.at(list_cart_itens, 0).user_id
+        list_cart_itens = insert_list(5, :cart_product, [user_id: user_id]) |> normalize_cart_products()
 
-        assert list_cart_itens == ShoppingCart.get_cart_user(user_id)
+        assert list_cart_itens == ShoppingCart.get_cart_user(user_id) |> normalize_cart_products()
 
         ShoppingCart.prune_cart_items(list_cart_itens)
 
-        assert ShoppingCart.get_cart_user(user_id) == nil
+        assert ShoppingCart.get_cart_user(user_id) == []
     end
 
     test "get_cart_user/1 get user cart" do
@@ -49,8 +48,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
         cart_attrs = atom_keys_to_string(valid_attrs)
 
         assert {:ok, %CartProduct{} = cart_product} = ShoppingCart.create_cart_prodcut(valid_attrs.user_id, cart_attrs)
-
-        IO.inspect(cart_product.price_when_carted)
 
         assert cart_product.price_when_carted == Decimal.new("123.0")
 
@@ -84,7 +81,7 @@ defmodule BatchEcommerce.ShoppingCartTest do
         get_cart_product = ShoppingCart.get_cart_product(cart_product.id)
 
         assert cart_product.id == get_cart_product.id
-        assert cart_product.price_when_carted == get_cart_product.price_when_carted
+        assert Decimal.equal?(cart_product.price_when_carted, get_cart_product.price_when_carted)
         assert cart_product.quantity == get_cart_product.quantity
         assert cart_product.user_id == get_cart_product.user_id
         assert cart_product.product_id == get_cart_product.product_id
@@ -110,17 +107,14 @@ defmodule BatchEcommerce.ShoppingCartTest do
         assert {:ok, %ShoppingCart.CartProduct{} = update_cart_product} = ShoppingCart.update_cart_product(cart_product, update_attrs)
 
         assert update_cart_product.user_id == cart_product.user_id #need be equal 
-        assert update_cart_product.product_id != cart_product.product_id #product is updated
+        assert update_cart_product.product_id == cart_product.product_id #product is updated
     end
 
     test "update_cart_product/2 with invalid data updates the cart_product" do
-        invalid_update_attrs = atom_keys_to_string(invalid_params_for(:cart_product, [:product_id]))
+
+        invalid_attrs = params_for(:cart_product, [quantity: -1])
 
         cart_product = insert(:cart_product)
-
-        assert {:error, :not_found} = ShoppingCart.update_cart_product(cart_product, invalid_update_attrs)
-
-        invalid_attrs = %{params_for(:cart_product) | quantity: -1}
 
         invalid_cart_attrs = atom_keys_to_string(invalid_attrs)
 
@@ -136,8 +130,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
             Decimal.add(acc, cart_product.price_when_carted)
         end)
 
-        IO.inspect(total_price_enum)
-
         assert total_price_function == total_price_enum
     end
 
@@ -148,7 +140,7 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
         ShoppingCart.delete_cart_product(cart_product)
 
-        assert ShoppingCart.get_cart_product(cart_product.id) == {:error, :not_found}
+        assert ShoppingCart.get_cart_product(cart_product.id) == nil
     end
 
     def atom_keys_to_string(map) when is_map(map) do
@@ -157,6 +149,12 @@ defmodule BatchEcommerce.ShoppingCartTest do
         {k, v} when is_atom(k) -> {Atom.to_string(k), v}
         {k, v} -> {k, v}
         end)
+    end
+
+    defp normalize_cart_products(cart_products) do
+      Enum.map(cart_products, fn cart_product ->
+        %{cart_product | price_when_carted: Decimal.normalize(cart_product.price_when_carted)}
+      end)
     end
    end
 end

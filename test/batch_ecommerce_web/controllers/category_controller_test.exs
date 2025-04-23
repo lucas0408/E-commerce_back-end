@@ -6,6 +6,8 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
 
   import BatchEcommerce.{CatalogFixtures, AccountsFixtures}
 
+  import BatchEcommerce.Factory
+
   alias BatchEcommerce.Catalog.Category
   alias BatchEcommerce.Accounts.Guardian
 

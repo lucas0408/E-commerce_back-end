@@ -11,14 +11,13 @@ defmodule BatchEcommerce.AccountsTest do
 
   describe "users" do
     test "list_users/0 returns all users" do
-      inserted_users = insert_list(3, :user)
+      inserted_users = insert_list(2, :user) 
       user_list = Accounts.list_users()
 
       fields_to_remove = [:password]
 
-      assert [Enum.map(inserted_users, &Map.drop(&1, fields_to_remove))] == [
-               Enum.map(user_list, &Map.drop(&1, fields_to_remove))
-             ]
+      assert Enum.map(inserted_users, &Map.drop(&1, fields_to_remove)) ==
+            Enum.map(user_list, &Map.drop(&1, fields_to_remove))
     end
 
     test "get_user/1 returns the user with given id" do

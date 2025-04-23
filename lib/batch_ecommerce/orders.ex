@@ -41,7 +41,7 @@ defmodule BatchEcommerce.Orders do
   end
 
   def list_orders do
-    Repo.all(Order)
+    Repo.all(Order) |> Repo.preload(order_products: [:product])
   end
 
   def get_order!(user_id, id) do

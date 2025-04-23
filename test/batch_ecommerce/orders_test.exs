@@ -40,7 +40,7 @@ defmodule BatchEcommerce.OrdersTest do
         %{order | total_price: Decimal.normalize(order.total_price)}
       end
 
-      orders = insert_list(3, :order) |> normalize_orders()
+      orders = insert_list(3, :order) |> Repo.preload(order_products: [:product]) |> normalize_orders()
       db_orders = Orders.list_orders() |> normalize_orders()
 
       assert orders == db_orders

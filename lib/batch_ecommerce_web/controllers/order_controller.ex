@@ -14,7 +14,7 @@ defmodule BatchEcommerceWeb.OrderController do
   end
 
   def create(conn, _params) do
-    case Orders.complete_order(conn) do
+    case Orders.complete_order(conn.private.guardian_default_resource.id) do
       {:ok, order} ->
         conn
         |> put_status(:created)

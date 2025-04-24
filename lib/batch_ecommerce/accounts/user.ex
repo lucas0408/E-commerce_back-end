@@ -5,7 +5,7 @@ defmodule BatchEcommerce.Accounts.User do
   alias BatchEcommerce.Accounts
 
   @required_fields_insert [:cpf, :name, :email, :phone_number, :birth_date, :password]
-  @required_fields_update [:cpf, :name, :email, :phone_number, :birth_date]
+  @required_fields_update [:name, :email, :phone_number, :birth_date]
   @unique_fields [:email, :cpf, :phone_number]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -68,7 +68,6 @@ defmodule BatchEcommerce.Accounts.User do
     )
     |> cast_assoc(:addresses)
     |> unique_constraint(:email)
-    |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)
   end
 

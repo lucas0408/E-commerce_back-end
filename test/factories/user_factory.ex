@@ -14,10 +14,10 @@ defmodule BatchEcommerce.Factories.UserFactory do
         %User{
           id: Ecto.UUID.generate(),
           cpf: random_digits_string(11),
-          name: "Arthur Santos",
+          name: sequence(:name, &"Arthur Santos #{&1}"),
           email: sequence(:email, &"arthursantos#{&1}@hotmail.com"),
           phone_number: "119#{random_digits_string(8)}",
-          birth_date: ~D[2004-05-06],
+          birth_date: Date.utc_today() |> Date.shift(year: -18),
           password: password,
           password_hash: Bcrypt.hash_pwd_salt(password),
           addresses: [build(:address)]

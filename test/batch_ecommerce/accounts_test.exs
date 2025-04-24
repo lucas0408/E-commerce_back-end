@@ -30,7 +30,7 @@ defmodule BatchEcommerce.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       address_attrs = params_for(:address)
-      valid_attrs = params_for(:user)
+      valid_attrs = params_for(:user, addresses: [address_attrs])
 
       assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
 
@@ -69,7 +69,7 @@ defmodule BatchEcommerce.AccountsTest do
 
       assert {:ok, %User{} = updated_user} = Accounts.update_user(user, update_attrs)
 
-      assert updated_user.cpf == update_attrs.cpf
+      assert updated_user.cpf == user.cpf
       assert updated_user.name == update_attrs.name
       assert updated_user.email == update_attrs.email
       assert updated_user.phone_number == update_attrs.phone_number

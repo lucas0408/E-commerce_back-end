@@ -6,6 +6,8 @@ defmodule BatchEcommerceWeb.UserControllerTest do
 
   import BatchEcommerce.AccountsFixtures
 
+  import BatchEcommerce.Factory
+
   alias BatchEcommerce.Accounts.{User, Guardian}
 
   @create_attrs %{
@@ -72,36 +74,29 @@ defmodule BatchEcommerceWeb.UserControllerTest do
 
   describe "create user" do
     test "renders user when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/users", user: @create_attrs)
-      assert %{"id" => id} = json_response(conn, 201)["data"]
+      conn = post(conn, ~p"/api/users", user: user_params = params_for(:user))
+      response_data = json_response(conn, 201)["data"]
 
-      conn = get(conn, ~p"/api/users/#{id}")
+      assert response_data["cpf"] == user_params.cpf
+      assert response_data["name"] == user_params.name
+      assert response_data["email"] == user_params.email
+      assert response_data["phone_number"] == user_params.phone_number
+      assert response_data["birth_date"] == Date.to_string(user_params.birth_date)
+      assert length(response_data["addresses"]["data"]) == length(user_params.addresses)
 
-      user = BatchEcommerce.Accounts.get_user(id)
-
-      response_data = json_response(conn, 200)["data"]
-
-      assert response_data["id"] == id
-      assert response_data["cpf"] == "52511111111"
-      assert response_data["name"] == "murilo"
-      assert response_data["email"] == "murilo@hotmail.com"
-      assert response_data["phone_number"] == "11979897989"
-      assert response_data["birth_date"] == "2004-05-06"
-      assert length(response_data["addresses"]["data"]) == length(user.addresses)
-
-      Enum.each(response_data["addresses"]["data"], fn address ->
-        assert Map.has_key?(address, "address")
-        assert Map.has_key?(address, "cep")
-        assert Map.has_key?(address, "uf")
-        assert Map.has_key?(address, "city")
-        assert Map.has_key?(address, "district")
-        assert Map.has_key?(address, "complement")
-        assert Map.has_key?(address, "home_number")
+      Enum.each(Enum.zip(response_data["addresses"]["data"], user_params.addresses), fn {address_response, address_params} ->
+        assert address_response["address"] == address_params.address
+        assert address_response["cep"] == address_params.cep
+        assert address_response["uf"] == address_params.uf
+        assert address_response["city"] == address_params.city
+        assert address_response["district"] == address_params.district
+        assert address_response["complement"] == address_params.complement
+        assert address_response["home_number"] == address_params.home_number
       end)
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/users", user: @invalid_attrs)
+      conn = post(conn, ~p"/api/users", user: invalid_params_for(:user, [:cpf, :email, :password]))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -109,35 +104,44 @@ defmodule BatchEcommerceWeb.UserControllerTest do
   describe "update user" do
     setup [:create_session]
 
-    test "renders user when data is valid", %{conn: conn, user: %User{id: id} = user} do
-      conn = put(conn, ~p"/api/users/#{user}", user: @update_attrs)
-      assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
-      conn = get(conn, ~p"/api/users/#{id}")
-
+    test "renders user when data is valid", %{conn: conn, user: user} do
+      conn = put(conn, ~p"/api/users/#{user}", user: update_params = params_for(:user))
       response_data = json_response(conn, 200)["data"]
 
-      assert response_data["id"] == id
-      assert response_data["cpf"] == "52511111111"
-      assert response_data["name"] == "murilo updated"
-      assert response_data["email"] == "murilo@hotmail.com"
-      assert response_data["phone_number"] == "11979897989"
-      assert response_data["birth_date"] == "2005-05-06"
-      assert length(response_data["addresses"]["data"]) == length(user.addresses)
+      assert response_data["id"] == user.id
+      assert response_data["cpf"] == user.cpf
+      assert response_data["name"] == update_params.name
+      assert response_data["name"] != user.name
+      assert response_data["email"] == update_params.email
+      assert response_data["email"] != user.email
+      assert response_data["phone_number"] == update_params.phone_number
+      assert response_data["phone_number"] != user.phone_number
+      assert response_data["birth_date"] == Date.to_string(update_params.birth_date)
+      assert response_data["birth_date"] == Date.to_string(user.birth_date)
 
-      Enum.each(response_data["addresses"]["data"], fn address ->
-        assert Map.has_key?(address, "address")
-        assert Map.has_key?(address, "cep")
-        assert Map.has_key?(address, "uf")
-        assert Map.has_key?(address, "city")
-        assert Map.has_key?(address, "district")
-        assert Map.has_key?(address, "complement")
-        assert Map.has_key?(address, "home_number")
+      Enum.each(Enum.zip(response_data["addresses"]["data"], update_params.addresses), fn {address_response, address_params} ->
+        assert address_response["address"] == address_params.address
+        assert address_response["cep"] == address_params.cep
+        assert address_response["uf"] == address_params.uf
+        assert address_response["city"] == address_params.city
+        assert address_response["district"] == address_params.district
+        assert address_response["complement"] == address_params.complement
+        assert address_response["home_number"] == address_params.home_number
+      end)
+
+      Enum.each(Enum.zip(response_data["addresses"]["data"], user.addresses), fn {address_response, address_params} ->
+        assert address_response["address"] != address_params.address
+        assert address_response["cep"] != address_params.cep
+        assert address_response["uf"] != address_params.uf
+        assert address_response["city"] != address_params.city
+        assert address_response["district"] != address_params.district
+        assert address_response["complement"] != address_params.complement
+        assert address_response["home_number"] != address_params.home_number
       end)
     end
 
     test "renders errors when data is invalid", %{conn: conn, user: user} do
-      conn = put(conn, ~p"/api/users/#{user}", user: @invalid_attrs)
+      conn = put(conn, ~p"/api/users/#{user}", user: invalid_params_for(:user, [:cpf, :email, :password]))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -161,47 +165,9 @@ defmodule BatchEcommerceWeb.UserControllerTest do
     end
 
     test "lists all users when authenticated", %{conn: conn} do
-      user_1 =
-        user_fixture(%{
-          cpf: "52511111112",
-          name: "murilo_1",
-          email: "murilo_1@hotmail.com",
-          phone_number: "11979897982",
-          birth_date: "2004-05-06",
-          password: "password_1",
-          addresses: [
-            %{
-              address: "rua elixir_1",
-              cep: "09071001",
-              uf: "PE",
-              city: "cidade java_1",
-              district: "vila programação_1",
-              complement: "casa_1",
-              home_number: "3214"
-            }
-          ]
-        })
+      user_1 = insert(:user)
 
-      user_2 =
-        user_fixture(%{
-          cpf: "52511111113",
-          name: "lucas",
-          email: "lucas@hotmail.com",
-          phone_number: "11979897983",
-          birth_date: "2004-05-06",
-          password: "password_2",
-          addresses: [
-            %{
-              address: "rua elixir_2",
-              cep: "09071003",
-              uf: "PB",
-              city: "cidade java_2",
-              district: "vila programação_2",
-              complement: "casa_2",
-              home_number: "3215"
-            }
-          ]
-        })
+      user_2 = insert(:user)
 
       conn = Guardian.Plug.sign_in(conn, user_1)
       {:ok, token, _claims} = Guardian.encode_and_sign(user_1)
@@ -234,7 +200,7 @@ defmodule BatchEcommerceWeb.UserControllerTest do
   end
 
   defp create_session(%{conn: conn}) do
-    user = user_fixture()
+    user = insert(:user)
     conn = Guardian.Plug.sign_in(conn, user)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
     %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}

@@ -140,7 +140,7 @@ defmodule BatchEcommerce.Accounts do
 
   def companies_preload(companies) do
     companies
-    |> Repo.preload(:addresses) |> Repo.preload(:products)
+    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories])
   end
 
   @doc """

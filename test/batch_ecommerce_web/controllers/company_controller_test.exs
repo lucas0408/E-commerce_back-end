@@ -7,45 +7,6 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
 
   alias BatchEcommerce.Accounts.{Company, Guardian}
 
-  @create_attrs %{
-    cnpj: "11111111111111",
-    email: "murilo@hotmail.com",
-    name: "some name",
-    phone_number: "11979897989",
-    user_id: nil,
-    addresses: [
-      %{
-        address: "rua elixir",
-        cep: "09071000",
-        uf: "SP",
-        city: "cidade java",
-        district: "vila programação",
-        complement: "casa",
-        home_number: "321"
-      }
-    ]
-  }
-
-  @update_attrs %{
-    cnpj: "11111111111111",
-    email: "updateemail@hotmail.com",
-    name: "some update name",
-    phone_number: "11979897989",
-    user_id: nil,
-    addresses: [
-      %{
-        address: "some update address",
-        cep: "09071000",
-        uf: "SP",
-        city: "some update city",
-        district: "vila programação",
-        complement: "casa",
-        home_number: "321"
-      }
-    ]
-  }
-  @invalid_attrs %{name: nil, cnpj: nil, email: nil, phone_number: nil}
-
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
@@ -151,7 +112,7 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
   end
 
   defp create_secssion_company(%{conn: conn}) do
-    user = user_fixture()
+    user = insert(:user)
     conn = Guardian.Plug.sign_in(conn, user)
     company = insert(:company, user_id: user.id)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
@@ -160,7 +121,7 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
   end
 
   defp create_session(%{conn: conn}) do
-    user = user_fixture()
+    user = insert(:user)
     conn = Guardian.Plug.sign_in(conn, user)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
     %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}

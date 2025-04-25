@@ -7,6 +7,7 @@ defmodule BatchEcommerceWeb.CompanyJSON do
   Renders a list of companies.
   """
   def index(%{companies: companies}) do
+    IO.inspect(companies)
     %{data: for(company <- companies, do: data(company))}
   end
 

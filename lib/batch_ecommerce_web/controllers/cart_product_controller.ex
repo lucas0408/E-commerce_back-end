@@ -14,6 +14,26 @@ defmodule BatchEcommerceWeb.CartProductController do
     |> render(:index, cart_products: cart_products)
   end
 
+  def show(conn, %{"id" => id}) do
+    case ShoppingCart.get_cart_product(id) do
+      %CartProduct{} = product ->
+        conn
+        |> put_status(:ok)
+        |> render(:show, product: product)
+
+      nil ->
+        {:error, :not_found}
+    end
+  end
+
+  def get_by_user(conn, %{"user_id" => user_id}) do
+    cart_products = ShoppingCart.get_cart_user(user_id)
+    
+    conn
+    |> put_status(:ok)
+    |> render(:index, cart_products: cart_products)
+  end
+
   def create(conn, %{"cart_product" => cart_product_params}) do
     with {:ok, %CartProduct{} = cart_product} <- ShoppingCart.create_cart_prodcut(conn.private.guardian_default_resource.id, cart_product_params) do
       conn
@@ -21,8 +41,8 @@ defmodule BatchEcommerceWeb.CartProductController do
       |> put_resp_header("location", ~p"/api/cart_products/#{cart_product}")
       |> render(:show, cart_product: cart_product)
     else
-      nil -> {:error, :not_found}
       {:error, %Ecto.Changeset{} = changeset} -> {:error, changeset}
+      error -> error
     end
   end
 

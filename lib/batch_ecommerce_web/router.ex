@@ -30,6 +30,7 @@ defmodule BatchEcommerceWeb.Router do
     resources "/products", ProductController, except: [:index, :show, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :index, :edit]
     resources "/cart_products", CartProductController 
+    get "/cart_products/user/:user_id", CartProductController, :get_by_user
     resources "/orders", OrderController, only: [:create, :show, :index]
     resources "/companies", CompanyController
   end

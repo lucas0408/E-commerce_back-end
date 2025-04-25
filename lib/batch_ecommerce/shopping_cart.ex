@@ -15,7 +15,7 @@ defmodule BatchEcommerce.ShoppingCart do
     Repo.all(query)
   end
 
-  def create_cart_prodcut(id, cart_item_params) do
+  def create_cart_prodcut(user_id, cart_item_params) do
     case Map.get(cart_item_params, "product_id") do
       nil ->
         {:error, :not_found}   
@@ -31,7 +31,7 @@ defmodule BatchEcommerce.ShoppingCart do
         attrs = %{
           quantity: quantity,
           price_when_carted: price_when_carted,
-          user_id: id,
+          user_id: user_id,
           product_id: product.id
         }
 

@@ -9,11 +9,9 @@ defmodule BatchEcommerce.Repo.Migrations.CreateProducts do
       add :image_url, :string
       add :description, :string
       add :company_id, references(:companies, on_delete: :delete_all)
-      add :category_id, references(:categories)
 
       timestamps(type: :utc_datetime)
     end
-
-    create index(:products, [:category_id])
+    
   end
 end

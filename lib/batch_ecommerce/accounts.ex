@@ -138,7 +138,7 @@ defmodule BatchEcommerce.Accounts do
     Repo.all(Company) |> companies_preload()
   end
 
-  defp companies_preload(companies) do
+  def companies_preload(companies) do
     companies
     |> Repo.preload(:addresses) |> Repo.preload(:products)
   end
@@ -177,7 +177,7 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.insert()
     |> case do
       {:ok, company} ->
-        {:ok, Repo.preload(company, :addresses)}
+        {:ok, companies_preload(company)}
 
       {:error, changeset} ->
         {:error, changeset}
@@ -207,7 +207,7 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.update()
     |> case do
       {:ok, company_updated} ->
-        {:ok, Repo.preload(company_updated, :addresses)}
+        {:ok, companies_preload(company_updated)}
 
       {:error, changeset} ->
         {:error, changeset}

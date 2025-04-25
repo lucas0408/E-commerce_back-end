@@ -5,60 +5,67 @@ defmodule BatchEcommerce.CatalogTest do
 
   use BatchEcommerce.DataCase, async: true
 
+  import BatchEcommerce.Factory
+
   alias BatchEcommerce.Catalog
   alias BatchEcommerce.Catalog.{Product, Category}
-  import BatchEcommerce.CatalogFixtures
 
   describe "categories" do
-    @invalid_attrs %{type: nil}
 
     test "list_categories/0 returns all categories" do
-      category = category_fixture()
-      assert Catalog.list_categories() == [category]
+      inserted_categories = insert_list(3, :category)
+      category_list = Catalog.list_categories()
+
+      assert inserted_categories == category_list
     end
 
     test "get_category/1 returns the category with given id" do
-      category = category_fixture()
+      category = insert(:category)
 
-      assert %Category{} = category_found = Catalog.get_category(category.id)
-      assert category_found == category
+      found_category = Catalog.get_category(category.id)
+
+      assert category = found_category
     end
 
     test "create_category/1 with valid data creates a category" do
-      valid_attrs = %{type: "roupas"}
+      valid_attrs = params_for(:category)
 
       assert {:ok, %Category{} = category} = Catalog.create_category(valid_attrs)
-      assert category.type == "roupas"
+      
+      assert category.type == valid_attrs.type
     end
 
     test "create_category/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Catalog.create_category(@invalid_attrs)
+      invalid_attrs = invalid_params_for(:category, [:type])
+      assert {:error, %Ecto.Changeset{}} = Catalog.create_category(invalid_attrs)
     end
 
     test "update_category/2 with valid data updates the category" do
-      category = category_fixture()
-      update_attrs = %{type: "ferramentas"}
+      update_attrs = params_for(:category)
+      category = insert(:category)
 
       assert {:ok, %Category{} = category} = Catalog.update_category(category, update_attrs)
-      assert category.type == "ferramentas"
+
+      assert category.type == update_attrs.type
     end
 
     test "update_category/2 with invalid data returns error changeset" do
-      category = category_fixture()
+      invalid_attrs = invalid_params_for(:category, [:type])
+      category = insert(:category)
 
-      assert {:error, %Ecto.Changeset{}} = Catalog.update_category(category, @invalid_attrs)
+      assert {:error, %Ecto.Changeset{}} = Catalog.update_category(category, invalid_attrs)
       assert category == Catalog.get_category(category.id)
     end
 
     test "delete_category/1 deletes the category" do
-      category = category_fixture()
+      category = insert(:category)
 
       assert {:ok, %Category{}} = Catalog.delete_category(category)
       assert Catalog.get_category(category.id) == nil
     end
 
     test "change_category/1 returns a category changeset" do
-      category = category_fixture()
+      category = insert(:category)
       assert %Ecto.Changeset{} = Catalog.change_category(category)
     end
   end
@@ -66,146 +73,138 @@ defmodule BatchEcommerce.CatalogTest do
   describe "products" do
     alias BatchEcommerce.Catalog.Product
 
-    import BatchEcommerce.CatalogFixtures
-
-    @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, description: nil}
-
     test "list_products/0 returns all products" do
-      product = product_fixture_assoc(%{}, %{type: "roupas"})
+      list_products = insert_list(5, :product)
 
-      products = Catalog.list_products()
-      # IO.inspect(products)
+      assert list_products = Catalog.list_products()
     end
 
     test "get_product/1 returns the product with given id" do
-      product = product_fixture()
-      assert %Product{} = product_found = Catalog.get_product(product.id)
-      assert product_found == product
+      product = insert(:product)
+      found_product = Catalog.get_product(product.id)
+
+      assert product == found_product
     end
 
     test "create_product/1 with valid data creates a product" do
-      valid_attrs = %{
-        name: "some name",
-        price: "120.5",
-        stock_quantity: 42,
-        description: "some description"
-      }
-
+      
+      valid_attrs = params_for(:product)
+      
+      valid_attrs = %{valid_attrs | categories: []}
+      
       assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
-      assert product.name == "some name"
-      assert product.price == Decimal.new("120.5")
-      assert product.stock_quantity == 42
-      assert product.description == "some description"
+      
+      get_product = Catalog.get_product(product.id)
+      
+      assert product.name == valid_attrs.name
+      assert product.price == Decimal.new("#{valid_attrs.price}")
+      assert product.stock_quantity == valid_attrs.stock_quantity
+      assert product.description == valid_attrs.description
+      
+      product.categories == []
     end
 
     test "create_product/1 with invalid data returns error changeset" do
-      assert {:error, %Ecto.Changeset{}} = Catalog.create_product(@invalid_attrs)
+      invalid_params = invalid_params_for(:product, [:name, :price, :stock_quantity, :description, :company_id])
+      
+      assert {:error, %Ecto.Changeset{}} = Catalog.create_product(invalid_params)
     end
 
-    test "update_product/2 with valid data updates the product" do
-      product = product_fixture()
+    test "update_product/2 with valid data update the product" do
+      valid_attrs = params_for(:product)
+      
+      valid_attrs = %{valid_attrs | categories: []}
+      
+      assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
 
-      update_attrs = %{
-        name: "some updated name",
-        price: "456.7",
-        stock_quantity: 43
-      }
+      update_attrs = params_for(:product)
 
-      assert {:ok, %Product{} = product} = Catalog.update_product(product, update_attrs)
-      assert product.name == "some updated name"
-      assert product.price == Decimal.new("456.7")
-      assert product.stock_quantity == 43
+      assert {:ok, %Product{} = update_product} = Catalog.update_product(product, update_attrs)
+
+      assert update_product.name == update_attrs.name
+      assert update_product.price == Decimal.new("#{update_attrs.price}")
+      assert update_product.stock_quantity == update_attrs.stock_quantity
+      assert update_product.description == update_attrs.description
+      
+      update_product.categories == []
+
+      assert update_product.name != product.name
     end
 
     test "update_product/2 with invalid data returns error changeset" do
-      product = product_fixture()
-      assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, @invalid_attrs)
+      invalid_attrs = invalid_params_for(:product, [:name, :price, :stock_quantity, :description, :company_id])
+      product = insert(:product)
+
+      assert {:error, %Ecto.Changeset{}} = Catalog.update_product(product, invalid_attrs)
       assert product == Catalog.get_product(product.id)
     end
 
     test "delete_product/1 deletes the product" do
-      product = product_fixture()
+      product = insert(:product)
       assert {:ok, %Product{}} = Catalog.delete_product(product)
       assert Catalog.get_product(product.id) == nil
     end
 
     test "change_product/1 returns a product changeset" do
-      product = product_fixture()
+      product = insert(:product)
       assert %Ecto.Changeset{} = Catalog.change_product(product)
     end
   end
 
   describe "products with category associated" do
-    setup [:create_categories]
 
     test "get product returns the product with given id and preloaded category", %{} do
-      product = product_fixture_assoc()
+      product = insert(:product)
       assert %Product{} = product_found = Catalog.get_product(product.id)
-      assert product_found == product
+      assert product_found.categories == product.categories
     end
 
-    test "create product with categories associated", %{
-      categories: categories
-    } do
-      category_ids = Enum.map(categories, & &1.id)
-
-      valid_attrs = %{
-        name: "some name",
-        price: "120.5",
-        stock_quantity: 42,
-        category_ids: category_ids,
-        description: "some description"
-      }
-
-      assert {:ok, %Product{} = product} = Catalog.create_product(valid_attrs)
-      assert product.name == "some name"
-      assert product.price == Decimal.new("120.5")
-      assert product.stock_quantity == 42
-
-      assert product.categories ==
-               Enum.map(product.categories, fn category ->
-                 %Category{} = category_return = Catalog.get_category(category.id)
-                 category_return
-               end)
+    test "create product with categories associated" do
+      valid_attrs = params_for(:product)
+      category = insert(:category)
+      category = Catalog.get_category(category.id)
+      
+      valid_attrs = %{valid_attrs | categories: [category.id]}
+      
+      assert {:ok, %Product{} = product} = Catalog.create_product(Map.new(valid_attrs, fn {key, val} -> {Atom.to_string(key), val} end))
+      
+      get_product = Catalog.get_product(product.id)
+      
+      assert product.name == valid_attrs.name
+      assert product.price == Decimal.new("#{valid_attrs.price}")
+      assert product.stock_quantity == valid_attrs.stock_quantity
+      assert product.description == valid_attrs.description
+      
+      [created_category] = product.categories
+      assert created_category.id == category.id
+      assert created_category.type == category.type
     end
 
-    test "update product with categories associated", %{
-      categories: categories
-    } do
-      category_ids = Enum.map(categories, & &1.id)
+    test "update product with categories associated" do
+      categories = insert_list(2, :category)
 
-      update_attrs = %{
-        name: "some updated name",
-        price: "456.7",
-        stock_quantity: 43,
-        category_ids: category_ids
-      }
+      category_ids = Enum.map(categories, fn category -> category.id end)
 
-      product_assoc = product_fixture_assoc()
+      update_attrs = params_for(:product)
 
-      assert {:ok, %Product{} = product} = Catalog.update_product(product_assoc, update_attrs)
-      assert product.name == "some updated name"
-      assert product.price == Decimal.new("456.7")
-      assert product.stock_quantity == 43
+      update_attrs_product = %{update_attrs | categories: category_ids}
 
-      assert product.categories ==
-               Enum.map(product.categories, fn category ->
-                 %Category{} = category_return = Catalog.get_category(category.id)
-                 category_return
-               end)
+      product = insert(:product)
+
+      assert {:ok, %Product{} = update_product} = Catalog.update_product(product, Map.new(update_attrs_product, fn {key, val} -> {Atom.to_string(key), val} end))
+      assert update_product.name == update_attrs.name
+      assert update_product.price == Decimal.from_float(update_attrs.price)
+      assert update_product.stock_quantity == update_attrs.stock_quantity
+
+      assert product.categories != update_product.categories
+
+      assert update_product.categories == categories
     end
 
     test "delete_product/1 deletes the product" do
-      product = product_fixture_assoc()
+      product = insert(:product)
       assert {:ok, %Product{}} = Catalog.delete_product(product)
       assert Catalog.get_product(product.id) == nil
     end
-  end
-
-  defp create_categories(_) do
-    category_1 = category_fixture(%{type: "roupas"})
-    category_2 = category_fixture(%{type: "sapatos"})
-
-    %{categories: [category_1, category_2]}
   end
 end

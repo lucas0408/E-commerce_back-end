@@ -14,6 +14,7 @@ defmodule BatchEcommerce.Factories.CompanyFactory do
         %Company{
           name: "Loja Arthur Santos",
           cnpj: random_digits_string(14),
+          name: sequence(:name, &"company_test_#{&1}"),
           email: sequence(:email, &"arthursantosloja#{&1}@hotmail.com"),
           phone_number: "119#{random_digits_string(8)}",
           user_id: user.id,

@@ -83,15 +83,13 @@ defmodule BatchEcommerce.ShoppingCart do
         end)
   end
 
-  def prune_cart_items(cart_products) do
-    [first_cart_products | _rest] = cart_products
-
+  def prune_cart_items(user_id) do
     {_, _} =
       Repo.delete_all(
-        from(i in CartProduct, where: i.user_id == ^first_cart_products.user_id)
+        from(i in CartProduct, where: i.user_id == ^user_id)
       )
 
-    {:ok}
+    {:ok, "any"}
   end
 
   def delete_cart_product(%CartProduct{} = cart_product) do

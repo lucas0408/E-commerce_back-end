@@ -12,15 +12,12 @@ defmodule BatchEcommerce.ShoppingCartTest do
 
 
     test "prune_cart_items/1 delete all cart_items from cart" do
-
         user_id = insert(:user).id
-
         list_cart_itens = insert_list(5, :cart_product, [user_id: user_id]) |> normalize_cart_products()
 
         assert list_cart_itens == ShoppingCart.get_cart_user(user_id) |> normalize_cart_products()
 
-        ShoppingCart.prune_cart_items(list_cart_itens)
-
+        ShoppingCart.prune_cart_items(user_id)
         assert ShoppingCart.get_cart_user(user_id) == []
     end
 
@@ -75,7 +72,6 @@ defmodule BatchEcommerce.ShoppingCartTest do
     end
 
     test "get_cart_product/1 get cart by id" do
-
         cart_product = insert(:cart_product)
 
         get_cart_product = ShoppingCart.get_cart_product(cart_product.id)

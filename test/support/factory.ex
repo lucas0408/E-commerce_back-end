@@ -7,6 +7,7 @@ defmodule BatchEcommerce.Factory do
   use BatchEcommerce.Factories.ProductFactory
   use BatchEcommerce.Factories.UserFactory
   use BatchEcommerce.Factories.CartProductFactory
+  use BatchEcommerce.Factories.OrderFactory
 
   def invalid_params_for(factory, fields) when factory == :product do
     params_for_product()

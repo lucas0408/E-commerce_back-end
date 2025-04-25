@@ -1,6 +1,7 @@
 defmodule BatchEcommerceWeb.CompanyJSON do
   alias BatchEcommerce.Accounts.Company
   alias BatchEcommerceWeb.AddressJSON
+  alias BatchEcommerceWeb.ProductJSON
 
   @doc """
   Renders a list of companies.
@@ -23,6 +24,8 @@ defmodule BatchEcommerceWeb.CompanyJSON do
       name: company.name,
       email: company.email,
       phone_number: company.phone_number,
+      user_id: company.user_id,
+      products: ProductJSON.index(%{products: company.products}),
       addresses: AddressJSON.index(%{addresses: company.addresses})
     }
   end

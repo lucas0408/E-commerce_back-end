@@ -2,6 +2,8 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
   use BatchEcommerceWeb.ConnCase
 
   import BatchEcommerce.AccountsFixtures
+  
+  import BatchEcommerce.Factory
 
   alias BatchEcommerce.Accounts.{Company, Guardian}
 
@@ -53,7 +55,25 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
 
     test "lists all companies", %{conn: conn, company: company} do
       conn = get(conn, ~p"/api/companies")
-      assert json_response(conn, 200)["data"] |> Enum.at(0) |> Map.get("id") == company.id
+      response_data = json_response(conn, 200)["data"] |> Enum.at(0)
+      IO.inspect(response_data)
+      assert response_data["id"] == company.id
+      assert response_data["name"] == company.name
+      assert response_data["cnpj"] == company.cnpj
+      assert response_data["email"] == company.email
+      assert response_data["phone_number"] == company.phone_number
+      assert response_data["user_id"] == company.user_id
+      assert length(response_data["addresses"]["data"]) == length(company.addresses)
+
+      Enum.each(Enum.zip(response_data["addresses"]["data"], company.addresses), fn {address_response, address_params} ->
+        assert address_response["address"] == address_params.address
+        assert address_response["cep"] == address_params.cep
+        assert address_response["uf"] == address_params.uf
+        assert address_response["city"] == address_params.city
+        assert address_response["district"] == address_params.district
+        assert address_response["complement"] == address_params.complement
+        assert address_response["home_number"] == address_params.home_number
+      end)
     end
   end
 
@@ -150,14 +170,11 @@ defmodule BatchEcommerceWeb.CompanyControllerTest do
   defp create_secssion_company(%{conn: conn}) do
     user = user_fixture()
     conn = Guardian.Plug.sign_in(conn, user)
-    company = company_fixture(user.id)
+    IO.inspect(user.id)
+    company = insert(:company, user_id: user.id)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
 
-    %{
-      conn: put_req_header(conn, "authorization", "Bearer #{token}"),
-      company: company,
-      user: user
-    }
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), company: company}
   end
 
   defp create_session(%{conn: conn}) do

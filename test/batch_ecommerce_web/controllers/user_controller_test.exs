@@ -4,60 +4,9 @@ defmodule BatchEcommerceWeb.UserControllerTest do
   """
   use BatchEcommerceWeb.ConnCase, async: true
 
-  import BatchEcommerce.AccountsFixtures
-
   import BatchEcommerce.Factory
 
   alias BatchEcommerce.Accounts.{User, Guardian}
-
-  @create_attrs %{
-    cpf: "52511111111",
-    name: "murilo",
-    email: "murilo@hotmail.com",
-    phone_number: "11979897989",
-    birth_date: "2004-05-06",
-    password: "password",
-    addresses: [
-      %{
-        address: "rua elixir",
-        cep: "09071000",
-        uf: "SP",
-        city: "cidade java",
-        district: "vila programação",
-        complement: "casa",
-        home_number: "321"
-      }
-    ]
-  }
-
-  @update_attrs %{
-    cpf: "52511111111",
-    name: "murilo updated",
-    email: "murilo@hotmail.com",
-    phone_number: "11979897989",
-    birth_date: "2005-05-06",
-    addresses: [
-      %{
-        address: "rua python",
-        cep: "09071001",
-        uf: "MG",
-        city: "cidade ruby",
-        district: "vila destruição",
-        complement: "apartamento",
-        home_number: "123"
-      }
-    ]
-  }
-
-  @invalid_attrs %{
-    cpf: nil,
-    name: nil,
-    email: nil,
-    phone_number: nil,
-    birth_date: nil,
-    password: nil,
-    addresses: [nil]
-  }
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -68,7 +17,24 @@ defmodule BatchEcommerceWeb.UserControllerTest do
 
     test "lists all users", %{conn: conn, user: user} do
       conn = get(conn, ~p"/api/users")
-      assert json_response(conn, 200)["data"] |> Enum.at(0) |> Map.get("id") == user.id
+      response_data = json_response(conn, 200)["data"] |> Enum.at(0)
+      assert response_data["cpf"] == user.cpf
+      assert response_data["name"] == user.name
+      assert response_data["email"] == user.email
+      assert response_data["phone_number"] == user.phone_number
+      assert response_data["birth_date"] == Date.to_string(user.birth_date)
+      assert length(response_data["addresses"]["data"]) == length(user.addresses)
+
+      Enum.each(Enum.zip(response_data["addresses"]["data"], user.addresses), fn {address_response, address_params} ->
+        assert address_response["address"] == address_params.address
+        assert address_response["cep"] == address_params.cep
+        assert address_response["uf"] == address_params.uf
+        assert address_response["city"] == address_params.city
+        assert address_response["district"] == address_params.district
+        assert address_response["complement"] == address_params.complement
+        assert address_response["home_number"] == address_params.home_number
+      end)
+      
     end
   end
 
@@ -173,29 +139,43 @@ defmodule BatchEcommerceWeb.UserControllerTest do
       {:ok, token, _claims} = Guardian.encode_and_sign(user_1)
       conn = get(conn, ~p"/api/users", %{"Authorization" => "Bearer #{token}"})
 
-      assert json_response(conn, 200)["data"] |> Enum.at(0) |> Map.get("id") == user_1.id
+      response_data_user1 =  json_response(conn, 200)["data"] |> Enum.at(0)
 
-      assert json_response(conn, 200)["data"] |> Enum.at(1) |> Map.get("id") == user_2.id
+      response_data_user2 = json_response(conn, 200)["data"] |> Enum.at(1)
 
-      # TODO found a better way to do this test in future
-      # assert response_data_2["id"] == user_1.id
-      # assert response_data_2["cpf"] == "52511111113"
-      # assert response_data_2["name"] == "lucas"
-      # assert response_data_2["email"] == "lucas@hotmail.com"
-      # assert response_data_2["phone_number"] == "11979897983"
-      # assert response_data_2["birth_date"] == "2004-05-06"
-      # assert response_data_2["password"] == "password_2"
-      # assert length(response_data_2["addresses"]["data"]) == length(user_2.addresses)
+      assert response_data_user1["cpf"] == user_1.cpf
+      assert response_data_user1["name"] == user_1.name
+      assert response_data_user1["email"] == user_1.email
+      assert response_data_user1["phone_number"] == user_1.phone_number
+      assert response_data_user1["birth_date"] == Date.to_string(user_1.birth_date)
+      assert length(response_data_user1["addresses"]["data"]) == length(user_1.addresses)
 
-      # Enum.each(response_data_2["addresses"]["data"], fn address ->
-      #   assert Map.has_key?(address, "address")
-      #   assert Map.has_key?(address, "cep")
-      #   assert Map.has_key?(address, "uf")
-      #   assert Map.has_key?(address, "city")
-      #   assert Map.has_key?(address, "district")
-      #   assert Map.has_key?(address, "complement")
-      #   assert Map.has_key?(address, "home_number")
-      # end)
+      Enum.each(Enum.zip(response_data_user1["addresses"]["data"], user_1.addresses), fn {address_response, address_params} ->
+        assert address_response["address"] == address_params.address
+        assert address_response["cep"] == address_params.cep
+        assert address_response["uf"] == address_params.uf
+        assert address_response["city"] == address_params.city
+        assert address_response["district"] == address_params.district
+        assert address_response["complement"] == address_params.complement
+        assert address_response["home_number"] == address_params.home_number
+      end)
+
+      assert response_data_user2["cpf"] == user_2.cpf
+      assert response_data_user2["name"] == user_2.name
+      assert response_data_user2["email"] == user_2.email
+      assert response_data_user2["phone_number"] == user_2.phone_number
+      assert response_data_user2["birth_date"] == Date.to_string(user_2.birth_date)
+      assert length(response_data_user2["addresses"]["data"]) == length(user_2.addresses)
+
+      Enum.each(Enum.zip(response_data_user2["addresses"]["data"], user_2.addresses), fn {address_response, address_params} ->
+        assert address_response["address"] == address_params.address
+        assert address_response["cep"] == address_params.cep
+        assert address_response["uf"] == address_params.uf
+        assert address_response["city"] == address_params.city
+        assert address_response["district"] == address_params.district
+        assert address_response["complement"] == address_params.complement
+        assert address_response["home_number"] == address_params.home_number
+      end)
     end
   end
 

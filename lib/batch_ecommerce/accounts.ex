@@ -135,7 +135,12 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def list_companies do
-    Repo.all(Company) |> Repo.preload(:addresses)
+    Repo.all(Company) |> companies_preload()
+  end
+
+  defp companies_preload(companies) do
+    companies
+    |> Repo.preload(:addresses) |> Repo.preload(:products)
   end
 
   @doc """
@@ -152,7 +157,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_company(id), do: Repo.get(Company, id) |> Repo.preload(:addresses)
+  def get_company(id), do: Repo.get(Company, id) |> companies_preload()
 
   @doc """
   Creates a company.

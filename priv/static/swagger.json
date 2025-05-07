@@ -1,0 +1,1062 @@
+{
+  "info": {
+    "version": "1.0",
+    "title": "BatchEcommerce"
+  },
+  "host": "localhost:4000",
+  "definitions": {
+    "ProductData": {
+      "properties": {
+        "categories": {
+          "$ref": "#/definitions/CategoryResponse"
+        },
+        "company_id": {
+          "description": "ID da empresa",
+          "type": "integer"
+        },
+        "description": {
+          "description": "Descrição do produto",
+          "type": "string"
+        },
+        "id": {
+          "description": "ID do produto",
+          "type": "integer"
+        },
+        "image_url": {
+          "description": "URL da imagem do produto",
+          "type": "string"
+        },
+        "name": {
+          "description": "Nome do produto",
+          "type": "string"
+        },
+        "price": {
+          "description": "Preço do produto",
+          "format": "float",
+          "type": "number"
+        },
+        "stock_quantity": {
+          "description": "Quantidade em estoque",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "CategoryResponse": {
+      "example": {
+        "data": [
+          {
+            "id": 1,
+            "type": "Eletrônicos"
+          },
+          {
+            "id": 2,
+            "type": "Smartphones"
+          }
+        ]
+      },
+      "properties": {
+        "data": {
+          "items": {
+            "$ref": "#/definitions/CategoryData"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "CategoryData": {
+      "properties": {
+        "id": {
+          "description": "ID da categoria",
+          "type": "integer"
+        },
+        "type": {
+          "description": "Tipo da categoria",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ProductParams": {
+      "description": "Parâmetros para criar ou atualizar um produto",
+      "example": {
+        "product": {
+          "categories": [
+            1,
+            2
+          ],
+          "company_id": 9,
+          "description": "teste_descrição",
+          "image_url": "http://localhost:9000/batch-bucket/43985685-289d-4837-9a43-2dd172eb9a77-product_image.jpg",
+          "name": "nome_produto_teste",
+          "price": 12.3,
+          "stock_quantity": 30
+        }
+      },
+      "properties": {
+        "categories": {
+          "description": "IDs das categorias",
+          "items": "integer",
+          "type": "array"
+        },
+        "company_id": {
+          "description": "ID da empresa",
+          "type": "integer"
+        },
+        "description": {
+          "description": "Descrição do produto",
+          "type": "string"
+        },
+        "image_url": {
+          "description": "URL da imagem do produto",
+          "type": "string"
+        },
+        "name": {
+          "description": "Nome do produto",
+          "type": "string"
+        },
+        "price": {
+          "description": "Preço do produto",
+          "format": "float",
+          "type": "number"
+        },
+        "stock_quantity": {
+          "description": "Quantidade em estoque",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stock_quantity",
+        "price",
+        "image_url",
+        "categories",
+        "company_id",
+        "description",
+        "name"
+      ],
+      "title": "Parâmetros do Produto",
+      "type": "object"
+    },
+    "ProductResponse": {
+      "description": "Representação JSON de um produto",
+      "example": {
+        "data": {
+          "categories": {
+            "data": [
+              {
+                "id": 1,
+                "type": "Eletrônicos"
+              },
+              {
+                "id": 2,
+                "type": "Smartphones"
+              }
+            ]
+          },
+          "company_id": 9,
+          "description": "teste_descrição",
+          "id": 1,
+          "image_url": "http://localhost:9000/batch-bucket/43985685-289d-4837-9a43-2dd172eb9a77-product_image.jpg",
+          "name": "nome_produto_teste",
+          "price": 12.3,
+          "stock_quantity": 30
+        }
+      },
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/ProductData"
+        }
+      },
+      "title": "Resposta de Produto",
+      "type": "object"
+    },
+    "ProductsResponse": {
+      "description": "Lista com todos os produtos cadastrados",
+      "example": {
+        "data": [
+          {
+            "categories": {
+              "data": []
+            },
+            "company_id": 2,
+            "description": "teste_descrição",
+            "id": 8,
+            "image_url": "http://localhost:9000/batch-bucket/43985685-289d-4837-9a43-2dd172eb9a77-product_image.jpg",
+            "name": "name_product_test_9",
+            "price": "12.3",
+            "stock_quantity": 30
+          },
+          {
+            "categories": {
+              "data": [
+                {
+                  "id": 1,
+                  "type": "Eletrônicos"
+                }
+              ]
+            },
+            "company_id": 3,
+            "description": "descrição do produto",
+            "id": 9,
+            "image_url": "http://localhost:9000/batch-bucket/outro-produto.jpg",
+            "name": "outro_produto",
+            "price": "99.9",
+            "stock_quantity": 15
+          }
+        ]
+      },
+      "properties": {
+        "data": {
+          "items": {
+            "$ref": "#/definitions/ProductData"
+          },
+          "type": "array"
+        }
+      },
+      "title": "Resposta de Lista de Produtos",
+      "type": "object"
+    },
+    "LoginParams": {
+      "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "password": {
+          "type": "string",
+          "description": "Senha do usuário",
+          "example": "Senha@123"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email do usuário",
+          "example": "joao.silva@exemplo.com"
+        }
+      }
+    },
+    "LoginResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID único do usuário",
+              "example": "6789598c-b26d-446f-bcd7-b4872d664129"
+            },
+            "token": {
+              "type": "string",
+              "description": "Token JWT de autenticação",
+              "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."
+            },
+            "email": {
+              "type": "string",
+              "description": "Email do usuário",
+              "example": "joao.silva@exemplo.com"
+            }
+          }
+        }
+      }
+    },
+    "ErrorCredencial": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "error Invalid credentials",
+          "example": "Invalid credentials"
+        }
+      }
+    },
+    "LogoutResponse": {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string",
+          "description": "Mensagem de sucesso",
+          "example": "Logged out"
+        }
+      }
+    },
+    "UserParams": {
+      "type": "object",
+      "required": [
+        "user"
+      ],
+      "properties": {
+        "user": {
+          "type": "object",
+          "required": [
+            "cpf",
+            "name",
+            "email",
+            "phone_number",
+            "birth_date",
+            "password"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Nome completo do usuário",
+              "example": "João da Silva"
+            },
+            "password": {
+              "type": "string",
+              "description": "Senha do usuário",
+              "example": "Senha@123"
+            },
+            "email": {
+              "type": "string",
+              "description": "Email do usuário",
+              "example": "joao.silva@exemplo.com"
+            },
+            "phone_number": {
+              "type": "string",
+              "description": "Número de telefone",
+              "example": "11987654321"
+            },
+            "addresses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Address"
+              }
+            },
+            "birth_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Data de nascimento",
+              "example": "1990-01-15"
+            },
+            "cpf": {
+              "type": "string",
+              "description": "CPF do usuário",
+              "example": "12345678901"
+            }
+          }
+        }
+      }
+    },
+    "UserCreateResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID único do usuário",
+              "example": "3d33d3e7-dd93-44a6-bf88-f6a4986e762b"
+            },
+            "name": {
+              "type": "string",
+              "description": "Nome completo do usuário",
+              "example": "João da Silva"
+            },
+            "token": {
+              "type": "string",
+              "description": "Token JWT de autenticação",
+              "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."
+            },
+            "email": {
+              "type": "string",
+              "description": "Email do usuário",
+              "example": "joao.silva@exemplo.com"
+            },
+            "phone_number": {
+              "type": "string",
+              "description": "Número de telefone",
+              "example": "11987654321"
+            },
+            "addresses": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/AddressWithId"
+                  }
+                }
+              }
+            },
+            "birth_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Data de nascimento",
+              "example": "1990-01-15"
+            },
+            "cpf": {
+              "type": "string",
+              "description": "CPF do usuário",
+              "example": "12345678901"
+            }
+          }
+        }
+      }
+    },
+    "ErrorList": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "object",
+          "properties": {
+            "email": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Descrição de erro do email",
+                "example": "Already in use"
+              }
+            },
+            "phone_number": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Descrição de erro do email",
+                "example": "Enter a valid phone number"
+              }
+            },
+            "cpf": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Descrição de erro do cpf",
+                "example": "Already in use"
+              }
+            }
+          }
+        }
+      }
+    },
+    "UsersListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      }
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "Address": {
+      "type": "object",
+      "required": [
+        "cep",
+        "uf",
+        "city",
+        "district",
+        "address",
+        "home_number"
+      ],
+      "properties": {
+        "address": {
+          "type": "string",
+          "description": "Logradouro",
+          "example": "Avenida Paulista"
+        },
+        "cep": {
+          "type": "string",
+          "description": "CEP",
+          "example": "01311-000"
+        },
+        "city": {
+          "type": "string",
+          "description": "Cidade",
+          "example": "São Paulo"
+        },
+        "complement": {
+          "type": "string",
+          "description": "Complemento",
+          "example": "Apartamento 123"
+        },
+        "district": {
+          "type": "string",
+          "description": "Bairro",
+          "example": "Bela Vista"
+        },
+        "home_number": {
+          "type": "string",
+          "description": "Número",
+          "example": "1578"
+        },
+        "uf": {
+          "type": "string",
+          "description": "UF",
+          "example": "SP"
+        }
+      }
+    },
+    "AddressWithId": {
+      "type": "object",
+      "required": [
+        "cep",
+        "uf",
+        "city",
+        "district",
+        "address",
+        "home_number"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID do endereço",
+          "example": 4
+        },
+        "address": {
+          "type": "string",
+          "description": "Logradouro",
+          "example": "Avenida Paulista"
+        },
+        "cep": {
+          "type": "string",
+          "description": "CEP",
+          "example": "01311-000"
+        },
+        "city": {
+          "type": "string",
+          "description": "Cidade",
+          "example": "São Paulo"
+        },
+        "complement": {
+          "type": "string",
+          "description": "Complemento",
+          "example": "Apartamento 123"
+        },
+        "district": {
+          "type": "string",
+          "description": "Bairro",
+          "example": "Bela Vista"
+        },
+        "home_number": {
+          "type": "string",
+          "description": "Número",
+          "example": "1578"
+        },
+        "uf": {
+          "type": "string",
+          "description": "UF",
+          "example": "SP"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "required": [
+        "cpf",
+        "name",
+        "email",
+        "phone_number",
+        "birth_date"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "ID único do usuário",
+          "example": "3d33d3e7-dd93-44a6-bf88-f6a4986e762b"
+        },
+        "name": {
+          "type": "string",
+          "description": "Nome completo do usuário",
+          "example": "João da Silva"
+        },
+        "password": {
+          "type": "string",
+          "description": "Senha do usuário (não deve ser retornada nas respostas reais)",
+          "example": "Senha@123"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email do usuário",
+          "example": "joao.silva@exemplo.com"
+        },
+        "phone_number": {
+          "type": "string",
+          "description": "Número de telefone",
+          "example": "11987654321"
+        },
+        "addresses": {
+          "type": "object",
+          "properties": {
+            "data": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/AddressWithId"
+              }
+            }
+          }
+        },
+        "birth_date": {
+          "type": "string",
+          "format": "date",
+          "description": "Data de nascimento",
+          "example": "1990-01-15"
+        },
+        "cpf": {
+          "type": "string",
+          "description": "CPF do usuário",
+          "example": "12345678901"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/login": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Autentica um usuário e retorna um token de acesso",
+        "operationId": "login_user",
+        "parameters": [
+          {
+            "description": "Credenciais do usuário",
+            "in": "body",
+            "name": "credentials",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/LoginParams"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LoginResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/ErrorCredencial"
+            }
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "summary": "Fazer login",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/api/logout": {
+      "post": {
+        "description": "Encerra a sessão do usuário atual",
+        "operationId": "logout_user",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/LogoutResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Fazer logout",
+        "tags": [
+          "Session"
+        ]
+      }
+    },
+    "/api/products": {
+      "get": {
+        "description": "Retorna uma lista com todos os produtos cadastrados",
+        "operationId": "BatchEcommerceWeb.ProductController.index",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProductsResponse"
+            }
+          }
+        },
+        "summary": "Lista todos os produtos",
+        "tags": [
+          "Product"
+        ]
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Cria um novo produto com as informações fornecidas",
+        "operationId": "BatchEcommerceWeb.ProductController.create",
+        "parameters": [
+          {
+            "description": "Parâmetros do produto",
+            "in": "body",
+            "name": "product",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductParams"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/ProductResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Cria um novo produto",
+        "tags": [
+          "Product"
+        ]
+      }
+    },
+    "/api/products/{id}": {
+      "delete": {
+        "description": "Remove permanentemente um produto pelo ID",
+        "operationId": "BatchEcommerceWeb.ProductController.delete",
+        "parameters": [
+          {
+            "description": "ID do produto",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "summary": "Remove um produto",
+        "tags": [
+          "Product"
+        ]
+      },
+      "get": {
+        "description": "Retorna informações detalhadas de um produto específico pelo ID",
+        "operationId": "BatchEcommerceWeb.ProductController.show",
+        "parameters": [
+          {
+            "description": "ID do produto",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProductResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Obtém um produto específico",
+        "tags": [
+          "Product"
+        ]
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Atualiza um produto existente com as informações fornecidas",
+        "operationId": "BatchEcommerceWeb.ProductController.update",
+        "parameters": [
+          {
+            "description": "ID do produto",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "description": "Parâmetros do produto",
+            "in": "body",
+            "name": "product",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ProductParams"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/ProductResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          }
+        },
+        "summary": "Atualiza um produto existente",
+        "tags": [
+          "Product"
+        ]
+      }
+    },
+    "/api/users": {
+      "get": {
+        "description": "Retorna uma lista de todos os usuários cadastrados no sistema",
+        "operationId": "list_users",
+        "parameters": [],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UsersListResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Server Error"
+          }
+        },
+        "summary": "Listar usuários",
+        "tags": [
+          "Users"
+        ]
+      },
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Cria um novo usuário no sistema e retorna os dados com token de autenticação",
+        "operationId": "create_user",
+        "parameters": [
+          {
+            "description": "Dados do usuário",
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserParams"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/UserCreateResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/ErrorList"
+            }
+          }
+        },
+        "summary": "Criar novo usuário",
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/api/users/{id}": {
+      "delete": {
+        "description": "Remove um usuário do sistema",
+        "operationId": "delete_user",
+        "parameters": [
+          {
+            "description": "ID do usuário",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string",
+            "x-example": "6789598c-b26d-446f-bcd7-b4872d664129"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Excluir usuário",
+        "tags": [
+          "Users"
+        ]
+      },
+      "get": {
+        "description": "Retorna todos os dados de um usuário específico",
+        "operationId": "show_user",
+        "parameters": [
+          {
+            "description": "ID do usuário",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string",
+            "x-example": "6789598c-b26d-446f-bcd7-b4872d664129"
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "summary": "Obter detalhes de um usuário",
+        "tags": [
+          "Users"
+        ]
+      },
+      "put": {
+        "consumes": [
+          "application/json"
+        ],
+        "description": "Atualiza os dados de um usuário existente, permitindo modificar qualquer campo exceto o ID",
+        "operationId": "update_user",
+        "parameters": [
+          {
+            "description": "ID do usuário",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "type": "string",
+            "x-example": "6789598c-b26d-446f-bcd7-b4872d664129"
+          },
+          {
+            "description": "Dados do usuário para atualização",
+            "in": "body",
+            "name": "user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserParams"
+            }
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/UserResponse"
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "$ref": "#/definitions/ErrorList"
+            }
+          }
+        },
+        "summary": "Atualizar usuário",
+        "tags": [
+          "Users"
+        ]
+      }
+    }
+  },
+  "swagger": "2.0"
+}

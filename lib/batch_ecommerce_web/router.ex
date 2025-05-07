@@ -35,6 +35,19 @@ defmodule BatchEcommerceWeb.Router do
     resources "/companies", CompanyController
   end
 
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :batch_ecommerce, swagger_file: "swagger.json"
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "BatchEcommerce"
+      }
+    }
+  end
+
   # Enable LiveDashboard and Swoosh mailbox preview in development
   if Application.compile_env(:batch_ecommerce, :dev_routes) do
     # If you want to use the LiveDashboard in production, you should put

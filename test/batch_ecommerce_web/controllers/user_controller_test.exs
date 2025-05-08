@@ -25,6 +25,7 @@ defmodule BatchEcommerceWeb.UserControllerTest do
       assert response_data["birth_date"] == Date.to_string(user.birth_date)
       assert length(response_data["addresses"]["data"]) == length(user.addresses)
 
+
       Enum.each(Enum.zip(response_data["addresses"]["data"], user.addresses), fn {address_response, address_params} ->
         assert address_response["address"] == address_params.address
         assert address_response["cep"] == address_params.cep

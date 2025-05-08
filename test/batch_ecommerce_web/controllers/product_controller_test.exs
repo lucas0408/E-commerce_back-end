@@ -56,6 +56,8 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
       category_ids = Enum.map(categories, fn category -> category.id end)
       product = params_for(:product, [categories: category_ids])
 
+      IO.inspect(product)
+
       conn = post(conn, ~p"/api/products", product: product)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 

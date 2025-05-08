@@ -20,7 +20,6 @@ defmodule BatchEcommerceWeb.UserController do
     response 200, "OK", Schema.ref(:UsersListResponse)
     response 400, "Bad Request"
     response 401, "Unauthorized"
-    response 500, "Server Error"
   end
 
   def index(conn, _params) do

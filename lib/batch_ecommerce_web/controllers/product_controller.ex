@@ -14,6 +14,7 @@ defmodule BatchEcommerceWeb.ProductController do
     produces "application/json"
     
     response 200, "OK", Schema.ref(:ProductsResponse)
+    response 401, "Unauthorized"
   end
 
   swagger_path :create do
@@ -68,7 +69,6 @@ defmodule BatchEcommerceWeb.ProductController do
     
     response 204, "No Content"
     response 401, "Unauthorized"
-    response 403, "Forbidden"
     response 400, "Bad Request"
   end
 

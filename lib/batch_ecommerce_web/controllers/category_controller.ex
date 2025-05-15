@@ -8,7 +8,7 @@ defmodule BatchEcommerceWeb.CategoryController do
 
   def index(conn, _params) do
     categories = Catalog.list_categories()
-
+    
     conn
     |> put_status(:ok)
     |> render(:index, categories: categories)

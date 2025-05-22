@@ -12,6 +12,8 @@ defmodule BatchEcommerce.Order.OrderProduct do
     belongs_to :product, BatchEcommerce.Catalog.Product
 
     timestamps(type: :utc_datetime)
+
+    
   end
 
   @doc false

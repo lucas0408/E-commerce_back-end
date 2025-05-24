@@ -16,10 +16,11 @@ defmodule BatchEcommerceWeb.OrderJSON do
   end
 
   defp data(%Order{} = order) do
+    IO.inspect(order)
 
     %{
       id: order.id,
-      user_id: order.user_id,
+      user: order.user,
       total_price: Decimal.round(order.total_price, 2),
       order_products: order.order_products
     }

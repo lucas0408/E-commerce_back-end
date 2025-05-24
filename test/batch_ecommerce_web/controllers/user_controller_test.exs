@@ -15,9 +15,16 @@ defmodule BatchEcommerceWeb.UserControllerTest do
   describe "index" do
     setup [:create_session]
 
+    test "get user", %{conn: conn, user: user} do
+        id = "c074e250-890c-46d5-ada4-ed8b92a20882"
+        conn = get(conn, ~p"/api/users/#{id}")
+        response_data = json_response(conn, 200)["data"]
+        IO.inspect(response_data)
+    end
+
     test "lists all users", %{conn: conn, user: user} do
-      conn = get(conn, ~p"/api/users")
       response_data = json_response(conn, 200)["data"] |> Enum.at(0)
+      IO.inspect(response_data)
       assert response_data["cpf"] == user.cpf
       assert response_data["name"] == user.name
       assert response_data["email"] == user.email

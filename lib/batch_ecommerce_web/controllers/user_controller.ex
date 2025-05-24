@@ -47,6 +47,7 @@ defmodule BatchEcommerceWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
+    IO.inspect(user_params)
     with {:ok, %User{} = user} <- Accounts.create_user(user_params),
          {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
       conn
@@ -80,6 +81,8 @@ defmodule BatchEcommerceWeb.UserController do
   def show(conn, %{"id" => id}) do
     case Accounts.get_user(id) do
       %User{} = user ->
+        
+      IO.inspect(user)
         conn
         |> put_status(:ok)
         |> render(:show, user: user)

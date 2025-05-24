@@ -34,26 +34,26 @@ defmodule BatchEcommerce.Orders do
 
       case BatchEcommerce.ShoppingCart.prune_cart_items(user_id) do
         {:ok, _} -> 
-          {:ok, Repo.preload(order, order_products: [:product])}
+          {:ok, Repo.preload(order, order_products: [:product]) |> Repo.preload(user: [:addresses])}
         error -> 
           error
       end
   end
 
   def list_orders do
-    Repo.all(Order) |> Repo.preload(order_products: [:product])
+    Repo.all(Order) |> Repo.preload(order_products: [:product]) |> Repo.preload(user: [:addresses])
   end
 
   def get_order!(user_id, id) do
     Order
     |> Repo.get_by!(id: id, user_id: user_id)
-    |> Repo.preload(order_products: [:product])
+    |> Repo.preload(order_products: [:product]) |> Repo.preload(user: [:addresses])
   end
 
   def get_order_by_user_id!(user_id) do
     from(i in Order, where: i.user_id == ^user_id)
     |> Repo.all()
-    |> Repo.preload(order_products: [:product])
+    |> Repo.preload(order_products: [:product]) |> Repo.preload(user: [:addresses])
   end
 
   def delete_order(%Order{} = order) do

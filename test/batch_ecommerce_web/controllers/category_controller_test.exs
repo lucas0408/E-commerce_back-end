@@ -61,7 +61,7 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
     } do
       conn = put(conn, ~p"/api/categories/#{category}", category: params_for(:category))
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
+    
       conn = get(conn, ~p"/api/categories/#{id}")
 
       assert category.type != json_response(conn, 200)["data"]["type"]

@@ -48,6 +48,7 @@ defmodule BatchEcommerce.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.5"},
+      {:nimble_csv, "~> 1.2"},
       {:finch, "~> 0.19"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},

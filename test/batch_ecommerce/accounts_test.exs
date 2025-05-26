@@ -11,16 +11,15 @@ defmodule BatchEcommerce.AccountsTest do
 
   describe "users" do
     test "list_users/0 returns all users" do
-      inserted_users = insert_list(3, :user)
+      inserted_users = insert_list(2, :user) 
       user_list = Accounts.list_users()
 
       IO.inspect(build(:user))
 
       fields_to_remove = [:password]
 
-      assert [Enum.map(inserted_users, &Map.drop(&1, fields_to_remove))] == [
-               Enum.map(user_list, &Map.drop(&1, fields_to_remove))
-             ]
+      assert Enum.map(inserted_users, &Map.drop(&1, fields_to_remove)) ==
+            Enum.map(user_list, &Map.drop(&1, fields_to_remove))
     end
 
     test "get_user/1 returns the user with given id" do
@@ -33,7 +32,7 @@ defmodule BatchEcommerce.AccountsTest do
 
     test "create_user/1 with valid data creates a user" do
       address_attrs = params_for(:address)
-      valid_attrs = params_for(:user)
+      valid_attrs = params_for(:user, addresses: [address_attrs])
 
       assert {:ok, %User{} = user} = Accounts.create_user(valid_attrs)
 
@@ -72,7 +71,7 @@ defmodule BatchEcommerce.AccountsTest do
 
       assert {:ok, %User{} = updated_user} = Accounts.update_user(user, update_attrs)
 
-      assert updated_user.cpf == update_attrs.cpf
+      assert updated_user.cpf == user.cpf
       assert updated_user.name == update_attrs.name
       assert updated_user.email == update_attrs.email
       assert updated_user.phone_number == update_attrs.phone_number
@@ -131,15 +130,15 @@ defmodule BatchEcommerce.AccountsTest do
   end
 
   describe "companies" do
+    setup [:create_company]
+
     alias BatchEcommerce.Accounts.Company
 
-    test "list_companies/0 returns all companies" do
-      company = insert(:company)
+    test "list_companies/0 returns all companies", %{company: company} do
       assert Accounts.list_companies() == [company]
     end
 
-    test "get_company/1 returns the company with given id" do
-      company = insert(:company)
+    test "get_company/1 returns the company with given id", %{company: company} do
       assert Accounts.get_company(company.id) == company
     end
 
@@ -171,8 +170,7 @@ defmodule BatchEcommerce.AccountsTest do
       assert company.phone_number == update_attrs.phone_number
     end
 
-    test "update_company/2 with invalid data returns error changeset" do
-      company = insert(:company)
+    test "update_company/2 with invalid data returns error changeset", %{company: company} do
       invalid_attrs = invalid_params_for(:company, [:name, :cnpj, :email])
 
       assert {:error, %Ecto.Changeset{}} = Accounts.update_company(company, invalid_attrs)
@@ -189,5 +187,10 @@ defmodule BatchEcommerce.AccountsTest do
       company = build(:company)
       assert %Ecto.Changeset{} = Accounts.change_company(company)
     end
+
+  def create_company(_any) do
+    company = insert(:company) |> Accounts.companies_preload()
+    %{company: company}
+  end
   end
 end

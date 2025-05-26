@@ -3,6 +3,9 @@ defmodule BatchEcommerce.Accounts.Address do
   import Ecto.Changeset
   import EctoCommons.PostalCodeValidator
 
+  @derive {Jason.Encoder, only: [:cep, :uf, :city, :district, :address, :complement, :home_number]}
+
+
   @required [:cep, :uf, :city, :district, :address, :complement, :home_number]
 
   schema "addresses" do

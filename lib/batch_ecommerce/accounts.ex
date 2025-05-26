@@ -34,7 +34,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:addresses)
+  def get_user(id), do: Repo.get(User, id) |> Repo.preload([:addresses])
 
   @doc """
   Creates a user.
@@ -135,7 +135,12 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def list_companies do
-    Repo.all(Company) |> Repo.preload(:addresses)
+    Repo.all(Company) |> companies_preload()
+  end
+
+  def companies_preload(companies) do
+    companies
+    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories])
   end
 
   @doc """
@@ -152,7 +157,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_company(id), do: Repo.get(Company, id) |> Repo.preload(:addresses)
+  def get_company(id), do: Repo.get(Company, id) |> companies_preload()
 
   @doc """
   Creates a company.
@@ -172,7 +177,7 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.insert()
     |> case do
       {:ok, company} ->
-        {:ok, Repo.preload(company, :addresses)}
+        {:ok, companies_preload(company)}
 
       {:error, changeset} ->
         {:error, changeset}
@@ -202,7 +207,7 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.update()
     |> case do
       {:ok, company_updated} ->
-        {:ok, Repo.preload(company_updated, :addresses)}
+        {:ok, companies_preload(company_updated)}
 
       {:error, changeset} ->
         {:error, changeset}

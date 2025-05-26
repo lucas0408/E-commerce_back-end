@@ -1,129 +1,156 @@
-# defmodule BatchEcommerce.ShoppingCartTest do
-#   use BatchEcommerce.DataCase, async: true
+defmodule BatchEcommerce.ShoppingCartTest do
+    use BatchEcommerce.DataCase, async: true
 
-#   alias BatchEcommerce.ShoppingCart
+    alias BatchEcommerce.ShoppingCart
 
-#   alias BatchEcommerce.Repo
+    import BatchEcommerce.Factory
 
-#   describe "carts" do
-#     alias BatchEcommerce.ShoppingCart.Cart
+    alias BatchEcommerce.Repo
 
-#     import BatchEcommerce.ShoppingCartFixtures
+    describe "cart_products" do
+        alias BatchEcommerce.ShoppingCart.CartProduct
 
-#     import BatchEcommerce.AccountsFixtures
 
-#     # @invalid_attrs %{user_uuid: nil}
+    test "prune_cart_items/1 delete all cart_items from cart" do
+        user_id = insert(:user).id
+        list_cart_itens = insert_list(5, :cart_product, [user_id: user_id]) |> normalize_cart_products()
 
-#     # test "get_cart_by_user_uuid!/1 returns the cart with given user_id" do
-#     #   user_id = user_fixture().id
-#     #   assert %Cart{} = ShoppingCart.get_cart_by_user_uuid(user_id)
-#     # end
+        assert list_cart_itens == ShoppingCart.get_cart_user(user_id) |> normalize_cart_products()
 
-#   #   test "create_cart/1 with valid data creates a cart" do
-#   #     user = user_fixture()
-#   #     assert %Cart{} = ShoppingCart.get_cart_by_user_uuid(user.id)
-#   #   end
+        ShoppingCart.prune_cart_items(user_id)
+        assert ShoppingCart.get_cart_user(user_id) == []
+    end
 
-#   #   test "prune_cart_items/1 delete all cart_items from cart" do
-#   #     cart_item = cart_item_fixture()
+    test "get_cart_user/1 get user cart" do
+        user = insert(:user)
 
-#   #     cart = Repo.preload(cart_item, cart: :items).cart
+        cart_product_list = Enum.map(1..3, fn _ -> params_for(:cart_product) end)
 
-#   #     {:ok, cart_items_empty} = ShoppingCart.prune_cart_items(cart)
+        list_with_user_id =
+        Enum.map(cart_product_list, fn params ->
+            ShoppingCart.create_cart_prodcut(user.id, atom_keys_to_string(%{params | user_id: user.id}))
+        end)
 
-#   #     assert cart.items == [cart_item]
-#   #     assert cart_items_empty.items == []
-#   #   end
-#   # end
+        generic_cart_products = insert_list(3, :cart_product)
 
-#   # describe "cart_items" do
-#   #   import BatchEcommerce.AccountsFixtures
+        list_with_user_id == ShoppingCart.get_cart_user(user.id)
 
-#   #   alias BatchEcommerce.ShoppingCart.CartItem
+        list_with_user_id != generic_cart_products
+        
+    end
 
-#   #   import BatchEcommerce.ShoppingCartFixtures
+    test "create_cart_product/2 with a valid data create a cart_product" do
+        valid_attrs = params_for(:cart_product)
 
-#   #   import BatchEcommerce.CatalogFixtures
+        cart_attrs = atom_keys_to_string(valid_attrs)
 
-#   #   alias BatchEcommerce.Catalog.Product
+        assert {:ok, %CartProduct{} = cart_product} = ShoppingCart.create_cart_prodcut(valid_attrs.user_id, cart_attrs)
 
-#   #   @invalid_attrs %{price_when_carted: nil, quantity: nil}
+        assert cart_product.price_when_carted == Decimal.new("123.0")
 
-#   #   test "total_item_price/1 returns total item price" do
-#   #     cart_item = cart_item_fixture()
+        assert cart_product.quantity == valid_attrs.quantity
 
-#   #     assert ShoppingCart.total_item_price(ShoppingCart.preload_product(cart_item)) ==
-#   #              Decimal.mult(cart_item.price_when_carted, cart_item.quantity)
-#   #   end
+        assert cart_product.user_id == valid_attrs.user_id
 
-#   #   test "total_cart_price/0 returns total cart price" do
-#   #     cart_item = ShoppingCart.preload_product(cart_item_fixture())
+        assert cart_product.product_id == valid_attrs.product_id
+    end
 
-#   #     assert ShoppingCart.total_cart_price(Repo.preload(cart_item, cart: [items: :product]).cart) ==
-#   #              Decimal.mult(cart_item.price_when_carted, cart_item.quantity)
-#   #   end
+    test "create_cart_product/2 with a invalid dat create a cart_product" do
+        attrs = params_for(:cart_product)
 
-#   #   test "get_cart_item/1 returns the cart_item with given id" do
-#   #     cart_item = cart_item_fixture()
-#   #     assert ShoppingCart.get_cart_item(cart_item.id) == cart_item
-#   #   end
+        invalid_attrs = %{attrs | quantity: -1}
 
-#   #   test "add_item_to_cart/2 with valid data creates a cart_item" do
-#   #     valid_attrs = %{"product_id" => product_fixture().id, "quantity" => "10"}
+        invalid_cart_attrs = atom_keys_to_string(invalid_attrs)
 
-#   #     assert {:ok, %CartItem{} = cart_item} =
-#   #              ShoppingCart.add_item_to_cart(
-#   #                ShoppingCart.get_cart_by_user_uuid(user_fixture().id),
-#   #                valid_attrs
-#   #              )
+        assert {:error, %Ecto.Changeset{}} = ShoppingCart.create_cart_prodcut(invalid_attrs.user_id, invalid_cart_attrs)
 
-#   #     assert cart_item.price_when_carted == Decimal.mult("120.50", "10")
-#   #     assert cart_item.quantity == 10
-#   #   end
+        invalid_attrs = invalid_params_for(:cart_product, [:user_id])
 
-#   #   test "create_cart_item/1 with invalid data returns error changeset" do
-#   #     invalid_attrs = %{"product_id" => product_fixture().id, "quantity" => "-1"}
+        invalid_cart_attrs = atom_keys_to_string(invalid_attrs)
 
-#   #     assert {:error, %Ecto.Changeset{}} =
-#   #              ShoppingCart.add_item_to_cart(
-#   #                ShoppingCart.get_cart_by_user_uuid(user_fixture().id),
-#   #                invalid_attrs
-#   #              )
-#   #   end
+        assert {:error, %Ecto.Changeset{}} = ShoppingCart.create_cart_prodcut(invalid_attrs.user_id, invalid_cart_attrs)
+    end
 
-#   #   test "update_cart_item/2 with valid data updates the cart_item" do
-#   #     cart_item = cart_item_fixture()
-#   #     update_attrs = %{"product_id" => cart_item.product_id, "quantity" => "100"}
+    test "get_cart_product/1 get cart by id" do
+        cart_product = insert(:cart_product)
 
-#   #     assert {:ok, %CartItem{} = cart_item} =
-#   #              ShoppingCart.update_cart_item(cart_item, update_attrs)
+        get_cart_product = ShoppingCart.get_cart_product(cart_product.id)
 
-#   #     assert cart_item.price_when_carted == Decimal.mult("120.50", "100")
-#   #     assert cart_item.quantity == 100
-#   #   end
+        assert cart_product.id == get_cart_product.id
+        assert Decimal.equal?(cart_product.price_when_carted, get_cart_product.price_when_carted)
+        assert cart_product.quantity == get_cart_product.quantity
+        assert cart_product.user_id == get_cart_product.user_id
+        assert cart_product.product_id == get_cart_product.product_id
+    end
 
-#   #   test "preload_product/1 return item_cart with products" do
-#   #     cart_item = cart_item_fixture()
+    test "preload_product/1 loads product and categories data" do
+        cart_product = insert(:cart_product)
 
-#   #     assert cart_item.product != %Product{}
+        preload_cart_product = ShoppingCart.preload_product(cart_product)
 
-#   #     cart_item_preload = ShoppingCart.preload_product(cart_item)
+        assert %Ecto.Association.NotLoaded{} = cart_product.product
 
-#   #     assert cart_item_preload.product.price == Decimal.new("120.50")
-#   #   end
+        assert %BatchEcommerce.Catalog.Product{} = preload_cart_product.product
 
-#   #   test "update_cart_item/2 with invalid data returns error changeset" do
-#   #     cart_item = cart_item_fixture()
-#   #     invalid_attrs = %{"product_id" => nil, "quantity" => "100"}
+        assert [%BatchEcommerce.Catalog.Category{}] = preload_cart_product.product.categories
+    end
 
-#   #     assert {:error, :not_found} = ShoppingCart.update_cart_item(cart_item, invalid_attrs)
-#   #     assert ShoppingCart.get_cart_item(cart_item.id) != 100
-#   #   end
+    test "update_cart_product/2 with valid data updates the cart_product" do
+        update_attrs = atom_keys_to_string(params_for(:cart_product))
 
-#   #   test "delete_cart_item/1 deletes the cart_item" do
-#   #     cart_item = cart_item_fixture()
-#   #     assert {:ok, %CartItem{}} = ShoppingCart.delete_cart_item(cart_item)
-#   #     assert ShoppingCart.get_cart_item(cart_item.id) == {:error, :not_found}
-#   #   end
-#   # end
-# #end
+        cart_product = insert(:cart_product)
+
+        assert {:ok, %ShoppingCart.CartProduct{} = update_cart_product} = ShoppingCart.update_cart_product(cart_product, update_attrs)
+
+        assert update_cart_product.user_id == cart_product.user_id #need be equal 
+        assert update_cart_product.product_id == cart_product.product_id #product is updated
+    end
+
+    test "update_cart_product/2 with invalid data updates the cart_product" do
+
+        invalid_attrs = params_for(:cart_product, [quantity: -1])
+
+        cart_product = insert(:cart_product)
+
+        invalid_cart_attrs = atom_keys_to_string(invalid_attrs)
+
+        assert {:error, %Ecto.Changeset{}} = ShoppingCart.update_cart_product(cart_product, invalid_cart_attrs)
+    end
+
+    test "total_price_cart_product/1 calculates total cart price" do
+        list_cart_product = insert_list(5, :cart_product)
+
+        total_price_function = ShoppingCart.total_price_cart_product(list_cart_product)
+
+        total_price_enum = Enum.reduce(list_cart_product, Decimal.new(0), fn cart_product, acc -> 
+            Decimal.add(acc, cart_product.price_when_carted)
+        end)
+
+        assert total_price_function == total_price_enum
+    end
+
+    test "delete_cart_product/1 deletes the cart_product" do
+        cart_product = insert(:cart_product)
+
+        assert %CartProduct{} = ShoppingCart.get_cart_product(cart_product.id)
+
+        ShoppingCart.delete_cart_product(cart_product)
+
+        assert ShoppingCart.get_cart_product(cart_product.id) == nil
+    end
+
+    def atom_keys_to_string(map) when is_map(map) do
+        Map.new(map, fn
+        {k, v} when is_atom(k) and is_map(v) -> {Atom.to_string(k), atom_keys_to_string(v)}
+        {k, v} when is_atom(k) -> {Atom.to_string(k), v}
+        {k, v} -> {k, v}
+        end)
+    end
+
+    defp normalize_cart_products(cart_products) do
+      Enum.map(cart_products, fn cart_product ->
+        %{cart_product | price_when_carted: Decimal.normalize(cart_product.price_when_carted)}
+      end)
+    end
+   end
+end

@@ -15,6 +15,8 @@ config :batch_ecommerce,
   ecto_repos: [BatchEcommerce.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :phoenix_swagger, json_library: Jason
+
 # Configures the endpoint
 config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
   url: [host: "localhost"],
@@ -25,6 +27,16 @@ config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
   ],
   pubsub_server: BatchEcommerce.PubSub,
   live_view: [signing_salt: "9Ln52K6E"]
+
+config :batch_ecommerce, :phoenix_swagger,
+  swagger_files: %{
+    "priv/static/swagger.json" => [
+      router: BatchEcommerceWeb.Router,     # phoenix routes will be converted to swagger paths
+      endpoint: BatchEcommerceWeb.Endpoint  # (optional) endpoint config used to set host, port and https schemes.
+    ]
+  }
+
+config :phoenix_swagger, PhoenixSwagger.Plug.SwaggerUI, otp_app: :batch_ecommerce
 
 # Configures the mailer
 #

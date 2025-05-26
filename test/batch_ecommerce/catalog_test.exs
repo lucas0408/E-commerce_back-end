@@ -86,8 +86,7 @@ defmodule BatchEcommerce.CatalogTest do
       assert product == found_product
     end
 
-    test "create_product/1 with valid data creates a product" do
-      
+    test "create_product/1 with valid data creates a product" do      
       valid_attrs = params_for(:product)
       
       valid_attrs = %{valid_attrs | categories: []}
@@ -159,29 +158,20 @@ defmodule BatchEcommerce.CatalogTest do
       assert product_found.categories == product.categories
     end
 
-    test "create product with categories associated" do
-      valid_attrs = params_for(:product)
-      category = insert(:category)
-      category = Catalog.get_category(category.id)
-      
-      valid_attrs = %{valid_attrs | categories: [category.id]}
-      
-      assert {:ok, %Product{} = product} = Catalog.create_product(Map.new(valid_attrs, fn {key, val} -> {Atom.to_string(key), val} end))
-      
-      get_product = Catalog.get_product(product.id)
-      
-      assert product.name == valid_attrs.name
-      assert product.price == Decimal.new("#{valid_attrs.price}")
-      assert product.stock_quantity == valid_attrs.stock_quantity
-      assert product.description == valid_attrs.description
-      
-      [created_category] = product.categories
-      assert created_category.id == category.id
-      assert created_category.type == category.type
-    end
+    test "create product with categories associated", %{
+      categories: categories
+    } do
+      company = insert(:company)
+      category_ids = Enum.map(categories, & &1.id)
 
-    test "update product with categories associated" do
-      categories = insert_list(2, :category)
+      valid_attrs = %{
+        name: "some name",
+        price: "120.5",
+        stock_quantity: 42,
+        category_ids: category_ids,
+        company_id: company.id,
+        description: "some description"
+      }
 
       category_ids = Enum.map(categories, fn category -> category.id end)
 

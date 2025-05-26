@@ -14,6 +14,8 @@ defmodule BatchEcommerce.AccountsTest do
       inserted_users = insert_list(2, :user) 
       user_list = Accounts.list_users()
 
+      IO.inspect(build(:user))
+
       fields_to_remove = [:password]
 
       assert Enum.map(inserted_users, &Map.drop(&1, fields_to_remove)) ==

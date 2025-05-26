@@ -157,7 +157,8 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_company(id), do: Repo.get(Company, id) |> companies_preload()
+  def get_company(user_id), do: Repo.get_by(Company, user_id: user_id) 
+    |> companies_preload()
 
   @doc """
   Creates a company.
@@ -177,9 +178,12 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.insert()
     |> case do
       {:ok, company} ->
+        IO.inspect(company, label: "company: ")
         {:ok, companies_preload(company)}
 
       {:error, changeset} ->
+        IO.inspect(attrs, label: "attrs")
+        IO.inspect(changeset, label: "changeset: ")
         {:error, changeset}
     end
   end

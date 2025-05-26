@@ -82,9 +82,6 @@ defmodule BatchEcommerceWeb.CompanyController do
   end
 
   def create(conn, %{"company" => company_params}) do
-    user_id = conn.private.guardian_default_resource.id
-
-    company_params = Map.put(company_params, "user_id", user_id)
 
     with {:ok, %Company{} = company} <- Accounts.create_company(company_params) do
       conn

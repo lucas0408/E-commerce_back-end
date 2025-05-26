@@ -20,7 +20,6 @@ defmodule BatchEcommerceWeb.Router do
     resources "/products", ProductController, only: [:index, :show]
     resources "/categories", CategoryController, only: [:index]
     post "/login", SessionController, :login
-    get "/orders/export-stream", OrderController, :export_stream
     get "/logout", SessionController, :logout
   end
 
@@ -33,6 +32,7 @@ defmodule BatchEcommerceWeb.Router do
     resources "/cart_products", CartProductController 
     get "/cart_products/user/:user_id", CartProductController, :get_by_user
     resources "/orders", OrderController, only: [:create, :show, :index]
+    get "/orders/export-stream", OrderController, :export_stream
     resources "/companies", CompanyController
   end
 

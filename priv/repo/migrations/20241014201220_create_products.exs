@@ -6,12 +6,12 @@ defmodule BatchEcommerce.Repo.Migrations.CreateProducts do
       add :name, :string
       add :price, :decimal
       add :stock_quantity, :integer
-      add :filename, :string
+      add :image_url, :string
       add :description, :string
       add :company_id, references(:companies, on_delete: :delete_all)
 
       timestamps(type: :utc_datetime)
     end
-    
+
   end
 end

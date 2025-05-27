@@ -1,10 +1,10 @@
 defmodule BatchEcommerce.MinioFixtures do
   def upload_fixture do
-    %Plug.Upload{
-      content_type: "image/jpeg",
-      filename: "test.jpg",
-      path: create_temp_file()
-    }
+    # %Plug.Upload{
+    #   content_type: "image/jpeg",
+    #   image_url: "test.jpg",
+    #   path: create_temp_file()
+    # }
   end
 
   defp create_temp_file do

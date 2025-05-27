@@ -2,10 +2,8 @@ defmodule BatchEcommerce.Catalog.Product do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias BatchEcommerce.Catalog.Category
-
   @derive {Jason.Encoder, only: [:id, :name, :price, :stock_quantity, :image_url, :description, :company_id, :inserted_at, :updated_at]}
-  
+
   @required_fields [:name, :price, :stock_quantity, :description, :company_id]
   @filename_regex ~r|^http://localhost:9000/batch-bucket/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-.*\.jpg$|
 
@@ -13,7 +11,7 @@ defmodule BatchEcommerce.Catalog.Product do
     field :name, :string
     field :price, :decimal
     field :stock_quantity, :integer
-    field :filename, :string
+    field :image_url, :string
     field :description, :string
 
     many_to_many :categories, BatchEcommerce.Catalog.Category, join_through: "products_categories", on_replace: :delete
@@ -64,11 +62,11 @@ defmodule BatchEcommerce.Catalog.Product do
   defp validate_stock_quantity(changeset),
     do: validate_number(changeset, :stock_quantity, greater_than: 0)
 
-  def filename_changeset(product, attrs) do
+  def image_url_changeset(product, attrs) do
     product
-    |> cast(attrs, [:filename])
-    |> validate_required([:filename])
-    |> validate_format(:filename, @filename_regex,
+    |> cast(attrs, [:image_url])
+    |> validate_required([:image_url])
+    |> validate_format(:image_url, @filename_regex,
       message: "Deve começar com o padrão correto e terminar com .jpg"
     )
   end

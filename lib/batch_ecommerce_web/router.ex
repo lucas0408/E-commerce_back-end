@@ -30,8 +30,23 @@ defmodule BatchEcommerceWeb.Router do
     resources "/products", ProductController, except: [:index, :show, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :index, :edit]
     resources "/cart_products", CartProductController 
+    get "/cart_products/user/:user_id", CartProductController, :get_by_user
     resources "/orders", OrderController, only: [:create, :show, :index]
+    get "/orders/export-stream", OrderController, :export_stream
     resources "/companies", CompanyController
+  end
+
+  scope "/api/swagger" do
+    forward "/", PhoenixSwagger.Plug.SwaggerUI, otp_app: :batch_ecommerce, swagger_file: "swagger.json"
+  end
+
+  def swagger_info do
+    %{
+      info: %{
+        version: "1.0",
+        title: "BatchEcommerce"
+      }
+    }
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

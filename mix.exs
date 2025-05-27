@@ -6,6 +6,7 @@ defmodule BatchEcommerce.MixProject do
       app: :batch_ecommerce,
       version: "0.1.0",
       elixir: "~> 1.18.2",
+      compilers: [:phoenix, :gettext] ++ Mix.compilers ++ [:phoenix_swagger],
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -47,6 +48,7 @@ defmodule BatchEcommerce.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.5"},
+      {:nimble_csv, "~> 1.2"},
       {:finch, "~> 0.19"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
@@ -70,7 +72,9 @@ defmodule BatchEcommerce.MixProject do
       {:plug_crypto, "~> 2.1.0"},
       {:flop, "~> 0.26.1"},
       {:ex_machina, "~> 2.8.0", only: :test},
-      {:brcpfcnpj, "~> 2.0.1"}
+      {:brcpfcnpj, "~> 2.0.1"},
+      {:phoenix_swagger, "~> 0.8"},
+      {:ex_json_schema, "~> 0.5"}
     ]
   end
 

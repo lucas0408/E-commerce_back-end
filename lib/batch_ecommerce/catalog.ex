@@ -120,7 +120,7 @@ defmodule BatchEcommerce.Catalog do
     |> Repo.preload(:categories)
   end
 
-  @spec get_product(any()) :: nil | [%{optional(atom()) => any()}] | %{optional(atom()) => any()}
+  #@spec get_product(any()) :: nil | [%{optional(atom()) => any()}] | %{optional(atom()) => any()}
   @doc """
   Gets a single product.
 
@@ -154,7 +154,7 @@ defmodule BatchEcommerce.Catalog do
   """
   def create_product(attrs \\ %{}) do
     %Product{}
-    |> change_product(attrs)
+    |> Product.changeset(attrs)
     |> Repo.insert()
     |> case do
       {:ok, product} ->
@@ -179,7 +179,7 @@ defmodule BatchEcommerce.Catalog do
   """
   def update_product(%Product{} = product, attrs) do
     product
-    |> change_product(attrs)
+    |> Product.changeset(attrs)
     |> Repo.update()
     |> case do
       {:ok, product_updated} ->

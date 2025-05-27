@@ -4,8 +4,10 @@ defmodule BatchEcommerce.Accounts.User do
   import EctoCommons.{EmailValidator, PhoneNumberValidator, DateValidator}
   alias BatchEcommerce.Accounts
 
+  @derive {Jason.Encoder, only: [:id, :cpf, :name, :email, :phone_number, :birth_date, :addresses]}
+
   @required_fields_insert [:cpf, :name, :email, :phone_number, :birth_date, :password]
-  @required_fields_update [:cpf, :name, :email, :phone_number, :birth_date]
+  @required_fields_update [:name, :email, :phone_number, :birth_date]
   @unique_fields [:email, :cpf, :phone_number]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -26,6 +28,8 @@ defmodule BatchEcommerce.Accounts.User do
     has_many :cart_products, BatchEcommerce.ShoppingCart.CartProduct, on_delete: :delete_all
 
     has_one :company, BatchEcommerce.Accounts.Company, on_replace: :update, on_delete: :delete_all
+
+    has_many :order, BatchEcommerce.Order.Order
 
     timestamps(type: :utc_datetime)
   end
@@ -68,7 +72,6 @@ defmodule BatchEcommerce.Accounts.User do
     )
     |> cast_assoc(:addresses)
     |> unique_constraint(:email)
-    |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)
   end
 

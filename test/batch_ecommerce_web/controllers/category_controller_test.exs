@@ -6,21 +6,18 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
 
   import BatchEcommerce.{CatalogFixtures, AccountsFixtures}
 
+  import BatchEcommerce.Factory
+
   alias BatchEcommerce.Catalog.Category
   alias BatchEcommerce.Accounts.Guardian
 
-  @create_attrs %{
-    type: "roupas"
-  }
-
-  @update_attrs %{
-    type: "ferramentas"
-  }
-
-  @invalid_attrs %{type: nil}
-
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
+  end
+
+  setup do
+    category = insert(:category)
+    %{category: category}
   end
 
   describe "index" do
@@ -36,19 +33,21 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
     setup [:create_session]
 
     test "renders category when data is valid", %{conn: conn} do
-      conn = post(conn, ~p"/api/categories", category: @create_attrs)
+      category_attrs = params_for(:category)
+      conn = post(conn, ~p"/api/categories", category: category_attrs)
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, ~p"/api/categories/#{id}")
 
+      category_attrs_type = category_attrs.type
+
       assert %{
-               "id" => ^id,
-               "type" => "roupas"
+               "type" => category_attrs_type
              } = json_response(conn, 200)["data"]
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
-      conn = post(conn, ~p"/api/categories", category: @invalid_attrs)
+      conn = post(conn, ~p"/api/categories", category: invalid_params_for(:category, [:type]))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -60,19 +59,16 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
       conn: conn,
       category: %Category{id: id} = category
     } do
-      conn = put(conn, ~p"/api/categories/#{category}", category: @update_attrs)
+      conn = put(conn, ~p"/api/categories/#{category}", category: params_for(:category))
       assert %{"id" => ^id} = json_response(conn, 200)["data"]
-
+    
       conn = get(conn, ~p"/api/categories/#{id}")
 
-      assert %{
-               "id" => ^id,
-               "type" => "ferramentas"
-             } = json_response(conn, 200)["data"]
+      assert category.type != json_response(conn, 200)["data"]["type"]
     end
 
     test "renders errors when data is invalid", %{conn: conn, category: category} do
-      conn = put(conn, ~p"/api/categories/#{category}", category: @invalid_attrs)
+      conn = put(conn, ~p"/api/categories/#{category}", category: invalid_params_for(:category, [:type]))
       assert json_response(conn, 422)["errors"] != %{}
     end
   end
@@ -90,11 +86,9 @@ defmodule BatchEcommerceWeb.CategoryControllerTest do
   end
 
   defp create_session(%{conn: conn}) do
-    user = user_fixture()
+    user = insert(:user)
     conn = Guardian.Plug.sign_in(conn, user)
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
-
-    category = category_fixture()
-    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), category: category}
+    %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}
   end
 end

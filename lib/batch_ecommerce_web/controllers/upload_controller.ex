@@ -6,12 +6,15 @@ defmodule BatchEcommerceWeb.UploadController do
   alias BatchEcommerce.Catalog.{Minio, Product}
 
   # TODO: implementar erro de unprocessable_entity que é retornável de upload_file no futuro
-  def create(conn, %{"image" => %Plug.Upload{} = image, "product_id" => product_id}) do
-    with {:ok, image_url} <- Minio.upload_file(image),
-         %Product{} = _product <- Catalog.put_image_url(product_id, image_url) do
+  def create(conn, %{"image" => %Plug.Upload{} = image, "company_name" => company_name, "product_id" => product_id}) do
+    with {:ok, filename} <- Minio.upload_image(image, company_name),
+         %Product{} = _product <- Catalog.put_filename(product_id, filename) do
       conn
       |> put_status(:ok)
-      |> json(%{image_url: image_url})
+      |> json(%{filename: filename})
+
+    else {:error, reason} ->
+      {:error, reason}
     end
   end
 end

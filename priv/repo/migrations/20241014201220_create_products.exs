@@ -6,7 +6,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateProducts do
       add :name, :string
       add :price, :decimal
       add :stock_quantity, :integer
-      add :image_url, :string
+      add :filename, :string
       add :description, :string
       add :company_id, references(:companies, on_delete: :delete_all)
       add :category_id, references(:categories)

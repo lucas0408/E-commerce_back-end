@@ -22,11 +22,11 @@ defmodule BatchEcommerceWeb.UserController do
       |> put_resp_header("location", ~p"/api/users/#{user}")
       |> render(:create, user: user, token: token)
     else
-      nil ->
-        {:error, :bad_request}
-
       {:error, %Ecto.Changeset{} = changeset} ->
         {:error, changeset}
+
+        {:error, _reason} ->
+          {:error, :bad_request}
     end
   end
 

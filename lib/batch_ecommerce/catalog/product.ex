@@ -5,13 +5,13 @@ defmodule BatchEcommerce.Catalog.Product do
   alias BatchEcommerce.Catalog.Category
 
   @required_fields [:name, :price, :stock_quantity, :description, :company_id]
-  @image_url_regex ~r|^http://localhost:9000/batch-bucket/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-.*\.jpg$|
+  @filename_regex ~r|^http://localhost:9000/batch-bucket/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-.*\.jpg$|
 
   schema "products" do
     field :name, :string
     field :price, :decimal
     field :stock_quantity, :integer
-    field :image_url, :string
+    field :filename, :string
     field :description, :string
 
     many_to_many :categories, Category, join_through: "products_categories", on_replace: :delete
@@ -61,11 +61,11 @@ defmodule BatchEcommerce.Catalog.Product do
   defp validate_stock_quantity(changeset),
     do: validate_number(changeset, :stock_quantity, greater_than: 0)
 
-  def image_url_changeset(product, attrs) do
+  def filename_changeset(product, attrs) do
     product
-    |> cast(attrs, [:image_url])
-    |> validate_required([:image_url])
-    |> validate_format(:image_url, @image_url_regex,
+    |> cast(attrs, [:filename])
+    |> validate_required([:filename])
+    |> validate_format(:filename, @filename_regex,
       message: "Deve começar com o padrão correto e terminar com .jpg"
     )
   end

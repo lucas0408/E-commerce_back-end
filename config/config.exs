@@ -75,10 +75,11 @@ config :batch_ecommerce, BatchEcommerceFinch,
   }
 
 config :ex_aws,
-  region: "local"
+  region: "us-east-1"
 
 config :ex_aws, :s3,
-  region: "local",
+  region: "us-east-1",
+  host: "localhost",
   scheme: "http://",
   port: 9000
 

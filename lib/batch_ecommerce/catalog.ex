@@ -234,12 +234,12 @@ defmodule BatchEcommerce.Catalog do
     Repo.all(from c in Category, where: c.id in ^category_ids)
   end
 
-  def put_image_url(product_id, image_url) do
+  def put_filename(product_id, filename) do
     case Repo.get(Product, product_id) do
       %Product{} = product ->
         product_with_image =
           product
-          |> Product.image_url_changeset(%{image_url: image_url})
+          |> Product.filename_changeset(%{filename: filename})
           |> Repo.update()
 
         product_with_image

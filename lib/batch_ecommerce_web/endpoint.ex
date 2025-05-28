@@ -7,7 +7,7 @@ defmodule BatchEcommerceWeb.Endpoint do
   @session_options [
     store: :cookie,
     key: "_batch_ecommerce_key",
-    signing_salt: "qe86uBRI",
+    signing_salt: "8PMMNI9F",
     same_site: "Lax"
   ]
 
@@ -28,6 +28,8 @@ defmodule BatchEcommerceWeb.Endpoint do
   # Code reloading can be explicitly enabled under the
   # :code_reloader configuration of your endpoint.
   if code_reloading? do
+    socket "/phoenix/live_reload/socket", Phoenix.LiveReloader.Socket
+    plug Phoenix.LiveReloader
     plug Phoenix.CodeReloader
     plug Phoenix.Ecto.CheckRepoStatus, otp_app: :batch_ecommerce
   end
@@ -35,25 +37,6 @@ defmodule BatchEcommerceWeb.Endpoint do
   plug Phoenix.LiveDashboard.RequestLogger,
     param_key: "request_logger",
     cookie_key: "request_logger"
-
-  plug CORSPlug, origin: ["http://localhost:4200", "http://localhost", "http://localhost:80"],
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    headers: [
-      "Authorization",
-      "Content-Type",
-      "Accept",
-      "Origin",
-      "User-Agent",
-      "DNT",
-      "Cache-Control",
-      "X-Mx-ReqToken",
-      "Keep-Alive",
-      "X-Requested-With",
-      "If-Modified-Since",
-      "X-CSRF-Token"
-    ],
-    expose: ["content-type", "Authorization"],
-    max_age: 7200
 
   plug Plug.RequestId
   plug Plug.Telemetry, event_prefix: [:phoenix, :endpoint]

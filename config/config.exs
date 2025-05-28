@@ -22,17 +22,19 @@ config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [json: BatchEcommerceWeb.ErrorJSON],
+    formats: [html: BatchEcommerceWeb.ErrorHTML, json: BatchEcommerceWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: BatchEcommerce.PubSub,
-  live_view: [signing_salt: "9Ln52K6E"]
+  live_view: [signing_salt: "3p3TM+Fu"]
 
 config :batch_ecommerce, :phoenix_swagger,
   swagger_files: %{
     "priv/static/swagger.json" => [
-      router: BatchEcommerceWeb.Router,     # phoenix routes will be converted to swagger paths
-      endpoint: BatchEcommerceWeb.Endpoint  # (optional) endpoint config used to set host, port and https schemes.
+      # phoenix routes will be converted to swagger paths
+      router: BatchEcommerceWeb.Router,
+      # (optional) endpoint config used to set host, port and https schemes.
+      endpoint: BatchEcommerceWeb.Endpoint
     ]
   }
 
@@ -59,7 +61,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.0",
+  version: "3.4.3",
   batch_ecommerce: [
     args: ~w(
       --config=tailwind.config.js

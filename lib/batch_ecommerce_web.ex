@@ -26,6 +26,7 @@ defmodule BatchEcommerceWeb do
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
       import Phoenix.Controller
+      import Phoenix.LiveView.Router
     end
   end
 
@@ -41,9 +42,58 @@ defmodule BatchEcommerceWeb do
         formats: [:html, :json],
         layouts: [html: BatchEcommerceWeb.Layouts]
 
-      import Plug.Conn
       use Gettext, backend: BatchEcommerceWeb.Gettext
 
+      import Plug.Conn
+
+      unquote(verified_routes())
+    end
+  end
+
+  def live_view do
+    quote do
+      use Phoenix.LiveView,
+        layout: {BatchEcommerceWeb.Layouts, :app}
+
+      unquote(html_helpers())
+    end
+  end
+
+  def live_component do
+    quote do
+      use Phoenix.LiveComponent
+
+      unquote(html_helpers())
+    end
+  end
+
+  def html do
+    quote do
+      use Phoenix.Component
+
+      # Import convenience functions from controllers
+      import Phoenix.Controller,
+        only: [get_csrf_token: 0, view_module: 1, view_template: 1]
+
+      # Include general helpers for rendering HTML
+      unquote(html_helpers())
+    end
+  end
+
+  defp html_helpers do
+    quote do
+      # Translation
+      use Gettext, backend: BatchEcommerceWeb.Gettext
+
+      # HTML escaping functionality
+      import Phoenix.HTML
+      # Core UI components
+      import BatchEcommerceWeb.CoreComponents
+
+      # Shortcut for generating JS commands
+      alias Phoenix.LiveView.JS
+
+      # Routes generation with the ~p sigil
       unquote(verified_routes())
     end
   end
@@ -58,7 +108,7 @@ defmodule BatchEcommerceWeb do
   end
 
   @doc """
-  When used, dispatch to the appropriate controller/view/etc.
+  When used, dispatch to the appropriate controller/live_view/etc.
   """
   defmacro __using__(which) when is_atom(which) do
     apply(__MODULE__, which, [])

@@ -3,13 +3,9 @@ defmodule BatchEcommerceWeb.Live.UserLive.New do
   alias BatchEcommerce.Accounts.User
   alias BatchEcommerceWeb.Live.UserLive.FormComponent
 
-  def mount(_params, _session, socket) do
-    {:ok, assign(socket, :live_action, :new)}
-  end
 
   def render(assigns) do
     ~H"""
-    
     <div class="pt-20 px-4"> <!-- Adiciona padding-top para compensar o header fixo -->
       <.live_component 
         module={FormComponent} 

@@ -85,42 +85,6 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
   end
 
   @impl true
-  def handle_event("add_address", _, socket) do
-    changeset = socket.assigns.changeset
-    current_addresses = changeset.changes[:addresses] || changeset.data.addresses || []
-    new_address = %Address{}
-    
-    updated_changeset =
-      changeset
-      |> Ecto.Changeset.put_assoc(:addresses, current_addresses ++ [new_address])
-
-    {:noreply, 
-    socket
-    |> assign(:changeset, updated_changeset)
-    |> assign(:form, to_form(updated_changeset))}
-  end
-
-  @impl true
-  def handle_event("remove_address", %{"index" => index}, socket) do
-    index = String.to_integer(index)
-    changeset = socket.assigns.changeset
-    current_addresses = changeset.changes[:addresses] || changeset.data.addresses || []
-    
-    # Garante que não remove se só tem um endereço
-    if length(current_addresses) > 1 do
-      updated_addresses = List.delete_at(current_addresses, index)
-      updated_changeset = Ecto.Changeset.put_assoc(changeset, :addresses, updated_addresses)
-
-      {:noreply, 
-      socket
-      |> assign(:changeset, updated_changeset)
-      |> assign(:form, to_form(updated_changeset))}
-    else
-      {:noreply, socket}
-    end
-  end
-
-  @impl true
   def handle_event("save", %{"user" => user_params}, socket) do
     save_user(socket, socket.assigns.action, user_params)
   end

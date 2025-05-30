@@ -15,7 +15,21 @@ defmodule BatchEcommerceWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {BatchEcommerceWeb.Layouts, :root}
     plug :protect_from_forgery
+    plug :fetch_current_user
     plug :put_secure_browser_headers
+  end
+
+  defp fetch_current_user(conn, _opts) do
+    # Para desenvolvimento - pega o primeiro usuário
+    # Em produção, você deve pegar da sessão ou token de autenticação
+    IO.inspect(BatchEcommerce.Accounts.list_companies())
+    current_user = List.first(BatchEcommerce.Accounts.list_users())
+    company = BatchEcommerce.Accounts.get_company_by_user_id(current_user.id)
+
+    
+    conn
+    |> assign(:current_user, current_user)
+    |> put_session(:current_user, current_user)
   end
 
   pipeline :ensure_auth do
@@ -25,6 +39,7 @@ defmodule BatchEcommerceWeb.Router do
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
 
+    
     resources "/users", UserController, only: [:create, :show]
     resources "/products", ProductController, only: [:index, :show]
     resources "/categories", CategoryController, only: [:index]
@@ -38,9 +53,11 @@ defmodule BatchEcommerceWeb.Router do
     live "/users", UserLive.Index, :index
     live "/users/new", UserLive.New, :new
     live "/users/:id/edit", UserLive.Edit, :edit
-
+    live "/products/new", ProductLive.New, :new
+    live "/companies/new", CompanyLive.New, :new
+    live "/companies/:id", CompanyLive.Show, :show
     live "/users/:id", UserLive.Show, :show
-    live "/users/:id/show/edit", UserLive.Show, :edit
+    live "/companies/:id/edit", CompanyLive.Edit, :edit
 
     get "/", PageController, :home
   end

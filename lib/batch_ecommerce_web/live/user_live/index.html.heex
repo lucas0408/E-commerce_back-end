@@ -1,0 +1,29 @@
+<!-- list_users.html.heex -->
+
+<.header>
+  <:title>Listing Users</:title>
+  <:actions>
+    <.link patch={~p"/live/users/new"}>
+      <.button>New User</.button>
+    </.link>
+  </:actions>
+</.header>
+
+<div id="users" phx-update="stream">
+  <%= for {id, user} <- @streams.users do %>
+    <div id={id} class="user-entry">
+      <p><strong>Name:</strong> <%= user.name %></p>
+      <p><strong>Address ID:</strong> <%= Enum.at(user.addresses, 0) && hd(user.addresses).address %></p>
+      <div class="actions">
+        <.link patch={~p"/users/#{user.id}/edit"}>
+          <.button>Edit</.button>
+        </.link>
+
+        <.button phx-click="delete" phx-value-id={user.id} data-confirm="Are you sure?">
+          Delete
+        </.button>
+      </div>
+    </div>
+  <% end %>
+</div>
+

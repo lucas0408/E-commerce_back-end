@@ -107,6 +107,14 @@ defmodule BatchEcommerce.Accounts do
     Repo.delete(user)
   end
 
+  def insert_change_user(%User{} = user, attrs \\ %{}) do
+    User.insert_changeset(user, attrs)
+  end
+
+  def update_change_user(%User{} = user, attrs \\ %{}) do
+    User.update_changeset(user, attrs)
+  end
+
   def authenticate_user(email, plain_text_password) do
     query = from(u in User, where: u.email == ^email)
 

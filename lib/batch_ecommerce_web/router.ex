@@ -9,6 +9,15 @@ defmodule BatchEcommerceWeb.Router do
     plug BatchEcommerce.Accounts.Pipeline
   end
 
+  pipeline :browser do
+    plug :accepts, ["html"]
+    plug :fetch_session
+    plug :fetch_live_flash
+    plug :put_root_layout, html: {BatchEcommerceWeb.Layouts, :root}
+    plug :protect_from_forgery
+    plug :put_secure_browser_headers
+  end
+
   pipeline :ensure_auth do
     plug Guardian.Plug.EnsureAuthenticated
   end
@@ -21,6 +30,19 @@ defmodule BatchEcommerceWeb.Router do
     resources "/categories", CategoryController, only: [:index]
     post "/login", SessionController, :login
     get "/logout", SessionController, :logout
+  end
+
+  scope "/", BatchEcommerceWeb.Live do
+    pipe_through :browser
+
+    live "/users", UserLive.Index, :index
+    live "/users/new", UserLive.New, :new
+    live "/users/:id/edit", UserLive.Edit, :edit
+
+    live "/users/:id", UserLive.Show, :show
+    live "/users/:id/show/edit", UserLive.Show, :edit
+
+    get "/", PageController, :home
   end
 
   scope "/api", BatchEcommerceWeb do

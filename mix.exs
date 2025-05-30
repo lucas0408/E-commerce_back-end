@@ -44,6 +44,7 @@ defmodule BatchEcommerce.MixProject do
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:phoenix_html_helpers, "~> 1.0.1"},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.1",

@@ -16,6 +16,8 @@ defmodule BatchEcommerceWeb.CoreComponents do
   """
   use Phoenix.Component
   use Gettext, backend: BatchEcommerceWeb.Gettext
+  import Phoenix.HTML
+  import Phoenix.LiveView.Helpers
 
   alias Phoenix.LiveView.JS
 
@@ -88,6 +90,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
     </div>
     """
   end
+
 
   @doc """
   Renders flash notices.
@@ -225,6 +228,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
   attr :rest, :global, include: ~w(disabled form name value)
 
   slot :inner_block, required: true
+
 
   def button(assigns) do
     ~H"""

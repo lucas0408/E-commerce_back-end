@@ -16,6 +16,7 @@ defmodule BatchEcommerce.ShoppingCart do
   end
 
   def create_cart_prodcut(user_id, cart_item_params) do
+    IO.inspect(user_id)
     case Map.get(cart_item_params, "product_id") do
       nil ->
         {:error, :not_found}   

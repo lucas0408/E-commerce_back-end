@@ -122,6 +122,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
+    IO.inspect(user_params)
     changeset = 
       socket.assigns.user
       |> Accounts.insert_change_user(user_params)

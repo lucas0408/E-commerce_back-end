@@ -120,6 +120,30 @@ defmodule BatchEcommerce.Catalog do
     |> Repo.preload(:categories)
   end
 
+  def get_all_products_company(params, company_id) do
+    from(p in Product,
+      where: p.company_id == ^company_id,
+      order_by: [desc: p.sales_quantity]
+    )
+    |> Repo.paginate(params)
+  end
+
+  def list_company_products_paginated(company_id, search_term \\ "", page \\ 1, per_page \\ 6) do
+    Product
+    |> where([p], p.company_id == ^company_id)
+    |> apply_search_filter(search_term)
+    |> preload([:categories])  # Carrega as categorias associadas
+    |> order_by([p], desc: p.inserted_at)
+    |> Repo.paginate(page: page, page_size: per_page)
+  end
+
+  defp apply_search_filter(query, ""), do: query
+
+  defp apply_search_filter(query, search_term) do
+    search_term = "#{search_term}%"
+    where(query, [p], ilike(p.name, ^search_term))
+  end
+
   #@spec get_product(any()) :: nil | [%{optional(atom()) => any()}] | %{optional(atom()) => any()}
   @doc """
   Gets a single product.

@@ -4,7 +4,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
   alias BatchEcommerce.Accounts.Company
   alias BatchEcommerce.Accounts.Address
 
-  @impl true
+ @impl true
   def render(assigns) do
     ~H"""
     <div class="max-w-4xl mx-auto px-6 py-8">
@@ -19,47 +19,39 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
       >
         <!-- Linha 1: nome e CNPJ -->
         <.input field={@form[:name]} type="text" label="Nome" />
-        
-        <!-- Só mostra CNPJ se for uma criação nova -->
         <%= if @action == :new do %>
           <.input field={@form[:cnpj]} type="text" label="CNPJ" />
-        <% else %>
-          <!-- Opcional: Mostrar o CNPJ como texto se for edição -->
-          <div class="flex flex-col">
-            <label class="block text-sm font-medium text-gray-700">CNPJ</label>
-            <div class="mt-1 text-gray-900">
-              <%= @company.cnpj %>
-            </div>
-          </div>
         <% end %>
 
-        <!-- Restante do seu formulário... -->
         <!-- Linha 2: email e telefone -->
         <.input field={@form[:email]} type="email" label="Email" />
         <.input field={@form[:phone_number]} type="text" label="Telefone" />
 
-        <!-- Campos de endereço -->
-        <.inputs_for :let={af} field={@form[:addresses]}>
-          <.input field={af[:cep]} label="CEP" />
-          <.input field={af[:address]} label="Logradouro" />
+        <!-- Campos de endereço (endereços é uma lista, mas aqui vamos renderizar só o primeiro por enquanto) -->
+          <.inputs_for :let={af} field={@form[:addresses]}>
+              <p>@form</p>
+              <h4 class="font-semibold text-lg">Endereço</h4>
 
-          <div class="grid grid-cols-3 gap-4">
-            <.input field={af[:home_number]} label="Número" />
-            <.input field={af[:complement]} label="Complemento" />
-          </div>
+              <.input field={af[:cep]} label="CEP" />
+              <.input field={af[:address]} label="Logradouro" />
 
-          <.input field={af[:district]} label="Bairro" />
+              <div class="grid grid-cols-3 gap-4">
+                <.input field={af[:home_number]} label="Número" />
+                <.input field={af[:complement]} label="Complemento" />
+              </div>
 
-          <div class="grid grid-cols-2 gap-4">
-            <.input field={af[:city]} label="Cidade" />
-            <.input field={af[:uf]} label="UF" class="uppercase" maxlength="2" />
-          </div>
-        </.inputs_for>
+              <.input field={af[:district]} label="Bairro" />
+
+              <div class="grid grid-cols-2 gap-4">
+                <.input field={af[:city]} label="Cidade" />
+                <.input field={af[:uf]} label="UF" class="uppercase" maxlength="2" />
+              </div>
+          </.inputs_for>
 
         <!-- Botão de cadastro -->
         <div class="col-span-2 flex justify-center mt-4">
           <.button class="bg-blue-600 text-white px-6 py-2 rounded">
-            <%= if @action == :new, do: "Cadastrar Empresa", else: "Atualizar Empresa" %>
+            Cadastrar Empresa
           </.button>
         </div>
       </.form>

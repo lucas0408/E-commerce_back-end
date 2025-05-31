@@ -231,8 +231,9 @@ defmodule BatchEcommerceWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-2 px-3",
-        "text-sm font-semibold leading-6 text-white active:text-white/80",
+        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-3.5 px-10 shadow-lg
+        hover:scale-105 transition-transform duration-300",
+        "text-base font-semibold leading-6 text-white active:text-white/80",
         @class
       ]}
       {@rest}
@@ -369,21 +370,34 @@ defmodule BatchEcommerceWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <div>
-      <.label for={@id}>{@label}</.label>
+    <div class="relative z-0 w-full group">
       <input
         type={@type}
         name={@name}
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "mt-2 block w-full rounded-lg text-zinc-900 focus:ring-0 sm:text-sm sm:leading-6",
-          @errors == [] && "border-zinc-300 focus:border-zinc-400",
+          "peer block py-2.5 px-0 w-full text-lg text-gray-900 bg-transparent border-0 border-b-2 appearance-none",
+          "dark:text-black dark:border-gray-600 dark:focus:border-blue-500",
+          "focus:outline-none focus:ring-0 focus:border-blue-600",
+          @errors == [] && "border-gray-300 focus:border-gray-400",
           @errors != [] && "border-rose-400 focus:border-rose-400"
         ]}
+        placeholder=" "
         {@rest}
       />
-      <.error :for={msg <- @errors}>{msg}</.error>
+
+      <label
+        for={@id}
+        class="absolute text-base text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0]
+              peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0
+              peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-blue-600 peer-focus:dark:text-blue-500">
+        {@label}
+      </label>
+
+      <.error :for={msg <- @errors}>
+        {msg}
+      </.error>
     </div>
     """
   end

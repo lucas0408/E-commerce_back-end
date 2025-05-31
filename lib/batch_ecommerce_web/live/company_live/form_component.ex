@@ -7,7 +7,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-4xl mx-auto px-6 py-8">
+    <div class="max-w-6xl mx-auto">
       <.form
         :let={f}
         for={@form}
@@ -15,49 +15,55 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        class="grid grid-cols-2 gap-6"
+        class="grid grid-cols-2  gap-x-20 gap-y-7"
       >
+
         <!-- Linha 1: nome e CNPJ -->
-        <.input field={@form[:name]} type="text" label="Nome" />
-        
-        <!-- Só mostra CNPJ se for uma criação nova -->
-        <%= if @action == :new do %>
-          <.input field={@form[:cnpj]} type="text" label="CNPJ" />
-        <% else %>
-          <!-- Opcional: Mostrar o CNPJ como texto se for edição -->
-          <div class="flex flex-col">
-            <label class="block text-sm font-medium text-gray-700">CNPJ</label>
-            <div class="mt-1 text-gray-900">
-              <%= @company.cnpj %>
+          <.input field={@form[:name]} type="text" label="Nome" />
+          <!-- Só mostra CNPJ se for uma criação nova -->
+          <%= if @action == :new do %>
+            <.input field={@form[:cnpj]} type="text" label="CNPJ" />
+          <% else %>
+            <!-- Opcional: Mostrar o CNPJ como texto se for edição -->
+            <div class="flex flex-col">
+              <label class="block text-sm font-medium text-gray-700">CNPJ</label>
+              <div class="mt-1 text-gray-900">
+                <%= @company.cnpj %>
+              </div>
             </div>
-          </div>
-        <% end %>
+          <% end %>
 
         <!-- Restante do seu formulário... -->
+
         <!-- Linha 2: email e telefone -->
-        <.input field={@form[:email]} type="email" label="Email" />
-        <.input field={@form[:phone_number]} type="text" label="Telefone" />
+          <.input field={@form[:email]} type="email" label="Email" />
+          <.input field={@form[:phone_number]} type="text" label="Telefone" />
 
         <!-- Campos de endereço -->
         <.inputs_for :let={af} field={@form[:addresses]}>
-          <.input field={af[:cep]} label="CEP" />
-          <.input field={af[:address]} label="Logradouro" />
 
-          <div class="grid grid-cols-3 gap-4">
-            <.input field={af[:home_number]} label="Número" />
-            <.input field={af[:complement]} label="Complemento" />
+          <.input field={af[:address]} label="Rua" />
+
+          <div class="flex gap-4">
+            <div class="max-w-[85px]">
+              <.input field={af[:home_number]} label="Número" />
+            </div>
+            <.input field={af[:cep]} label="CEP" />
           </div>
 
+          <.input field={af[:complement]} label="Complemento" />
           <.input field={af[:district]} label="Bairro" />
 
-          <div class="grid grid-cols-2 gap-4">
+          <div class="flex gap-4">
             <.input field={af[:city]} label="Cidade" />
-            <.input field={af[:uf]} label="UF" class="uppercase" maxlength="2" />
+            <div class="max-w-[50px]">
+              <.input field={af[:uf]} label="Estado" class="uppercase text-center" maxlength="2" />
+            </div>
           </div>
         </.inputs_for>
 
         <!-- Botão de cadastro -->
-        <div class="col-span-2 flex justify-center mt-4">
+        <div class="col-span-2 flex justify-center mt-10">
           <.button class="bg-blue-600 text-white px-6 py-2 rounded">
             <%= if @action == :new, do: "Cadastrar Empresa", else: "Atualizar Empresa" %>
           </.button>
@@ -70,19 +76,19 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
   def update(%{company: company} = assigns, socket) do
     IO.inspect(socket)
-    company = 
+    company =
       if Ecto.assoc_loaded?(company.addresses) and not Enum.empty?(company.addresses) do
         company
       else
         %{company | addresses: [%Address{}]}
       end
-            
+
     changeset = Accounts.change_company(company)
 
     {:ok,
     socket
     |> assign(assigns)
-    |> assign(:changeset, changeset)  
+    |> assign(:changeset, changeset)
     |> assign(:form, to_form(changeset))}
   end
 
@@ -108,10 +114,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
   end
 
   defp save_company(socket, :new, company_params) do
-    company_params = 
+    company_params =
      company_params
       |> Map.put("user_id", socket.assigns.current_user.id)
-    
+
     case Accounts.create_company(company_params) do
       {:ok, company} ->
         notify_parent({:saved, company})
@@ -129,12 +135,12 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
   end
 
   def handle_event("validate", %{"company" => company_params}, socket) do
-    changeset = 
+    changeset =
       socket.assigns.company
       |> Accounts.change_company(company_params)
       |> Map.put(:action, :validate)
-      
-    {:noreply, 
+
+    {:noreply,
     socket
     |> assign(:changeset, changeset)  # ✅ Adicionar esta linha
     |> assign(:form, to_form(changeset))}

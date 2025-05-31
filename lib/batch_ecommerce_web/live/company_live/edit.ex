@@ -12,18 +12,18 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Edit do
 
     def render(assigns) do
     ~H"""
-    <div class="pt-20 px-4">
-      <div class="max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold text-gray-900 mb-8">Criar Nova Empresa</h1>
-        
-        <.live_component 
-          module={FormComponent} 
+    <div class="pt-10 px-4">
+      <div class="max-w-7xl mx-auto">
+        <h1 class="text-4xl font-bold text-gray-900 mb-8 text-center pb-10">Criar Nova Empresa</h1>
+
+        <.live_component
+          module={FormComponent}
           id={@company.id}
-          company={@company} 
-          action={@live_action} 
+          company={@company}
+          action={@live_action}
           patch={~p"/companies"}
         />
-        
+
         <.back navigate={~p"/companies"} class="mt-6 inline-block text-blue-600 hover:text-blue-800">
           ← Voltar para empresas
         </.back>

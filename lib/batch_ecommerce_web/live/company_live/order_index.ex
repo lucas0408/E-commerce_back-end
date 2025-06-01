@@ -16,6 +16,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
      |> assign(:page, 1)
      |> assign(:per_page, @per_page)
      |> assign(:total_pages, 1)
+     |> assign(:user, %{name: "ricardo", id: 1})
      |> load_orders()}
   end
 
@@ -49,10 +50,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
   def render(assigns) do
     ~H"""
     <div class="max-w-7xl mx-auto px-4 py-8">
-      <.header>
-        Pedidos da Empresa
-        <:subtitle>Gerenciamento completo dos pedidos</:subtitle>
-      </.header>
+      
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
 
       <!-- Tabela de pedidos -->
       <div class="mt-8 flow-root">

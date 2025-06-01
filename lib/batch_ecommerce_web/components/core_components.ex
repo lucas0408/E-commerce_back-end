@@ -137,6 +137,202 @@ defmodule BatchEcommerceWeb.CoreComponents do
     """
   end
 
+    @doc """
+  Componente de ícone de notificações com contador.
+
+  ## Exemplos
+      <.notification_badge count={3} click_event="show_notifications" />
+  """
+  attr :count, :integer, default: 0
+  attr :click_event, :string, required: true
+  attr :rest, :global
+
+  def notification_badge(assigns) do
+    ~H"""
+    <button 
+      class="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none"
+      phx-click={@click_event}
+      aria-label="Notificações"
+      {@rest}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+      </svg>
+      <%= if @count > 0 do %>
+        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
+          <%= @count %>
+        </span>
+      <% end %>
+    </button>
+    """
+  end
+
+  @doc """
+  Componente de ícone de carrinho com contador.
+
+  ## Exemplos
+      <.cart_icon count={5} />
+  """
+  attr :count, :integer, default: 0
+  attr :rest, :global
+
+  def cart_icon(assigns) do
+    ~H"""
+    <a 
+      href="/cart_products/index" 
+      class="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none"
+      aria-label="Carrinho de compras"
+      {@rest}
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+      </svg>
+      <%= if @count > 0 do %>
+        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-indigo-500 rounded-full">
+          <%= @count %>
+        </span>
+      <% end %>
+    </a>
+    """
+  end
+
+  @doc """
+  Componente de exibição do perfil do usuário.
+
+  ## Exemplos
+      <.user_profile name="João Silva" id={123} avatar="/path/to/avatar.jpg" />
+  """
+  attr :name, :string, required: true
+  attr :id, :integer, required: true
+  attr :avatar, :string, default: "/images/default-avatar.png"
+  attr :rest, :global
+
+  def user_profile(assigns) do
+    ~H"""
+    <a 
+      href={"/users/#{@id}"} 
+      class="flex items-center hover:opacity-80 transition-opacity"
+      {@rest}
+    >
+      <span class="mr-2 text-sm font-medium text-gray-700"><%= @name %></span>
+      <img 
+        class="w-8 h-8 rounded-full object-cover" 
+        src={@avatar} 
+        alt="Foto do usuário"
+      />
+    </a>
+    """
+  end
+
+    attr :click_event, :string, default: "open-menu"
+    attr :class, :string, default: "h-6 w-6"
+    attr :rest, :global, include: ~w(disabled form name value)
+
+    def menu_button(assigns) do
+      assigns = assign_new(assigns, :target, fn -> nil end)
+      
+      ~H"""
+      <button 
+        phx-click={@click_event}
+        phx-target={@target}
+        class="p-2 rounded-md hover:bg-gray-100 focus:outline-none"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      """
+    end
+
+  def simple_sidebar_menu(assigns) do
+    ~H"""
+    <!-- Overlay -->
+    <div class="fixed inset-0 z-40 bg-black bg-opacity-50" phx-click="toggle_menu" phx-target={@myself}></div>
+
+    <!-- Menu lateral -->
+    <aside class="fixed top-0 left-0 z-50 w-64 h-full bg-white shadow-lg px-6 py-8 space-y-6 animate-slide-in">
+      <!-- Título -->
+      <h2 class="text-lg font-semibold text-gray-700">Faça login</h2>
+
+      <!-- Botões -->
+      <div class="flex flex-col space-y-4">
+        <a href="/login" class="w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded-md transition">
+          Login
+        </a>
+        <a href="/users/new" class="w-full text-center bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md transition">
+          Cadastre-se
+        </a>
+      </div>
+    </aside>
+    """
+  end
+
+
+  attr :user, :map, default: nil
+  attr :myself, :any, required: true
+
+  def header_side_menu(assigns) do
+    ~H"""
+    <div class="fixed inset-0 z-40">
+      <!-- Overlay -->
+      <div 
+        class="absolute inset-0 bg-black bg-opacity-50"
+        phx-click="toggle_menu"
+        phx-target={@myself}
+      ></div>
+
+      <!-- Conteúdo do Menu -->
+      <div class="absolute left-0 top-0 h-full w-64 bg-white shadow-xl">
+        <!-- Cabeçalho do Menu -->
+        <div class="p-4 border-b border-gray-200">
+          <%= if @user do %>
+            <div class="flex items-center space-x-3">
+              <img 
+                class="w-10 h-10 rounded-full object-cover" 
+                src={"/images/default-avatar.png"} 
+                alt="Foto do usuário"
+              />
+              <p class="font-medium text-gray-900"><%= @user.name %></p>
+            </div>
+          <% end %>
+        </div>
+
+        <!-- Itens do Menu -->
+        <nav class="p-2">
+          <ul class="space-y-1">
+            <li>
+              <a href="/compras" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Minhas Compras
+              </a>
+            </li>
+            <li>
+              <a href="/empresa" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v18m4.5-18v18M3 9h18" />
+                </svg>
+                Minha Empresa
+              </a>
+            </li>
+            <li>
+              <a href="/conta" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A6 6 0 0112 15a6 6 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+                Minha Conta
+              </a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    """
+  end
+
   @doc """
   Shows the flash group with standard titles and content.
 
@@ -144,6 +340,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
 
       <.flash_group flash={@flash} />
   """
+
   attr :flash, :map, required: true, doc: "the map of flash messages"
   attr :id, :string, default: "flash-group", doc: "the optional id of flash container"
 
@@ -405,6 +602,35 @@ defmodule BatchEcommerceWeb.CoreComponents do
     </label>
     """
   end
+
+    attr :query, :string, default: ""
+  attr :rest, :global
+
+  def search_bar(assigns) do
+    ~H"""
+    <div class="relative w-full max-w-md">
+      <form phx-change="search" phx-submit="search" {@rest}>
+        <input
+          type="text"
+          name="query"
+          value={@query}
+          placeholder="Pesquisar produtos..."
+          class="w-full pl-4 pr-10 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+        />
+        <button
+          type="submit"
+          class="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-indigo-600"
+          aria-label="Pesquisar"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
+      </form>
+    </div>
+    """
+  end
+
 
   @doc """
   Generates a generic error message.

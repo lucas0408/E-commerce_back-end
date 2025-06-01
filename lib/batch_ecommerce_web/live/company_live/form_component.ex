@@ -29,8 +29,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
         <!-- Campos de endereço (endereços é uma lista, mas aqui vamos renderizar só o primeiro por enquanto) -->
           <.inputs_for :let={af} field={@form[:addresses]}>
-              <p>@form</p>
-              <h4 class="font-semibold text-lg">Endereço</h4>
 
               <.input field={af[:cep]} label="CEP" />
               <.input field={af[:address]} label="Logradouro" />

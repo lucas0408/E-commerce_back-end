@@ -3,9 +3,9 @@ defmodule BatchEcommerceWeb.Live.UserLive.New do
   alias BatchEcommerce.Accounts.User
   alias BatchEcommerceWeb.Live.UserLive.FormComponent
 
-
   def render(assigns) do
     ~H"""
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.Header1} id="header1"/>
     <div class="pt-20 px-4"> <!-- Adiciona padding-top para compensar o header fixo -->
       <.live_component 
         module={FormComponent} 

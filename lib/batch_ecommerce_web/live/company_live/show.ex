@@ -13,12 +13,13 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
     {:ok,
      socket
      |> assign(:company, company)
+     |> assign(:user, %{name: "ricardo", id: 1})
      |> assign(:top_products, top_products)}
   end
 
   def get_top_5_selling_products_by_sales(products) do
     products
-    |> Enum.sort_by(& &1.sales_quantiry, :desc)
+    |> Enum.sort_by(& &1.sales_quantity, :desc)
     |> Enum.take(5)
   end
 
@@ -31,9 +32,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   def render(assigns) do
     ~H"""
     <div class="max-w-4xl mx-auto px-4 py-8">
-      <.header>
-        <%= @company.name %>
-      </.header>
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
 
       <!-- Tabela de produtos -->
       <div class="mb-10">

@@ -15,6 +15,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.New do
   
   def render(assigns) do
     ~H"""
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@current_user} id="HeaderDefault"/>
     <div class="pt-20 px-4">
       <div class="max-w-2xl mx-auto">
         <h1 class="text-3xl font-bold text-gray-900 mb-8">Criar Nova Empresa</h1>

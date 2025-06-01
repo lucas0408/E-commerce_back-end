@@ -15,6 +15,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
      |> assign(:page, 1)
      |> assign(:per_page, @per_page)  # Adicionamos ao socket
      |> assign(:total_pages, 1)
+     |> assign(:user, %{name: "ricardo", id: 1})
      |> assign(:export_form, to_form(%{"format" => "csv"}))
      |> load_products()}
   end
@@ -70,10 +71,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
   def render(assigns) do
     ~H"""
     <div class="max-w-7xl mx-auto px-4 py-8">
-      <.header>
-        Produtos da Empresa
-        <:subtitle>Gerenciamento completo dos produtos</:subtitle>
-      </.header>
+      
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
 
       <!-- Barra de pesquisa e botões -->
       <div class="flex justify-between items-center mb-6">

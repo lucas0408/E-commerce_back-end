@@ -5,12 +5,12 @@ defmodule BatchEcommerceWeb.Live.ProductLive.New do
 
   def render(assigns) do
     ~H"""
-    <div class="pt-20 px-4">
-      <.live_component 
-        module={FormComponent} 
-        id="new-product" 
-        product={%Product{}} 
-        action={@live_action} 
+    <div class="px-4">
+      <.live_component
+        module={FormComponent}
+        id="new-product"
+        product={%Product{}}
+        action={@live_action}
         patch={~p"/products"}
       >
         <h1 class="text-2xl font-bold mb-4">Creating a product</h1>

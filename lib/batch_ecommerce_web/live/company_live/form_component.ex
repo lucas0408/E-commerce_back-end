@@ -7,7 +7,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-5xl mx-auto">
       <.form
         :let={f}
         for={@form}
@@ -15,9 +15,9 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
         phx-target={@myself}
         phx-change="validate"
         phx-submit="save"
-        class="grid grid-cols-2  gap-x-20 gap-y-7"
       >
 
+      <div class="grid grid-cols-2 rounded-lg gap-x-20 gap-y-7 py-[30px] px-[30px] bg-gray-100">
         <!-- Linha 1: nome e CNPJ -->
           <.input field={@form[:name]} type="text" label="Nome" />
           <!-- Só mostra CNPJ se for uma criação nova -->
@@ -61,7 +61,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
             </div>
           </div>
         </.inputs_for>
-
+        </div>
         <!-- Botão de cadastro -->
         <div class="col-span-2 flex justify-center mt-10">
           <.button class="bg-blue-600 text-white px-6 py-2 rounded">

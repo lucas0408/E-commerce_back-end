@@ -231,7 +231,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-zinc-900 hover:bg-zinc-700 py-3.5 px-10 shadow-lg
+        "phx-submit-loading:opacity-75 rounded-lg bg-blue-800 hover:bg-blue-700 py-3.5 px-10 shadow-lg
         hover:scale-105 transition-transform duration-300",
         "text-base font-semibold leading-6 text-white active:text-white/80",
         @class
@@ -377,7 +377,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
-          "peer block py-2.5 px-0 w-full text-lg text-gray-900 bg-transparent border-0 border-b-2 appearance-none",
+          "peer block py-2.5 px-0 w-full text-lg text-gray-800 bg-transparent border-0 border-b-2 appearance-none",
           "dark:text-black dark:border-gray-600 dark:focus:border-blue-500",
           "focus:outline-none focus:ring-0 focus:border-blue-600",
           @errors == [] && "border-gray-300 focus:border-gray-400",

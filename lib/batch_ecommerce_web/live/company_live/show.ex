@@ -27,21 +27,22 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
 
   def render(assigns) do
     ~H"""
-    <div class="w-full max-w-screen-2xl mx-auto px-6 py-4">
-      <div class="flex h-full">
-        <aside class="w-64 h-full bg-white shadow-md p-6">
-          <h1 class="text-2xl font-bold text-gray-800 mb-2"><%= @company.name %></h1>
+    <div class="w-full flex max-w-screen-3xl mx-auto px-6 py-4">
+      <!-- Conteúdo principal à esquerda -->
+      <div class="flex-1 flex flex-col h-full pl-[50px]">
+        <aside class="bg-gray-100 shadow-md p-4 rounded-lg">
+          <h1 class="text-4xl font-bold text-gray-800 mb-2"><%= @company.name %></h1>
           <p class="text-gray-600">CNPJ: <%= @company.cnpj %></p>
         </aside>
 
-        <main class="flex-1 h-full overflow-auto p-8">
+        <div class="flex-1 h-full overflow-auto pt-6 ">
           <%= if @active_tab == :orders do %>
-            <div class="bg-white rounded-lg shadow-sm p-6 min-h-[calc(100vh-4rem)] overflow-auto">
-              <h2 class="text-2xl font-semibold mb-6">Últimos Pedidos</h2>
+            <div class="bg-gray-100 rounded-lg shadow-sm p-6 min-h-[calc(100vh-4rem)] overflow-auto ">
+              <h2 class="text-2xl font-bold mb-6 text-gray-800">Últimos Pedidos</h2>
 
               <div class="overflow-x-auto">
                 <table class="min-w-full divide-y divide-gray-200 border rounded-lg">
-                  <thead class="bg-gray-100">
+                  <thead class="bg-gray-200">
                     <tr>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                       <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Data</th>
@@ -91,11 +92,11 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
               </div>
             </div>
           <% end %>
-        </main>
+        </div>
       </div>
 
-      <!-- Botões flutuantes -->
-      <div class="absolute bottom-6 right-6 flex flex-col items-end space-y-2 z-50">
+      <!-- Botões à direita -->
+      <div class="flex flex-col gap-10 ml-6 pt-[130px] pl-[40px]">
         <%= render_tab_button(:products, @active_tab == :products, "Produtos") %>
         <%= render_tab_button(:orders, @active_tab == :orders, "Pedidos") %>
         <%= render_tab_button(:edit, @active_tab == :edit, "Editar Empresa") %>
@@ -108,7 +109,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
     assigns = %{tab: tab, active: active, label: label}
     ~H"""
     <button
-      class={"w-full text-left px-4 py-3 rounded-lg font-medium transition-colors #{if @active, do: "bg-blue-50 text-blue-600", else: "text-gray-700 hover:bg-gray-100"}"}
+      class={"phx-submit-loading:opacity-75 rounded-lg bg-blue-800 hover:bg-blue-700 py-3.5 px-10 shadow-lg
+        hover:scale-105 transition-transform duration-300 text-base font-semibold leading-6 text-white active:text-white/80"}
       phx-click="change_tab"
       phx-value-tab={@tab}
     >

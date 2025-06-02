@@ -91,6 +91,8 @@ Enum.each(categories, fn category ->
     type: category.type
   })
 end)
+categories = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Category)
+category_ids = Enum.map(categories, & &1.id)
 
 products = [
   %{
@@ -227,8 +229,16 @@ products = [
   }
 ]
 
-Enum.each(products, fn product ->
-  BatchEcommerce.Repo.insert!(%BatchEcommerce.Catalog.Product{
+products_with_categories =
+  Enum.map(products, fn product ->
+    selected_categories = Enum.take_random(categories, Enum.random(1..3))
+
+    Map.put(product, :categories, selected_categories)
+  end)
+
+Enum.each(products_with_categories, fn product ->
+  %BatchEcommerce.Catalog.Product{}
+  |> BatchEcommerce.Catalog.Product.changeset(%{
     name: product.name,
     price: product.price,
     stock_quantity: product.stock_quantity,
@@ -238,6 +248,8 @@ Enum.each(products, fn product ->
     sales_quantity: product.sales_quantity,
     image_url: product.image_url
   })
+  |> Ecto.Changeset.put_assoc(:categories, product.categories)
+  |> BatchEcommerce.Repo.insert!()
 end)
 
 # Relacionando produtos com categorias

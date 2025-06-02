@@ -29,9 +29,9 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers do
 
         <!-- Logo ou Barra de Pesquisa -->
         <div class="flex-1 flex justify-center mx-4">
-          <%= if @show_search do %>
-            <.search_bar query={@search_query} />
-          <% else %>
+            <%= if @show_search do %>
+              <.search_bar query={@search_query} target="#product-live-view" />
+            <% else %>
             <a href="/" class="text-xl font-bold text-gray-800">
               <span class="text-indigo-600">Batch</span>Ecommerce
             </a>

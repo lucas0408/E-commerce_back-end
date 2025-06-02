@@ -224,6 +224,108 @@ defmodule BatchEcommerceWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Barra lateral de categorias que fica fixa durante o scroll
+  """
+  attr :categories, :list, required: true
+  attr :selected_categories, :list, required: true
+  attr :rest, :global
+
+  def categories_sidebar(assigns) do
+    ~H"""
+    <div class="sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto" {@rest}>
+      <div class="bg-white p-4 rounded-lg shadow">
+        <h2 class="text-lg font-semibold mb-4">Categorias</h2>
+        <div class="space-y-2">
+          <%= for category <- @categories do %>
+            <div class="flex items-center">
+              <input 
+                type="checkbox" 
+                id={"category-#{category.id}"} 
+                name="category" 
+                value={category.id}
+                checked={category.id in @selected_categories}
+                phx-click="toggle_category"
+                phx-value-category={category.id}
+                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label for={"category-#{category.id}"} class="ml-2 text-sm text-gray-700">
+                <%= category.type %>
+              </label>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+    # ... outros componentes existentes ...
+
+  @doc """
+  Renderiza um card de produto clicável.
+  """
+  attr :product, :any, required: true
+  attr :rest, :global
+
+def product_card(assigns) do
+  ~H"""
+  <div 
+    class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+    phx-click="redirect_to_product"
+    phx-value-product-id={@product.id}
+  >
+    <div class="aspect-w-4 aspect-h-3">
+      <img 
+        src={@product.image_url || "https://via.placeholder.com/300"} 
+        alt={@product.name}
+        class="w-full h-48 object-cover"
+      />
+    </div>
+    <div class="p-4">
+      <h3 class="text-lg font-medium text-gray-900 mb-2"><%= @product.name %></h3>
+      <div class="flex items-center justify-between">
+        <div class="flex items-center">
+          <span class="text-lg font-bold text-gray-900">
+            <%= if @product.discount > 0 do %>
+              <%= format_price(calculate_discounted_price(@product.price, @product.discount)) %>
+            <% else %>
+              <%= format_price(@product.price) %>
+            <% end %>
+          </span>
+          <%= if @product.discount > 0 do %>
+            <span class="ml-2 text-sm text-red-600 line-through">
+              <%= format_price(@product.price) %>
+            </span>
+            <span class="ml-2 px-2 py-1 bg-red-100 text-red-800 text-xs font-medium rounded">
+              <%= @product.discount %>% OFF
+            </span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+  """
+end
+
+  defp calculate_discounted_price(price, discount) do
+    case discount do
+      nil -> price
+      _ -> price - (price * discount / 100)
+    end
+  end
+
+  defp format_price(price) when is_integer(price) do
+    "R$ #{price / 100}"
+  end
+
+  defp format_price(price) when is_float(price) do
+    "R$ #{:erlang.float_to_binary(price, decimals: 2)}"
+  end
+
+  defp format_price(_), do: "R$ 0,00"
+
+
     attr :click_event, :string, default: "open-menu"
     attr :class, :string, default: "h-6 w-6"
     attr :rest, :global, include: ~w(disabled form name value)

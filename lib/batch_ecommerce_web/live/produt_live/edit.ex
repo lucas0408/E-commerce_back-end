@@ -13,6 +13,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Edit do
     ~H"""
     <div class="pt-20 px-4">
       <div class="max-w-2xl mx-auto">
+        <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@current_user} id="HeaderDefault"/>
         <h1 class="text-3xl font-bold text-gray-900 mb-8">Criar Nova Empresa</h1>
         
         <.live_component 

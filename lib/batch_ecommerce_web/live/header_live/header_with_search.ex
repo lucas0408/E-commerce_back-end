@@ -11,20 +11,22 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithSearch do
       |> assign_new(:notification_count, fn -> 0 end)
       |> assign_new(:cart_count, fn -> 0 end)
       |> assign_new(:user, fn -> nil end)
-      |> assign_new(:search_query, fn -> "" end)
+      # Remove a assign de search_query pois será gerenciado pelo ProductLive.Index
 
     ~H"""
-    <.live_component 
-      module={BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers} 
-      id={"header-search-#{@id}"}
-      show_cart={@show_cart}
-      show_search={@show_search}
-      show_menu={@show_menu}
-      notification_count={@notification_count}
-      cart_count={@cart_count}
-      user={@user}
-      search_query={@search_query}
-    />
+    <div> <!-- Elemento raiz estático obrigatório -->
+      <.live_component 
+        module={BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers} 
+        id={"header-search-#{@id}"}
+        show_cart={@show_cart}
+        show_search={@show_search}
+        show_menu={@show_menu}
+        notification_count={@notification_count}
+        cart_count={@cart_count}
+        user={@user}
+        search_query={@search_query || ""}  # Passa vazio se não estiver definido
+      />
+    </div>
     """
   end
 end

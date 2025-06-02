@@ -58,6 +58,8 @@ defmodule BatchEcommerceWeb.Router do
     live "/companies/:id", CompanyLive.Show, :show
     live "/users/:id", UserLive.Show, :show
     live "/companies/:id/edit", CompanyLive.Edit, :edit
+    live "/companies/:id/edit", CompanyLive.Edit, :edit
+    live "/companies/:id/edit", CompanyLive.Edit, :edit
 
     get "/", PageController, :home
   end

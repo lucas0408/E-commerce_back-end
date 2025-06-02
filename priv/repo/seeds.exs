@@ -237,6 +237,7 @@ products_with_categories =
   end)
 
 Enum.each(products_with_categories, fn product ->
+  IO.inspect(product)
   %BatchEcommerce.Catalog.Product{}
   |> BatchEcommerce.Catalog.Product.changeset(%{
     name: product.name,
@@ -245,6 +246,7 @@ Enum.each(products_with_categories, fn product ->
     description: product.description,
     company_id: product.company_id,
     rating: product.rating,
+    discount: product.discount,
     sales_quantity: product.sales_quantity,
     image_url: product.image_url
   })

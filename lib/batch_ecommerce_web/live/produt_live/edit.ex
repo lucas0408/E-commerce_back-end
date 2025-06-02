@@ -3,15 +3,32 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Edit do
   alias BatchEcommerce.Catalog.Product
   alias BatchEcommerce.Catalog
   alias BatchEcommerceWeb.Live.ProductLive.FormComponent
+  alias BatchEcommerce.Accounts
+  alias BatchEcommerce.Accounts.User
 
-  def mount(%{"product_id" => id}, _session, socket) do
-    product = Catalog.get_product(id)
-    {:ok, assign(socket, product: product)}
+  def mount(%{"product_id" => id}, session, socket) do
+
+    current_user = Map.get(session, "current_user")
+
+    case Accounts.user_preload_company(current_user) do
+      %User{company: nil} ->
+        {:halt, Phoenix.LiveView.redirect(socket, to: "/companies/new")}
+
+      %User{company: company} ->
+        product = Catalog.get_product(id)
+        IO.inspect(product)
+        {:ok,
+        socket
+        |> assign(:current_user, current_user)
+        |> assign(product: product)
+        |> assign(:company, company)
+        |> assign(:page_title, "Nova Empresa")}
+    end
   end
 
     def render(assigns) do
     ~H"""
-    <div class="pt-20 px-4">
+    <div class="px-4">
       <div class="max-w-2xl mx-auto">
         <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@current_user} id="HeaderDefault"/>
         <h1 class="text-3xl font-bold text-gray-900 mb-8">Criar Nova Empresa</h1>
@@ -20,6 +37,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Edit do
           module={FormComponent} 
           id={@product.id}
           product={@product} 
+          company_id={@company.id}
           action={@live_action} 
         />
         

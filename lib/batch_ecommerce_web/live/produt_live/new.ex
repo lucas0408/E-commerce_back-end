@@ -29,11 +29,11 @@ defmodule BatchEcommerceWeb.Live.ProductLive.New do
         id="new-product"
         product={%Product{}}
         action={@live_action}
-        patch={~p"/products"}
+        company_id={@company.id}
       >
         <h1 class="text-2xl font-bold mb-4">Creating a product</h1>
       </.live_component>
-
+      
       <.back navigate={~p"/products"} class="mt-4 inline-block text-blue-600 hover:text-blue-800">
         Back to products
       </.back>

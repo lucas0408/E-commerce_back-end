@@ -45,6 +45,7 @@ defmodule BatchEcommerceWeb.Router do
     resources "/categories", CategoryController, only: [:index]
     post "/login", SessionController, :login
     get "/logout", SessionController, :logout
+    get "/orders/export-stream", OrderController, :export_stream
   end
 
   scope "/", BatchEcommerceWeb.Live do
@@ -53,13 +54,18 @@ defmodule BatchEcommerceWeb.Router do
     live "/users", UserLive.Index, :index
     live "/users/new", UserLive.New, :new
     live "/users/:id/edit", UserLive.Edit, :edit
+    live "/products", ProductLive.Index, :index
+    live "/products/:product_id", ProductLive.Show, :edit
     live "/products/new", ProductLive.New, :new
+    live "/products/:product_id/edit", ProductLive.Edit, :edit
+    live "/users/:id", UserLive.Show, :show
     live "/companies/new", CompanyLive.New, :new
     live "/companies/:id", CompanyLive.Show, :show
-    live "/users/:id", UserLive.Show, :show
     live "/companies/:id/edit", CompanyLive.Edit, :edit
-    live "/companies/:id/edit", CompanyLive.Edit, :edit
-    live "/companies/:id/edit", CompanyLive.Edit, :edit
+    live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
+    live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
+    live "/companies/:id/orders", OrderLive.Index, :index
+    live "/cart_products", ShoppingCart.Index, :index
 
     get "/", PageController, :home
   end

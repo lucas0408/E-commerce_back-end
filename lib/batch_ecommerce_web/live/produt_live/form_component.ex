@@ -5,15 +5,21 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   alias BatchEcommerce.Catalog.Product
 
   @impl true
-  def update(assigns, socket) do
-    changeset = Catalog.change_product(%Product{})
+  def update(%{product: product} = assigns, socket) do
+    changeset = Catalog.change_product(product)
     categories = Catalog.list_categories()
-    
+    selected_categories = if assigns.action == :edit do
+      Enum.map(product.categories, &to_string(&1.id))
+    else
+      []
+    end
     {:ok,
      socket
      |> assign(assigns)
      |> assign(:form, to_form(changeset))
+     |> assign(:changeset, changeset)
      |> assign(:categories, categories)
+     |> assign(:selected_categories, selected_categories)
      |> assign(:uploaded_files, [])
      |> assign(:preco_total, 0.0)
      |> allow_upload(:image, 
@@ -25,12 +31,16 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
   @impl true
   def handle_event("validate", %{"product" => product_params}, socket) do
-    
-    preco = parse_decimal(product_params["price"] || "0")  # Note que mudei para "price"
+    preco = parse_decimal(product_params["price"] || "0")
     desconto = parse_decimal(product_params["desconto"] || "0")
     preco_total = calculate_total_price(preco, desconto)
+
+    new_selected = Map.get(product_params, "categories", [])
+    previous_selected = socket.assigns.selected_categories
+
+    selected_categories = Enum.uniq(previous_selected ++ new_selected)
     
-    
+
     changeset =
       %Product{}
       |> Catalog.change_product(product_params)
@@ -39,22 +49,31 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     {:noreply,
     socket
     |> assign(:form, to_form(changeset))
+    |> assign(:selected_categories, selected_categories)
     |> assign(:preco_total, preco_total)}
   end
 
+
   @impl true
   def handle_event("save", %{"product" => product_params}, socket) do
-    IO.inspect(product_params)
-    case Catalog.create_product(product_params) do
+    IO.inspect(product_params, label: "Product Params")
+    
+    # Garantir que categories está presente nos parâmetros
+    product_params_with_categories = Map.put(product_params, "category_ids", socket.assigns.selected_categories)
+                                    |> Map.put("company_id", socket.assigns.company_id)
+
+    IO.inspect(product_params_with_categories)
+    
+    case Catalog.create_product(product_params_with_categories) do
       {:ok, product} ->
         notify_parent({:saved, product})
         {:noreply,
          socket
          |> put_flash(:info, "Produto criado com sucesso")
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_patch(to: ~p"/companies/new")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect(changeset)
+        IO.inspect(changeset, label: "Changeset Error")
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end
@@ -82,11 +101,11 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
           phx-submit="save"
           class="space-y-6"
         >
-          <!-- Linha 1: Nome e Categoria -->
+          <!-- Linha 1: Nome e Categorias -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <.input
-                field={f[:name]}
+                field={@form[:name]}
                 type="text"
                 label="Nome"
                 placeholder="Digite o nome do produto"
@@ -97,44 +116,71 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
-                Categoria
+                Categorias *
               </label>
-              <.input
-                field={f[:category_id]}
-                type="select"
-                options={Enum.map(@categories, &{&1.type, &1.id})}
-                prompt="Selecione uma categoria"
-                class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+              <select
+                name="product[categories][]"
+                multiple
+                class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32"
+                style="min-height: 120px;"
+              >
+                <%= for category <- @categories do %>
+                  <option 
+                    value={category.id}
+                    selected={to_string(category.id) in @selected_categories}
+                  >
+                    <%= category.type %>
+                  </option>
+                <% end %>
+              </select>
             </div>
           </div>
 
-          <!-- Linha 2: Preço e Desconto -->
+          <!-- Categorias Selecionadas (Visual) -->
+          <%= if length(@selected_categories) > 0 do %>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Categorias Selecionadas
+              </label>
+              <div class="flex flex-wrap gap-2">
+                <%= for category_id <- @selected_categories do %>
+                  <% category = Enum.find(@categories, &(to_string(&1.id) == category_id)) %>
+                  <%= if category do %>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                      <%= category.type %>
+                    </span>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+
+          <!-- Linha 2: Preço, Desconto, Preço Total e Estoque -->
          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
         <div>
           <.input
-            field={f[:price]}
+            field={@form[:price]}
             type="number"
             label="Preço (R$)"
             step="0.01"
             min="0"
             inputmode="decimal"
             placeholder="0.00"
-            value={to_string(f[:price].value || "")}
+            value={to_string(@form[:price].value || "")}
             class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 
         <div>
           <.input
-            field={f[:desconto]}
+            field={@form[:discount]}
             type="number"
             label="Desconto (%)"
             min="0"
             max="100"
             inputmode="decimal"
             placeholder="0.00"
-            value={to_string(f[:desconto].value || "")}
+            value={to_string(@form[:discount].value || "")}
             class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
@@ -154,23 +200,22 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
         <div>
           <.input
-            field={f[:stock_quantity]}
+            field={@form[:stock_quantity]}
             type="number"
             label="Estoque"
             min="0"
             inputmode="numeric"
             placeholder="0"
-            value={to_string(f[:stock_quantity].value || "")}
+            value={to_string(@form[:stock_quantity].value || "")}
             class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
       </div>
 
-
           <!-- Linha 3: Descrição -->
           <div>
             <.input
-              field={f[:description]}
+              field={@form[:description]}
               type="textarea"
               label="Descrição"
               rows="4"

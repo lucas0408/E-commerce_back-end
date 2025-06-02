@@ -4,7 +4,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
   alias BatchEcommerce.Accounts.Company
   alias BatchEcommerce.Accounts.Address
 
-  @impl true
+ @impl true
   def render(assigns) do
     ~H"""
     <div class="max-w-5xl mx-auto">
@@ -34,7 +34,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
           <% end %>
 
         <!-- Restante do seu formulário... -->
-
         <!-- Linha 2: email e telefone -->
           <.input field={@form[:email]} type="email" label="Email" />
           <.input field={@form[:phone_number]} type="text" label="Telefone" />
@@ -65,7 +64,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
         <!-- Botão de cadastro -->
         <div class="col-span-2 flex justify-center mt-10">
           <.button class="bg-blue-600 text-white px-6 py-2 rounded">
-            <%= if @action == :new, do: "Cadastrar Empresa", else: "Atualizar Empresa" %>
+            Cadastrar Empresa
           </.button>
         </div>
       </.form>

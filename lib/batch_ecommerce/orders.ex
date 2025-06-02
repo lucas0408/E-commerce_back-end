@@ -27,7 +27,9 @@ defmodule BatchEcommerce.Orders do
           product_id: item.product_id,
           price: item.price_when_carted,
           quantity: item.quantity,
-          order_id: order.id
+          order_id: order.id,
+          status: "Preparando Pedido",
+        
         })
         |>Repo.insert!()
       end)
@@ -39,9 +41,33 @@ defmodule BatchEcommerce.Orders do
           error
       end
   end
+  
+  def list_company_orders_paginated(company_id, page, per_page) do
+    # Primeiro obtenha todos os IDs de produtos da empresa
+    product_ids = Repo.all(
+      from p in BatchEcommerce.Catalog.Product,
+      where: p.company_id == ^company_id,
+      select: p.id
+    )
+
+
+    # Agora busque todos os order_products para esses produtos
+    query = from op in OrderProduct,
+      join: p in assoc(op, :product),
+      join: o in assoc(op, :order),
+      join: u in assoc(o, :user),
+      where: op.product_id in ^product_ids,
+      preload: [product: p, order: {o, user: u}],
+      order_by: [desc: op.inserted_at]
+
+    # Executar a paginação
+    result = Repo.paginate(query, page: page, page_size: per_page)
+    
+    result
+  end
 
   def list_orders do
-    Repo.all(Order) |> Repo.preload(order_products: [:product]) |> Repo.preload(user: [:addresses])
+    Repo.all(OrderProduct) |> Repo.preload(:product)
   end
 
   def get_order!(user_id, id) do

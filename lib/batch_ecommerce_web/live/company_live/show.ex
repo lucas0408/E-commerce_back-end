@@ -2,28 +2,32 @@
 defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Accounts
+  alias BatchEcommerce.Catalog
 
   @impl true
-  def mount(%{"id" => company_id}, _session, socket) do
-    company = Accounts.get_company!(company_id)
-    last_5_orders = get_last_5_orders(company)
+  def mount(%{"id" => id}, _session, socket) do
+    company = Accounts.get_company!(id)
+    IO.inspect(company)
+    top_products = get_top_5_selling_products_by_sales(company.products)
 
     {:ok,
      socket
      |> assign(:company, company)
-     |> assign(:last_5_orders, last_5_orders)
-     |> assign(:active_tab, :orders)}
+     |> assign(:user, %{name: "ricardo", id: 1})
+     |> assign(:top_products, top_products)}
   end
 
-  defp get_last_5_orders(_company), do: [] # Você ainda pode implementar isso
+  def get_top_5_selling_products_by_sales(products) do
+    products
+    |> Enum.sort_by(& &1.sales_quantity, :desc)
+    |> Enum.take(5)
+  end
+
+
+
 
   @impl true
   def handle_params(_params, _url, socket), do: {:noreply, socket}
-
-  @impl true
-  def handle_event("change_tab", %{"tab" => tab}, socket) do
-    {:noreply, assign(socket, :active_tab, String.to_existing_atom(tab))}
-  end
 
   def render(assigns) do
     ~H"""
@@ -123,4 +127,5 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   defp status_color("pending"), do: "bg-yellow-100 text-yellow-800"
   defp status_color("canceled"), do: "bg-red-100 text-red-800"
   defp status_color(_), do: "bg-gray-100 text-gray-800"
+
 end

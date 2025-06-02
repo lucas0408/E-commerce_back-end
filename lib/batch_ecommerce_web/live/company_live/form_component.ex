@@ -46,7 +46,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
           <div class="flex gap-4">
             <div class="max-w-[85px]">
-              <.input field={af[:home_number]} label="Número" />
+              <.input field={af[:home_number]} label="Número"/>
             </div>
             <.input field={af[:cep]} label="CEP" />
           </div>

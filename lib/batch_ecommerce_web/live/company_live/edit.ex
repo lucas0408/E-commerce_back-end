@@ -14,9 +14,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Edit do
 
     def render(assigns) do
     ~H"""
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
     <div class="pt-10 px-4">
-      <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold text-gray-100 mb-8 text-center pb-10">Criar Nova Empresa</h1>
+      <div class="max-w-7xl mx-auto rounded-lg bg-white">
+        <h1 class="text-4xl font-bold text-slate-700 mb-8 text-center mt-[25px] p-10">Criar Nova Empresa</h1>
 
         <.live_component
           module={FormComponent}

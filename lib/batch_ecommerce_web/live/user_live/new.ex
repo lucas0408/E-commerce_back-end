@@ -6,8 +6,8 @@ defmodule BatchEcommerceWeb.Live.UserLive.New do
   def render(assigns) do
     ~H"""
     <div class="px-4">
-      <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-bold text-gray-900 mb-8 text-center">Criar Nova Conta</h1>
+      <div class="max-w-7xl rounded-lg mx-auto bg-white m-[25px]">
+        <h1 class="text-4xl font-bold text-slate-700 mb-8 text-center mt-[25px] p-10">Criar Nova Conta</h1>
         <.live_component
           module={FormComponent}
           id="new-user"

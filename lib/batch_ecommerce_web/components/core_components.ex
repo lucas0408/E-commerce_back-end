@@ -606,6 +606,7 @@ end
     |> input()
   end
 
+
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->

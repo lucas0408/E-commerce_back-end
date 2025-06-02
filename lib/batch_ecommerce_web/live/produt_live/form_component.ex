@@ -61,7 +61,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     # Garantir que categories está presente nos parâmetros
     product_params_with_categories = 
       product_params
-      |> Map.put("category_ids", socket.assigns.selected_categories)
+      |> Map.put("categories", socket.assigns.selected_categories)
       |> Map.put("company_id", socket.assigns.company_id)
 
     case socket.assigns.action do
@@ -90,6 +90,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   end
 
   defp update_product(socket, product_params) do
+    IO.inspect(product_params)
     case Catalog.update_product(socket.assigns.product, product_params) do
       {:ok, product} ->
         notify_parent({:updated, product})

@@ -13,9 +13,11 @@ defmodule BatchEcommerce.ShoppingCart do
   def get_cart_user(user_id) do
     query = from(i in CartProduct, where: i.user_id == ^user_id)
     Repo.all(query)
+    |> preload_product()
   end
 
   def create_cart_prodcut(user_id, cart_item_params) do
+    IO.inspect(user_id)
     case Map.get(cart_item_params, "product_id") do
       nil ->
         {:error, :not_found}   
@@ -50,11 +52,10 @@ defmodule BatchEcommerce.ShoppingCart do
 
   def get_cart_product(id) do
     Repo.get(CartProduct, id)
-    |> preload_product()
   end
 
   def preload_product(cart_product) do
-    Repo.preload(cart_product, product: [:categories])
+    Repo.preload(cart_product, product: [:categories, :company])
   end
 
   def update_cart_product(%CartProduct{} = cart_product, cart_product_params) do
@@ -75,6 +76,7 @@ defmodule BatchEcommerce.ShoppingCart do
     cart_product
     |> CartProduct.changeset(attrs)
     |> Repo.update()
+    |> preload_product()
   end
 
   def total_price_cart_product(cart_products) do

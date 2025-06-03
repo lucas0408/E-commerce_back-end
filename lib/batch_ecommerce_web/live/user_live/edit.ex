@@ -10,7 +10,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.Edit do
 
   def render(assigns) do
     ~H"""
-    
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart} id="HeaderWithCart"/>
     <div class="pt-20 px-4"> <!-- Adiciona padding-top para compensar o header fixo -->
       <.live_component 
         module={FormComponent} 

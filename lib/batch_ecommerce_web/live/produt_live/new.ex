@@ -2,6 +2,24 @@ defmodule BatchEcommerceWeb.Live.ProductLive.New do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Catalog.Product
   alias BatchEcommerceWeb.Live.ProductLive.FormComponent
+  alias BatchEcommerce.Accounts
+  alias BatchEcommerce.Accounts.User
+
+  def mount(_params, session, socket) do
+    current_user = Map.get(session, "current_user")
+
+    case Accounts.user_preload_company(current_user) do
+      %User{company: nil} ->
+        {:halt, Phoenix.LiveView.redirect(socket, to: "/companies/new")}
+
+      %User{company: company} ->
+        {:ok,
+        socket
+        |> assign(:current_user, current_user)
+        |> assign(:company, company)
+        |> assign(:page_title, "Nova Empresa")}
+    end
+  end
 
   def render(assigns) do
     ~H"""

@@ -7,7 +7,8 @@ defmodule BatchEcommerce.Repo.Migrations.CreateOrderProducts do
       add :quantity, :integer
       add :order_id, references(:orders, on_delete: :nothing)
       add :product_id, references(:products, on_delete: :nothing)
-
+      add :status, :string 
+      
       timestamps(type: :utc_datetime)
     end
 

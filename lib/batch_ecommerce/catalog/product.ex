@@ -4,7 +4,7 @@ defmodule BatchEcommerce.Catalog.Product do
 
   @derive {Jason.Encoder, only: [:id, :name, :price, :stock_quantity, :image_url, :description, :company_id, :inserted_at, :updated_at]}
 
-  @required_fields [:name, :price, :stock_quantity, :description, :company_id]
+  @required_fields [:name, :price, :rating, :stock_quantity, :description, :company_id]
   @filename_regex ~r|^http://localhost:9000/batch-bucket/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-.*\.jpg$|
 
   schema "products" do
@@ -13,7 +13,9 @@ defmodule BatchEcommerce.Catalog.Product do
     field :stock_quantity, :integer
     field :image_url, :string
     field :description, :string
-
+    field :rating, :integer 
+    field :sales_quantity, :integer
+    field :discount, :decimal
     many_to_many :categories, BatchEcommerce.Catalog.Category, join_through: "products_categories", on_replace: :delete
     belongs_to :company, BatchEcommerce.Accounts.Company
 

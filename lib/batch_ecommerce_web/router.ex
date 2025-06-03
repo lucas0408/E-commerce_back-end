@@ -26,7 +26,7 @@ defmodule BatchEcommerceWeb.Router do
     current_user = List.first(BatchEcommerce.Accounts.list_users())
     company = BatchEcommerce.Accounts.get_company_by_user_id(current_user.id)
 
-    
+
     conn
     |> assign(:current_user, current_user)
     |> put_session(:current_user, current_user)
@@ -39,12 +39,13 @@ defmodule BatchEcommerceWeb.Router do
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
 
-    
+
     resources "/users", UserController, only: [:create, :show]
     resources "/products", ProductController, only: [:index, :show]
     resources "/categories", CategoryController, only: [:index]
     post "/login", SessionController, :login
     get "/logout", SessionController, :logout
+    get "/orders/export-stream", OrderController, :export_stream
   end
 
   scope "/", BatchEcommerceWeb.Live do
@@ -54,10 +55,17 @@ defmodule BatchEcommerceWeb.Router do
     live "/users/new", UserLive.New, :new
     live "/users/:id/edit", UserLive.Edit, :edit
     live "/products/new", ProductLive.New, :new
+    live "/products", ProductLive.Index, :index
+    live "/products/:product_id", ProductLive.Show, :edit
+    live "/products/:product_id/edit", ProductLive.Edit, :edit
+    live "/users/:id", UserLive.Show, :show
     live "/companies/new", CompanyLive.New, :new
     live "/companies/:id", CompanyLive.Show, :show
-    live "/users/:id", UserLive.Show, :show
     live "/companies/:id/edit", CompanyLive.Edit, :edit
+    live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
+    live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
+    live "/companies/:id/orders", OrderLive.Index, :index
+    live "/cart_products", ShoppingCart.Index, :index
 
     get "/", PageController, :home
   end
@@ -68,7 +76,7 @@ defmodule BatchEcommerceWeb.Router do
     resources "/users", UserController, except: [:create, :show, :new, :edit]
     resources "/products", ProductController, except: [:index, :show, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :index, :edit]
-    resources "/cart_products", CartProductController 
+    resources "/cart_products", CartProductController
     get "/cart_products/user/:user_id", CartProductController, :get_by_user
     resources "/orders", OrderController, only: [:create, :show, :index]
     get "/orders/export-stream", OrderController, :export_stream

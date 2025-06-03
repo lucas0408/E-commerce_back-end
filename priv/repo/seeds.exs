@@ -14,6 +14,7 @@ users = [
     password: "Senha@123",
     addresses: [
       %{
+        id: 1,  # Adicionei um ID para cada endereço para facilitar a manipulação
         cep: "01311-000",
         uf: "SP",
         city: "São Paulo",
@@ -21,6 +22,17 @@ users = [
         address: "Avenida Paulista",
         complement: "Próximo ao MASP",
         home_number: "1000"
+      },
+      %{
+        id: 2,
+        cep: "04538-132",
+        uf: "SP",
+        city: "São Paulo",
+        district: "Itaim Bibi",
+        address: "Rua Joaquim Floriano",
+        complement: "Edifício Commercial",
+        home_number: "100",
+        apartment: "101"  # Adicionei campo extra como exemplo
       }
     ]
   }

@@ -29,7 +29,7 @@ defmodule BatchEcommerceWeb.Router do
     
     conn
     |> assign(:current_user, current_user)
-    |> put_session(:current_user, current_user)
+    |> put_session(:current_user, current_user.id)
   end
 
   pipeline :ensure_auth do
@@ -66,6 +66,7 @@ defmodule BatchEcommerceWeb.Router do
     live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
     live "/companies/:id/orders", OrderLive.Index, :index
     live "/cart_products", ShoppingCart.Index, :index
+    live "/orders", OrderLive.Index, :index
 
     get "/", PageController, :home
   end

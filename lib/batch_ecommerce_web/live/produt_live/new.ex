@@ -6,7 +6,9 @@ defmodule BatchEcommerceWeb.Live.ProductLive.New do
   alias BatchEcommerce.Accounts.User
 
   def mount(_params, session, socket) do
-    current_user = Map.get(session, "current_user")
+    user_id = Map.get(session, "current_user")
+
+    current_user = Accounts.get_user(user_id)
 
     case Accounts.user_preload_company(current_user) do
       %User{company: nil} ->

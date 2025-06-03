@@ -6,7 +6,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
   @per_page 4
 
   @impl true
-  def mount(%{"company_id" => company_id}, _session, socket) do
+  def mount(%{"company_id" => company_id}, session, socket) do
+    user_id = Map.get(session, "current_user")
     {:ok, 
      socket
      |> assign(:company_id, company_id)
@@ -15,7 +16,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
      |> assign(:page, 1)
      |> assign(:per_page, @per_page)  # Adicionamos ao socket
      |> assign(:total_pages, 1)
-     |> assign(:user, %{name: "ricardo", id: 1})
+     |> assign(:user, Accounts.get_user(user_id))
      |> assign(:export_form, to_form(%{"format" => "csv"}))
      |> load_products()}
   end

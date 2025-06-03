@@ -32,7 +32,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers do
             <%= if @show_search do %>
               <.search_bar query={@search_query} target="#product-live-view" />
             <% else %>
-            <a href="/" class="text-xl font-bold text-gray-800">
+            <a href="/products" class="text-xl font-bold text-gray-800">
               <span class="text-indigo-600">Batch</span>Ecommerce
             </a>
           <% end %>

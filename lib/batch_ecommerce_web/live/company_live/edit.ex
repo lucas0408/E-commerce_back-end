@@ -5,11 +5,12 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Edit do
   alias BatchEcommerceWeb.Live.CompanyLive.FormComponent
   alias BatchEcommerceWeb.Live.HeaderLive.HeaderDefault
 
-  def mount(%{"id" => id}, _session, socket) do
-    user = %{name: "ricardo", id: 1, image_url: ""}
+  def mount(%{"id" => id}, session, socket) do
+    user_id = Map.get(session, "current_user")
+    current_user = Accounts.get_user(user_id)
     company = Accounts.get_company!(id)
     IO.inspect(Accounts.list_companies())
-    {:ok, assign(socket, company: company, user: user)}
+    {:ok, assign(socket, company: company, user: current_user)}
   end
 
     def render(assigns) do

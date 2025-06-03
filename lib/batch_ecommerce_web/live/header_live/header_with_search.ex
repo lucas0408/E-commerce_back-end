@@ -14,7 +14,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithSearch do
       # Remove a assign de search_query pois será gerenciado pelo ProductLive.Index
 
     ~H"""
-    <div> <!-- Elemento raiz estático obrigatório -->
+    <div>
       <.live_component 
         module={BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers} 
         id={"header-search-#{@id}"}

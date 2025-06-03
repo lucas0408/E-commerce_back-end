@@ -14,6 +14,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart do
       |> assign_new(:search_query, fn -> "" end)
 
     ~H"""
+    <div> <!-- Elemento raiz estático obrigatório -->
     <.live_component 
       module={BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers} 
       id={"header-cart-#{@id}"}
@@ -25,6 +26,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart do
       user={@user}
       search_query={@search_query}
     />
+    </div>
     """
   end
 end

@@ -9,14 +9,14 @@ defmodule BatchEcommerce.Orders do
   alias BatchEcommerce.Order.Order
   alias BatchEcommerce.Order.OrderProduct
 
-  def complete_order(user_id) do
+  def complete_order(user_id, shipping_cost) do
     cart_products = BatchEcommerce.ShoppingCart.get_cart_user(user_id)
 
     order =
       %Order{}
       |> Order.changeset(%{
         user_id: user_id,
-        total_price: BatchEcommerce.ShoppingCart.total_price_cart_product(cart_products)
+        total_price: Decimal.add(BatchEcommerce.ShoppingCart.total_price_cart_product(cart_products), shipping_cost)
       })
       |>Repo.insert!()
 
@@ -74,6 +74,14 @@ defmodule BatchEcommerce.Orders do
     Order
     |> Repo.get_by!(id: id, user_id: user_id)
     |> Repo.preload(order_products: [:product]) |> Repo.preload(user: [:addresses])
+  end
+  
+  def list_orders_by_user(user_id) do
+    Repo.all(
+      from o in Order,
+        where: o.user_id == ^user_id,
+        preload: [order_products: :product]
+    )
   end
 
   def get_order_by_user_id!(user_id) do

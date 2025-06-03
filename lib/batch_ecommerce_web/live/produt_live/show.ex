@@ -3,10 +3,12 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   alias BatchEcommerce.Catalog
   import BatchEcommerceWeb.CoreComponents
   alias BatchEcommerce.ShoppingCart
+  alias BatchEcommerce.Accounts
 
   @impl true
   def mount(%{"product_id" => id}, session, socket) do
-    current_user = Map.get(session, "current_user")
+    user_id = Map.get(session, "current_user")
+    current_user = Accounts.get_user(user_id)
     product = Catalog.get_product(id)
     {:ok,
      socket

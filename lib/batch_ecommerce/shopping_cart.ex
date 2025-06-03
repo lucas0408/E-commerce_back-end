@@ -28,7 +28,11 @@ defmodule BatchEcommerce.ShoppingCart do
 
         quantity = cart_item_params["quantity"] || "0"
 
-        price_when_carted = Decimal.mult(product.price, quantity)
+        discount_multiplier = Decimal.div(Decimal.sub(100, product.discount), 100)
+        price_when_carted =
+          product.price
+          |> Decimal.mult(quantity)
+          |> Decimal.mult(discount_multiplier)
 
         attrs = %{
           quantity: quantity,
@@ -76,7 +80,13 @@ defmodule BatchEcommerce.ShoppingCart do
     cart_product
     |> CartProduct.changeset(attrs)
     |> Repo.update()
-    |> preload_product()
+    |> case do
+        {:ok, cart_product} ->
+          {:ok, preload_product(cart_product)}
+
+        {:error, changeset} ->
+          {:error, changeset}
+      end
   end
 
   def total_price_cart_product(cart_products) do

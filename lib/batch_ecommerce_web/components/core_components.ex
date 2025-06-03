@@ -179,7 +179,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
   def cart_icon(assigns) do
     ~H"""
     <a 
-      href="/cart_products/index" 
+      href="/cart_products" 
       class="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none"
       aria-label="Carrinho de compras"
       {@rest}
@@ -311,7 +311,7 @@ end
   defp calculate_discounted_price(price, discount) do
     case discount do
       nil -> price
-      _ -> price - (price * discount / 100)
+      _ -> Decimal.to_float(price) - (Decimal.to_float(price) * Decimal.to_float(discount) / 100)
     end
   end
 
@@ -405,28 +405,32 @@ end
         <nav class="p-2">
           <ul class="space-y-1">
             <li>
-              <a href="/compras" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+              <.link navigate="/orders" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
                 <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 Minhas Compras
-              </a>
+              </.link>
             </li>
             <li>
-              <a href="/empresa" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v18m4.5-18v18M3 9h18" />
-                </svg>
-                Minha Empresa
-              </a>
+              <%= if @user && @user do %>
+                <.link navigate={"/companies/#{1}"} class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                  <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v18m4.5-18v18M3 9h18" />
+                  </svg>
+                  Minha Empresa
+                </.link>
+              <% end %>
             </li>
             <li>
-              <a href="/conta" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A6 6 0 0112 15a6 6 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-                Minha Conta
-              </a>
+              <%= if @user && @user.id do %>
+                <.link navigate={"/users/#{@user.id}"} class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                  <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.121 17.804A6 6 0 0112 15a6 6 0 016.879 2.804M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                  Minha Conta
+                </.link>
+              <% end %>
             </li>
           </ul>
         </nav>

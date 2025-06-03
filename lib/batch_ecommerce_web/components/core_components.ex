@@ -149,7 +149,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
 
   def notification_badge(assigns) do
     ~H"""
-    <button 
+    <button
       class="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none"
       phx-click={@click_event}
       aria-label="Notificações"
@@ -209,15 +209,15 @@ defmodule BatchEcommerceWeb.CoreComponents do
 
   def user_profile(assigns) do
     ~H"""
-    <a 
-      href={"/users/#{@id}"} 
+    <a
+      href={"/users/#{@id}"}
       class="flex items-center hover:opacity-80 transition-opacity"
       {@rest}
     >
       <span class="mr-2 text-sm font-medium text-gray-700"><%= @name %></span>
-      <img 
-        class="w-8 h-8 rounded-full object-cover" 
-        src={@avatar} 
+      <img
+        class="w-8 h-8 rounded-full object-cover"
+        src={@avatar}
         alt="Foto do usuário"
       />
     </a>
@@ -239,10 +239,10 @@ defmodule BatchEcommerceWeb.CoreComponents do
         <div class="space-y-2">
           <%= for category <- @categories do %>
             <div class="flex items-center">
-              <input 
-                type="checkbox" 
-                id={"category-#{category.id}"} 
-                name="category" 
+              <input
+                type="checkbox"
+                id={"category-#{category.id}"}
+                name="category"
                 value={category.id}
                 checked={category.id in @selected_categories}
                 phx-click="toggle_category"
@@ -270,14 +270,14 @@ defmodule BatchEcommerceWeb.CoreComponents do
 
 def product_card(assigns) do
   ~H"""
-  <div 
+  <div
     class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
     phx-click="redirect_to_product"
     phx-value-product-id={@product.id}
   >
     <div class="aspect-w-4 aspect-h-3">
-      <img 
-        src={@product.image_url || "https://via.placeholder.com/300"} 
+      <img
+        src={@product.image_url || "https://via.placeholder.com/300"}
         alt={@product.name}
         class="w-full h-48 object-cover"
       />
@@ -332,9 +332,9 @@ end
 
     def menu_button(assigns) do
       assigns = assign_new(assigns, :target, fn -> nil end)
-      
+
       ~H"""
-      <button 
+      <button
         phx-click={@click_event}
         phx-target={@target}
         class="p-2 rounded-md hover:bg-gray-100 focus:outline-none"
@@ -379,7 +379,7 @@ end
     ~H"""
     <div class="fixed inset-0 z-40">
       <!-- Overlay -->
-      <div 
+      <div
         class="absolute inset-0 bg-black bg-opacity-50"
         phx-click="toggle_menu"
         phx-target={@myself}
@@ -391,9 +391,9 @@ end
         <div class="p-4 border-b border-gray-200">
           <%= if @user do %>
             <div class="flex items-center space-x-3">
-              <img 
-                class="w-10 h-10 rounded-full object-cover" 
-                src={"/images/default-avatar.png"} 
+              <img
+                class="w-10 h-10 rounded-full object-cover"
+                src={"/images/default-avatar.png"}
                 alt="Foto do usuário"
               />
               <p class="font-medium text-gray-900"><%= @user.name %></p>
@@ -538,7 +538,7 @@ end
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-blue-800 hover:bg-blue-700 py-3.5 px-10 shadow-lg
+        "phx-submit-loading:opacity-75 rounded-lg bg-indigo-600 hover:bg-indigo-800 py-3.5 px-10 shadow-lg
         hover:scale-105 transition-transform duration-300",
         "text-base font-semibold leading-6 text-white active:text-white/80",
         @class
@@ -610,6 +610,7 @@ end
     |> input()
   end
 
+
   def input(%{type: "checkbox"} = assigns) do
     assigns =
       assign_new(assigns, :checked, fn ->
@@ -679,6 +680,16 @@ end
 
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
+
+    {extra_input_class, rest} = Map.pop(assigns.rest || %{}, :class)
+
+    assigns =
+      assigns
+      |> assign_new(:input_class, fn -> "" end)
+      |> assign_new(:label_class, fn -> "" end)
+      |> assign(:rest, rest)
+      |> assign(:extra_input_class, extra_input_class || "")
+
     ~H"""
     <div class="relative z-0 w-full group">
       <input
@@ -687,11 +698,15 @@ end
         id={@id}
         value={Phoenix.HTML.Form.normalize_value(@type, @value)}
         class={[
+          # classes padrão
           "peer block py-2.5 px-0 w-full text-lg text-gray-800 bg-transparent border-0 border-b-2 appearance-none",
-          "dark:text-black dark:border-gray-600 dark:focus:border-blue-500",
-          "focus:outline-none focus:ring-0 focus:border-blue-600",
+          "dark:text-black dark:border-gray-600 dark:focus:border-indigo-500",
+          "focus:outline-none focus:ring-0 focus:border-indigo-600",
           @errors == [] && "border-gray-300 focus:border-gray-400",
-          @errors != [] && "border-rose-400 focus:border-rose-400"
+          @errors != [] && "border-rose-400 focus:border-rose-400",
+          # classes opcionais passadas pelo user
+          @input_class,
+          @extra_input_class
         ]}
         placeholder=" "
         {@rest}
@@ -699,9 +714,13 @@ end
 
       <label
         for={@id}
-        class="absolute text-base text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0]
-              peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0
-              peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-blue-600 peer-focus:dark:text-blue-500">
+        class={[
+          "absolute text-base text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0]",
+          "peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0",
+          "peer-focus:scale-75 peer-focus:-translate-y-6 peer-focus:text-indigo-600 peer-focus:dark:text-indigo-500",
+          @label_class
+        ]}
+      >
         {@label}
       </label>
 
@@ -711,6 +730,7 @@ end
     </div>
     """
   end
+
 
   @doc """
   Renders a label.
@@ -780,7 +800,7 @@ end
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
+    <header class={[@actions != [] && "flex items-center justify-between", @class]}>
       <div>
         <h1 class="text-lg font-semibold leading-8 text-zinc-800">
           {render_slot(@inner_block)}

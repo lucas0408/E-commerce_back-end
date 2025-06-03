@@ -17,7 +17,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
         phx-submit="save"
       >
 
-      <div class="grid grid-cols-2 rounded-lg gap-x-20 gap-y-7 py-[30px] px-[30px] bg-gray-100">
+      <div class="grid grid-cols-2 gap-x-20 gap-y-7">
         <!-- Linha 1: nome e CNPJ -->
           <.input field={@form[:name]} type="text" label="Nome" />
           <!-- Só mostra CNPJ se for uma criação nova -->

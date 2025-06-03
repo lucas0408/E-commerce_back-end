@@ -31,11 +31,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
 
   def render(assigns) do
     ~H"""
-    <div class="max-w-4xl mx-auto px-4 py-8">
-    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
-
+      <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
+    <div class="max-w-6xl mx-auto px-4 py-20">
       <!-- Tabela de produtos -->
-      <div class="mb-10">
+      <div class="px-[15px] py-[7px] mt-[20px] bg-white rounded-lg">
         <.table id="top-products" rows={@top_products}>
           <:col :let={product} label="Nome do Produto">
             <%= product.name %>
@@ -53,24 +52,24 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
       </div>
 
       <!-- Botões de ação com verificação -->
-      <div class="flex space-x-4">
-      
+      <div class="flex justify-center space-x-10 mt-[50px]">
+
       <.link patch={~p"/companies/#{@company.id}/products"}>
-        <.button 
+        <.button
         >
           Produtos
         </.button>
       </.link>
-        
+
       <.link patch={~p"/companies/#{@company.id}/orders"}>
-        <.button 
+        <.button
         >
           Pedidos
         </.button>
       </.link>
-        
+
       <.link patch={~p"/companies/#{@company.id}/edit"}>
-        <.button 
+        <.button
         >
           Alterar Dados
         </.button>

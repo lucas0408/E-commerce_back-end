@@ -25,8 +25,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
   def handle_params(params, _uri, socket) do
     page = params |> Map.get("page", "1") |> String.to_integer()
     search_term = params |> Map.get("search", "")
-    
-    {:noreply, 
+
+    {:noreply,
     socket
     |> assign(:page, page)
     |> assign(:search_term, search_term)
@@ -35,8 +35,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
 
   defp load_products(socket) do
     %{search_term: term, page: page, company_id: company_id, per_page: per_page} = socket.assigns
-    
-    %{entries: entries, total_pages: total_pages, total_entries: total_entries} = 
+
+    %{entries: entries, total_pages: total_pages, total_entries: total_entries} =
       Catalog.list_company_products_paginated(company_id, term, page, per_page)
 
     socket
@@ -71,43 +71,44 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-7xl mx-auto px-4 py-8">
-      
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
-
+    <div class="max-w-7xl mx-auto px-4 py-20">
       <!-- Barra de pesquisa e botões -->
-      <div class="flex justify-between items-center mb-6">
-      <.simple_form 
-        for={%{}} 
-        as={:search} 
-        phx-change="search" 
-        phx-submit="search" 
+      <div class="flex justify-between items-center bg-white mt-[20px] mb-[2px] px-[15px] py-[5px] rounded-t-lg">
+      <.simple_form
+        for={%{}}
+        as={:search}
+        phx-change="search"
+        phx-submit="search"
         class="flex items-center space-x-4"
       >
         <.input
           type="text"
           name="search_term"
+          label="Pesquisar"
           value={@search_term}
           placeholder="Pesquisar por nome..."
-          class="w-64"
+          class=""
+          placeholder="Search"
           phx-debounce="300"
         />
         <button type="submit" class="hidden">Buscar</button>
       </.simple_form>
 
-        <div class="flex space-x-3">
-          <a href={~p"/api/orders/export-stream"} 
-            class="btn btn-primary"
+        <div class="flex space-x-8">
+          <a href={~p"/api/orders/export-stream"}
+            class="btn btn-primary font-bold text-green-600 border border-[2px] border-green-600 rounded-lg p-1 hover:bg-green-600 hover:text-white hover:scale-105"
             download>
             Exportar relatório
           </a>
-          <.link patch={~p"/companies/#{@company_id}/products/new"} color="primary">
+          <.link patch={~p"/products/new"} color="primary" class="font-bold text-white bg-indigo-600 rounded-lg p-1 hover:bg-indigo-800 hover:scale-105">
             Adicionar Produto
           </.link>
         </div>
       </div>
 
       <!-- Formulário de exportação -->
+      <div class="bg-white px-[10px] py-[1px] rounded-b-lg">
       <.form :let={f} for={@export_form} id="export-form" phx-submit="export">
         <.input type="hidden" field={f[:format]} value="csv" />
       </.form>
@@ -130,24 +131,24 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
           <%= product.price %>
         </:col>
         <:col :let={product} label="Ações">
-          <.link 
-            patch={~p"/products/#{product.id}/edit"} 
+          <.link
+            patch={~p"/products/#{product.id}/edit"}
             class="text-blue-600 hover:text-blue-800"
           >
             Editar
           </.link>
         </:col>
       </.table>
+      </div>
 
       <!-- Paginação corrigida -->
- <!-- Paginação corrigida -->
     <nav class="flex items-center justify-between border-t border-gray-200 px-4 py-3 sm:px-0 mt-4">
       <div class="flex flex-1 justify-between sm:hidden">
         <%= if @page > 1 do %>
-          <a 
-            href="#" 
+          <a
+            href="#"
             class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            phx-click="nav" 
+            phx-click="nav"
             phx-value-page={@page - 1}
           >
             Anterior
@@ -159,10 +160,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
         <% end %>
 
         <%= if @page < @total_pages do %>
-          <a 
-            href="#" 
+          <a
+            href="#"
             class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            phx-click="nav" 
+            phx-click="nav"
             phx-value-page={@page + 1}
           >
             Próxima
@@ -173,15 +174,15 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
           </span>
         <% end %>
       </div>
-      
+
       <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <nav class="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
             <%= if @page > 1 do %>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                phx-click="nav" 
+                phx-click="nav"
                 phx-value-page={@page - 1}
               >
                 <span class="sr-only">Anterior</span>
@@ -199,10 +200,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
             <% end %>
 
             <%= for i <- max(1, @page - 2)..min(@total_pages, @page + 2) do %>
-              <a 
-                href="#" 
-                class={"relative inline-flex items-center px-4 py-2 text-sm font-semibold #{if i == @page, do: "bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", else: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"}"}
-                phx-click="nav" 
+              <a
+                href="#"
+                class={"relative inline-flex items-center px-4 py-2 text-sm text-white font-semibold #{if i == @page, do: "bg-indigo-600 text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600", else: "text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:outline-offset-0"}"}
+                phx-click="nav"
                 phx-value-page={i}
               >
                 <%= i %>
@@ -210,10 +211,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
             <% end %>
 
             <%= if @page < @total_pages do %>
-              <a 
-                href="#" 
+              <a
+                href="#"
                 class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                phx-click="nav" 
+                phx-click="nav"
                 phx-value-page={@page + 1}
               >
                 <span class="sr-only">Próxima</span>

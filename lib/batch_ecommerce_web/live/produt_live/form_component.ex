@@ -41,7 +41,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
     selected_categories = Enum.uniq(previous_selected ++ new_selected)
 
-    
 
     changeset =
       %Product{}
@@ -59,7 +58,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   @impl true
   def handle_event("save", %{"product" => product_params}, socket) do
     # Garantir que categories está presente nos parâmetros
-    product_params_with_categories = 
+    product_params_with_categories =
       product_params
       |> Map.put("categories", socket.assigns.selected_categories)
       |> Map.put("company_id", socket.assigns.company_id)
@@ -113,9 +112,9 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="max-w-7xl mx-auto px-6">
+    <div class="max-w-7xl mx-auto mt-[50px] px-6">
       <div class="bg-white shadow-lg rounded-lg p-8 ">
-        <h1 class="text-4xl font-bold text-gray-800 mb-8 text-center">
+        <h1 class="text-4xl font-bold text-slate-700 mb-8 text-center">
           Cadastro de Produto
         </h1>
 
@@ -128,7 +127,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
           phx-submit="save"
           class="space-y-6"
         >
-        
           <!-- Linha 1: Nome e Categoria -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-[150px]">
             <div class="grid gap-6">
@@ -164,7 +162,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                     inputmode="decimal"
                     placeholder="0.00"
                     value={to_string(@form[:discount].value || "")}
-                    class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    class=""
                   />
                 </div>
 
@@ -202,8 +200,8 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                 />
               </div>
             </div>
+          <div class="grid gap-12">
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">
                 Categorias *
@@ -211,11 +209,9 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
               <select
                 name="product[categories][]"
                 multiple
-                class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32"
-                style="min-height: 120px;"
-              >
+                class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32">
                 <%= for category <- @categories do %>
-                  <option 
+                  <option
                     value={category.id}
                     selected={to_string(category.id) in @selected_categories}
                   >
@@ -302,7 +298,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
               <div class="flex justify-center pt-6">
                 <button
                   type="submit"
-                  class="px-8 py-3 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+                  class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform duration-300"
                 >
                   Adicionar Produto
                 </button>

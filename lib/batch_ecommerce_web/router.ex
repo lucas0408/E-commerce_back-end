@@ -26,7 +26,7 @@ defmodule BatchEcommerceWeb.Router do
     current_user = List.first(BatchEcommerce.Accounts.list_users())
     company = BatchEcommerce.Accounts.get_company_by_user_id(current_user.id)
 
-    
+
     conn
     |> assign(:current_user, current_user)
     |> put_session(:current_user, current_user.id)
@@ -39,7 +39,7 @@ defmodule BatchEcommerceWeb.Router do
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
 
-    
+
     resources "/users", UserController, only: [:create, :show]
     resources "/products", ProductController, only: [:index, :show]
     resources "/categories", CategoryController, only: [:index]
@@ -77,7 +77,7 @@ defmodule BatchEcommerceWeb.Router do
     resources "/users", UserController, except: [:create, :show, :new, :edit]
     resources "/products", ProductController, except: [:index, :show, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :index, :edit]
-    resources "/cart_products", CartProductController 
+    resources "/cart_products", CartProductController
     get "/cart_products/user/:user_id", CartProductController, :get_by_user
     resources "/orders", OrderController, only: [:create, :show, :index]
     get "/orders/export-stream", OrderController, :export_stream

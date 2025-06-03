@@ -25,6 +25,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.New do
 
   def render(assigns) do
     ~H"""
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@current_user} id="HeaderDefault"/>
     <div class="px-4">
       <.live_component
         module={FormComponent}

@@ -30,9 +30,8 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Edit do
 
     def render(assigns) do
     ~H"""
-    <div class="px-4">
-      <div class="max-w-2xl mx-auto">
         <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@current_user} id="HeaderDefault"/>
+            <div class="px-4">
         <h1 class="text-3xl font-bold text-gray-900 mb-8">Criar Nova Empresa</h1>
         
         <.live_component 
@@ -45,8 +44,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Edit do
         
         <.back navigate={~p"/companies"} class="mt-6 inline-block text-blue-600 hover:text-blue-800">
           ← Voltar para empresas
-        </.back>
-      </div>
+        </.back>  
     </div>
     """
   end

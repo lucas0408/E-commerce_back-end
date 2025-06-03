@@ -15,7 +15,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers do
     ~H"""
     <div id={"header-#{@id}"} class="sticky top-0 z-50 bg-white shadow-sm">
       <!-- Cabeçalho Principal -->
-      <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+      <div class="px-3 py-3 flex items-center justify-between">
         <!-- Botão de Menu -->
         <button
           phx-click="toggle_menu"
@@ -39,7 +39,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers do
         </div>
 
         <!-- Área de Ícones -->
-        <div class="flex items-center space-x-4">
+        <div class="flex justify-end items-center space-x-4">
 
           <%= if @user do %>
             <.notification_badge count={@notification_count} click_event="show_notifications" />
@@ -50,8 +50,8 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers do
             <.user_profile name={@user.name} id={@user.id} avatar={"/images/default-avatar.png"} />
           <% else %>
             <div class="flex space-x-2">
-            <.link 
-              navigate={~p"/login"} 
+            <.link
+              navigate={~p"/login"}
               class="text-sm font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
             >
               Faça login ou cadastre-se

@@ -30,12 +30,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
             <div class="grid grid-cols-1 max-w-[275px] gap-6">
                 <.input field={f[:password]} label="Senha" type="password" />
                 <.input field={f[:password_confirmation]} label="Confirmar Senha" type="password" />
-                <div class="flex items-start mb-5">
-                  <div class="flex items-center h-5">
-                    <input id="remember" type="checkbox" value="" class="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-200 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800" required />
-                  </div>
-                  <label for="remember" class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-900">Mostrar senha</label>
-                </div>
+
               </div>
 
             <div class="grid grid-cols-1 max-w-[170px] gap-6">

@@ -14,8 +14,9 @@ defmodule BatchEcommerceWeb.Router do
   end
 
   scope "/api", BatchEcommerceWeb do
-    pipe_through [:api, :auth]
 
+    live "/users/log_in", UserLoginLive, :new
+    live "/users/register", UserRegistrationLive, :new
     resources "/users", UserController, only: [:create, :show]
     resources "/products", ProductController, only: [:index, :show]
     resources "/categories", CategoryController, only: [:index]
@@ -29,7 +30,7 @@ defmodule BatchEcommerceWeb.Router do
     resources "/users", UserController, except: [:create, :show, :new, :edit]
     resources "/products", ProductController, except: [:index, :show, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :index, :edit]
-    resources "/cart_products", CartProductController 
+    resources "/cart_products", CartProductController
     get "/cart_products/user/:user_id", CartProductController, :get_by_user
     resources "/orders", OrderController, only: [:create, :show, :index]
     get "/orders/export-stream", OrderController, :export_stream

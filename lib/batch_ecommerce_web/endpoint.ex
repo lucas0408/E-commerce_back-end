@@ -8,6 +8,7 @@ defmodule BatchEcommerceWeb.Endpoint do
     store: :cookie,
     key: "_batch_ecommerce_key",
     signing_salt: "8PMMNI9F",
+    table: :session,
     same_site: "Lax"
   ]
 

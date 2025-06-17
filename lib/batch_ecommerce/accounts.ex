@@ -107,6 +107,14 @@ defmodule BatchEcommerce.Accounts do
     Repo.delete(user)
   end
 
+  def insert_change_user(%User{} = user, attrs \\ %{}) do
+    User.insert_changeset(user, attrs)
+  end
+
+  def update_change_user(%User{} = user, attrs \\ %{}) do
+    User.update_changeset(user, attrs)
+  end
+
   def authenticate_user(email, plain_text_password) do
     query = from(u in User, where: u.email == ^email)
 
@@ -123,6 +131,11 @@ defmodule BatchEcommerce.Accounts do
     end
   end
 
+  def user_preload_company(user) do
+    Repo.preload(user, :company)
+  end
+
+
   alias BatchEcommerce.Accounts.Company
 
   @doc """
@@ -134,13 +147,15 @@ defmodule BatchEcommerce.Accounts do
       [%Company{}, ...]
 
   """
+
+
   def list_companies do
     Repo.all(Company) |> companies_preload()
   end
 
   def companies_preload(companies) do
     companies
-    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories])
+    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories]) 
   end
 
   @doc """
@@ -157,8 +172,10 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_company(user_id), do: Repo.get_by(Company, user_id: user_id) 
+  def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id) 
     |> companies_preload()
+
+  def get_company!(id), do: Repo.get(Company, id) |> companies_preload()
 
   @doc """
   Creates a company.
@@ -182,8 +199,6 @@ defmodule BatchEcommerce.Accounts do
         {:ok, companies_preload(company)}
 
       {:error, changeset} ->
-        IO.inspect(attrs, label: "attrs")
-        IO.inspect(changeset, label: "changeset: ")
         {:error, changeset}
     end
   end

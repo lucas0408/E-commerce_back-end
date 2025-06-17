@@ -1,0 +1,28 @@
+msgid ""
+msgstr ""
+"Language: en\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+
+msgid "Error!"
+msgstr "Error!"
+
+msgid "Success!"
+msgstr "Success!"
+
+msgid "close"
+msgstr "close"
+
+msgid "Actions"
+msgstr "Actions"
+
+msgid "We can't find the internet"
+msgstr "We can't find the internet"
+
+msgid "Attempting to reconnect"
+msgstr "Attempting to reconnect"
+
+msgid "Something went wrong!"
+msgstr "Something went wrong!"
+
+msgid "Hang in there while we get back on track"
+msgstr "Hang in there while we get back on track"

@@ -16,7 +16,7 @@ defmodule BatchEcommerce.MixProject do
 
   # Configuration for the OTP application.
   #
-  # Type `mix help compile.app` for more information.
+  # Type mix help compile.app for more information.
   def application do
     [
       mod: {BatchEcommerce.Application, []},
@@ -30,20 +30,23 @@ defmodule BatchEcommerce.MixProject do
 
   # Specifies your project dependencies.
   #
-  # Type `mix help deps` for examples and options.
+  # Type mix help deps for examples and options.
   defp deps do
     [
       {:phoenix, "~> 1.7.11"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
+      {:scrivener_ecto, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.1"},
+      {:number, "~> 1.0"},
       {:phoenix_live_reload, "~> 1.2", only: :dev},
       {:phoenix_live_view, "~> 1.0"},
       {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:phoenix_html_helpers, "~> 1.0.1"},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.1",
@@ -87,7 +90,7 @@ defmodule BatchEcommerce.MixProject do
   #
   #     $ mix setup
   #
-  # See the documentation for `Mix` for more info on aliases.
+  # See the documentation for Mix for more info on aliases.
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],

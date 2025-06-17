@@ -3,3 +3,9 @@
 @import "tailwindcss/utilities";
 
 /* This file is for your main application CSS */
+.rating {
+  @apply flex items-center;
+}
+.rating svg {
+  @apply w-4 h-4 text-yellow-400;
+}

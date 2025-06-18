@@ -1,5 +1,6 @@
 defmodule BatchEcommerceWeb.Live.CompanyLive.New do
   use BatchEcommerceWeb, :live_view
+  alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.Company
   alias BatchEcommerceWeb.Live.CompanyLive.FormComponent
 

@@ -7,6 +7,7 @@ defmodule BatchEcommerce.Catalog do
 
   alias BatchEcommerce.Catalog.Category
   alias BatchEcommerce.Catalog.Product
+  alias BatchEcommerce.Catalog.ProductReview
 
   @doc """
   Returns the list of categories.
@@ -317,4 +318,19 @@ defmodule BatchEcommerce.Catalog do
         nil
     end
   end
+
+  def get_product_rating(product_id) do
+    query = from r in ProductReview,
+            where: r.product_id == ^product_id,
+            select: avg(r.review)
+    
+    case Repo.one(query) do
+      nil -> 0.0  # Nenhuma avaliação encontrada
+      average -> 
+        average
+        |> Decimal.to_float()
+        |> Float.round(1)  # Arredonda para 1 casa decimal
+    end
+  end
+
 end

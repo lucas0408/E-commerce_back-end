@@ -49,7 +49,7 @@ defmodule BatchEcommerceWeb.Router do
   end
 
   scope "/", BatchEcommerceWeb.Live do
-    pipe_through :browser
+    pipe_through [:browser, :auth]
 
     live "/users", UserLive.Index, :index
     live "/users/new", UserLive.New, :new

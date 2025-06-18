@@ -309,9 +309,11 @@ def product_card(assigns) do
 end
 
   defp calculate_discounted_price(price, discount) do
+    IO.inspect(price)
+    IO.inspect(discount)
     case discount do
       nil -> price
-      _ -> Decimal.to_float(price) - (Decimal.to_float(price) * Decimal.to_float(discount) / 100)
+      _ -> Decimal.to_float(price) - (Decimal.to_float(price) * discount / 100)
     end
   end
 

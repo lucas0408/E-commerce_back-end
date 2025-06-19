@@ -35,6 +35,37 @@ users = [
         apartment: "101"  # Adicionei campo extra como exemplo
       }
     ]
+  },
+  %{
+    cpf: "12345674901",
+    name: "Lucas da Silva",
+    email: "lucas.silva@exemplo.com",
+    phone_number: "11983654321",
+    birth_date: ~D[1997-01-15],
+    password: "Senha@123",
+    addresses: [
+      %{
+        id: 1,  # Adicionei um ID para cada endereço para facilitar a manipulação
+        cep: "01311-000",
+        uf: "SP",
+        city: "São Paulo",
+        district: "Bela Vista",
+        address: "Avenida Paulista",
+        complement: "Próximo ao MASP",
+        home_number: "1000"
+      },
+      %{
+        id: 2,
+        cep: "04538-132",
+        uf: "SP",
+        city: "São Paulo",
+        district: "Itaim Bibi",
+        address: "Rua Joaquim Floriano",
+        complement: "Edifício Commercial",
+        home_number: "100",
+        apartment: "101"  # Adicionei campo extra como exemplo
+      }
+    ]
   }
 ]
 
@@ -237,7 +268,6 @@ products_with_categories =
   end)
 
 Enum.each(products_with_categories, fn product ->
-  IO.inspect(product)
   %BatchEcommerce.Catalog.Product{}
   |> BatchEcommerce.Catalog.Product.changeset(%{
     name: product.name,
@@ -251,6 +281,28 @@ Enum.each(products_with_categories, fn product ->
   })
   |> Ecto.Changeset.put_assoc(:categories, product.categories)
   |> BatchEcommerce.Repo.insert!()
+end)
+
+products = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Product)
+
+users = BatchEcommerce.Repo.all(BatchEcommerce.Accounts.User)
+
+Enum.each(products, fn product ->
+
+  number_of_reviews = Enum.random(5..20)
+  
+  Enum.each(users, fn user ->
+    user_id = BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.User, name: "João da Silva").id
+    random_review = Enum.random(1..5)
+    
+    %BatchEcommerce.Catalog.ProductReview{}
+    |> BatchEcommerce.Catalog.ProductReview.changeset(%{
+      review: random_review,
+      product_id: product.id,
+      user_id: user.id
+    })
+    |> BatchEcommerce.Repo.insert!()
+  end)
 end)
 
 # Relacionando produtos com categorias

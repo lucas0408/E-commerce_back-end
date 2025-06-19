@@ -309,23 +309,31 @@ def product_card(assigns) do
 end
 
   defp calculate_discounted_price(price, discount) do
-    IO.inspect(price)
-    IO.inspect(discount)
     case discount do
       nil -> price
       _ -> Decimal.to_float(price) - (Decimal.to_float(price) * discount / 100)
     end
   end
 
+
   defp format_price(price) when is_integer(price) do
     "R$ #{price / 100}"
+  end
+
+  defp format_price(%Decimal{} = price) do
+    # Converte Decimal para float primeiro
+    float_price = Decimal.to_float(price)
+    "R$ #{:erlang.float_to_binary(float_price, decimals: 2)}"
   end
 
   defp format_price(price) when is_float(price) do
     "R$ #{:erlang.float_to_binary(price, decimals: 2)}"
   end
 
-  defp format_price(_), do: "R$ 0,00"
+  defp format_price(_) do
+    "R$ 0.00"
+  end
+
 
 
     attr :click_event, :string, default: "open-menu"

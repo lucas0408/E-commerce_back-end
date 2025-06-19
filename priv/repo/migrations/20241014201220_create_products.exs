@@ -10,7 +10,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateProducts do
       add :description, :string
       add :sales_quantity, :integer
       add :discount, :integer
-      add :comp any_id, references(:companies, on_delete: :delete_all)
+      add :company_id, references(:companies, on_delete: :delete_all)
 
       timestamps(type: :utc_datetime)
     end

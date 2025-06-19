@@ -8,9 +8,10 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   def update(%{product: product} = assigns, socket) do
     changeset = Catalog.change_product(product)
     categories = Catalog.list_categories()
+    IO.inspect(product.discount)
     {selected_categories, preco_total} = if assigns.action == :edit do
       {Enum.map(product.categories, &to_string(&1.id)),
-       calculate_total_price(Decimal.to_float(product.price), Decimal.to_float(product.discount))}
+       calculate_total_price(Decimal.to_float(product.price), product.discount)}
     else
       {[], 0}
     end
@@ -86,6 +87,15 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
         IO.inspect(changeset, label: "Changeset Error")
         {:noreply, assign(socket, form: to_form(changeset))}
     end
+  end
+
+  @impl true
+  def handle_event("remove-category", %{"category-id" => category_id}, socket) do
+    selected_categories = Enum.reject(socket.assigns.selected_categories, &(&1 == category_id))
+    
+    {:noreply, 
+    socket
+    |> assign(:selected_categories, selected_categories)}
   end
 
   defp update_product(socket, product_params) do
@@ -221,21 +231,31 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
               </select>
             </div>
 
-              <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">
-                  Categorias Selecionadas
-                </label>
-                <div class="flex flex-wrap gap-2">
-                  <%= for category_id <- @selected_categories do %>
-                    <% category = Enum.find(@categories, &(to_string(&1.id) == category_id)) %>
-                    <%= if category do %>
-                      <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
-                        <%= category.type %>
-                      </span>
-                    <% end %>
+            <!-- Categorias Selecionadas -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">
+                Categorias Selecionadas
+              </label>
+              <div class="flex flex-wrap gap-2">
+                <%= for category_id <- @selected_categories do %>
+                  <% category = Enum.find(@categories, &(to_string(&1.id) == category_id)) %>
+                  <%= if category do %>
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                      <%= category.type %>
+                      <button 
+                        type="button" 
+                        phx-click="remove-category" 
+                        phx-value-category-id={category_id}
+                        phx-target={@myself}
+                        class="ml-1 text-blue-600 hover:text-blue-800"
+                      >
+                        &times;
+                      </button>
+                    </span>
                   <% end %>
-                </div>
+                <% end %>
               </div>
+            </div>
 
               <!-- Upload de Imagem -->
               <div>

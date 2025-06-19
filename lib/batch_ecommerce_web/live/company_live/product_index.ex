@@ -68,6 +68,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
     {:noreply, put_flash(socket, :info, "Exportando relatório em #{format}...")}
   end
 
+  defp get_product_rating(product_id) do
+    Catalog.get_product_rating(product_id)
+  end
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -125,7 +129,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
           <%= product.stock_quantity %>
         </:col>
         <:col :let={product} label="Classificação">
-          <%= product.rating %>/5
+          <%= get_product_rating(product.id) %>/5
         </:col>
         <:col :let={product} label="Preço">
           <%= product.price %>

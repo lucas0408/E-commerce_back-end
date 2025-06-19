@@ -23,11 +23,12 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
     |> Enum.take(5)
   end
 
-
-
-
   @impl true
   def handle_params(_params, _url, socket), do: {:noreply, socket}
+
+  defp get_product_rating(product_id) do
+    Catalog.get_product_rating(product_id)
+  end
 
   def render(assigns) do
     ~H"""
@@ -46,7 +47,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
             <%= product.stock_quantity %>
           </:col>
           <:col :let={product} label="Classificação">
-            <%= product.rating %>
+            <%= get_product_rating(product.id) %>/5
           </:col>
         </.table>
       </div>

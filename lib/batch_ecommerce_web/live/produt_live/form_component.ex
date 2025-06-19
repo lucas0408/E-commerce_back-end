@@ -167,12 +167,11 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                     field={@form[:discount]}
                     type="number"
                     label="Desconto (%)"
-                    min="0"
-                    max="100"
                     inputmode="decimal"
                     placeholder="0.00"
-                    value={to_string(@form[:discount].value || "")}
-                    class=""
+                    value = ""
+                    value={to_string(@form[:discount].value || "0")}
+                    oninput="if(this.value > 100) this.value = 100; if(this.value < 0) this.value = 0;"
                   />
                 </div>
 
@@ -320,7 +319,11 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                   type="submit"
                   class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform duration-300"
                 >
-                  Adicionar Produto
+                  <%= if @action == :edit do %>
+                    Salvar Produto
+                  <% else %>
+                    Adicionar Produto
+                  <% end %>
                 </button>
               </div>
             </div>

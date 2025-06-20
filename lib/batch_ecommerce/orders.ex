@@ -16,6 +16,7 @@ defmodule BatchEcommerce.Orders do
       %Order{}
       |> Order.changeset(%{
         user_id: user_id,
+        status_payment: "Peendente",
         total_price: Decimal.add(BatchEcommerce.ShoppingCart.total_price_cart_product(cart_products), shipping_cost)
       })
       |>Repo.insert!()

@@ -411,16 +411,16 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
   # Componente para resumo do pedido
   defp order_summary(assigns) do
     ~H"""
-  <div class="sticky top-4">
-    <div class="rounded-lg bg-gray-50 p-6">
-      <h2 class="text-lg font-semibold text-gray-900 mb-6">Resumo do Pedido</h2>
+    <div class="sticky top-4">
+      <div class="rounded-lg bg-gray-50 p-6">
+        <h2 class="text-lg font-semibold text-gray-900 mb-6">Resumo do Pedido</h2>
 
-      <div class="space-y-4">
-        <!-- Subtotal dos produtos COM desconto -->
-        <div class="flex justify-between text-gray-600">
-          <span>Subtotal com descontos:</span>
-          <span>R$ <%= format_decimal(BatchEcommerce.ShoppingCart.total_price_cart_product(@cart_products)) %></span>
-        </div>
+        <div class="space-y-4">
+          <!-- Subtotal dos produtos -->
+          <div class="flex justify-between text-gray-600">
+            <span>Subtotal dos produtos:</span>
+            <span>R$ <%= format_decimal(BatchEcommerce.ShoppingCart.total_price_cart_product(@cart_products)) %></span>
+          </div>
 
           <!-- Frete -->
           <div 
@@ -436,14 +436,18 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
 
           <hr class="border-gray-300">
 
-          <!-- Total -->
-          <div class="flex justify-between text-lg font-bold text-gray-900">
-            <span>Total:</span>
-            <span>R$ <%= format_decimal(total_with_shipping(@cart_products, @shipping_cost)) %></span>
+          <!-- Total com frete (novo campo destacado) -->
+          <div class="bg-white p-3 rounded-lg border border-gray-200 shadow-sm">
+            <div class="flex justify-between items-center">
+              <span class="font-bold text-lg">Total a pagar:</span>
+              <span class="text-2xl font-bold text-green-600">
+                R$ <%= format_decimal(total_with_shipping(@cart_products, @shipping_cost)) %>
+              </span>
+            </div>
           </div>
         </div>
 
-        <!-- Botões de ação -->
+    <!-- Botões de ação -->
         <div class="mt-6 space-y-3">
           <%= if @shipping_cost == Decimal.new("0") do %>
             <.button 
@@ -557,6 +561,10 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
   """
   end
 
+  defp total_with_shipping(cart_products, shipping_cost) do
+    Decimal.add(BatchEcommerce.ShoppingCart.total_price_cart_product(cart_products), shipping_cost)
+  end
+
 
   defp calculate_discounted_price(price, discount) when is_nil(discount) or discount == 0 do
     price
@@ -570,11 +578,6 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
     |> Decimal.round(2)
   end
 
-  # Funções auxiliares
-  defp total_with_shipping(cart_products, shipping_cost) do
-    cart_total = BatchEcommerce.ShoppingCart.total_price_cart_product(cart_products)
-    Decimal.add(cart_total, shipping_cost)
-  end
 
   defp format_decimal(decimal) do
     decimal

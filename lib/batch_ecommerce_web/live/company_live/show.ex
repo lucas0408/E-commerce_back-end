@@ -44,7 +44,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
             <%= product.sales_quantity %>
           </:col>
           <:col :let={product} label="Quantidade em Carrinhos">
-            <%= product.stock_quantity %>
+            <%= BatchEcommerce.ShoppingCart.total_cart_products_quantity(product.id) %>
           </:col>
           <:col :let={product} label="Classificação">
             <%= get_product_rating(product.id) %>/5

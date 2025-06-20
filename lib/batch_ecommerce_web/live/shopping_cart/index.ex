@@ -356,6 +356,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
                   class="!rounded-none !rounded-r-md px-3 py-1.5 text-sm"
                   size="sm"
                   variant="outline"
+                  disabled={@cart_product.quantity >= (@cart_product.product.stock_quantity || 0)}
                 >
                   <.icon name="hero-plus" class="h-4 w-4" />
                 </.button>
@@ -365,14 +366,29 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
 
             <!-- Preço unitário -->
             <div class="text-right">
-              <p class="text-lg font-bold text-gray-900">
-                R$ <%= format_decimal(@cart_product.price_when_carted) %>
-              </p>
+              <%
+                price = @cart_product.price_when_carted
+                discount = @cart_product.product.discount || 0
+                discounted_price = calculate_discounted_price(price, discount)
+              %>
+
+              <%= if Decimal.cmp(discounted_price, price) == :lt do %>
+                <p class="text-sm text-gray-500 line-through">
+                  R$ <%= format_decimal(price) %>
+                </p>
+                <p class="text-lg font-bold text-green-600">
+                  R$ <%= format_decimal(discounted_price) %>
+                </p>
+              <% else %>
+                <p class="text-lg font-bold text-gray-900">
+                  R$ <%= format_decimal(price) %>
+                </p>
+              <% end %>
               <p class="text-sm text-gray-500">preço total</p>
             </div>
           </div>
 
-          <!-- Botão remover e subtotal -->
+        <!-- Botão remover e subtotal -->
           <div class="flex items-center justify-between border-t border-gray-100 pt-4">
             <.button
               phx-click="remove_item"
@@ -385,10 +401,6 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
               <.icon name="hero-trash" class="mr-1.5 h-4 w-4" />
               Remover
             </.button>
-
-            <p class="text-lg font-semibold text-gray-900">
-              Subtotal: R$ <%= format_decimal(@cart_product.price_when_carted) %>
-            </p>
           </div>
         </div>
       </div>
@@ -399,16 +411,16 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
   # Componente para resumo do pedido
   defp order_summary(assigns) do
     ~H"""
-    <div class="sticky top-4">
-      <div class="rounded-lg bg-gray-50 p-6">
-        <h2 class="text-lg font-semibold text-gray-900 mb-6">Resumo do Pedido</h2>
+  <div class="sticky top-4">
+    <div class="rounded-lg bg-gray-50 p-6">
+      <h2 class="text-lg font-semibold text-gray-900 mb-6">Resumo do Pedido</h2>
 
-        <div class="space-y-4">
-          <!-- Subtotal dos produtos -->
-          <div class="flex justify-between text-gray-600">
-            <span>Subtotal dos produtos:</span>
-            <span>R$ <%= format_decimal(BatchEcommerce.ShoppingCart.total_price_cart_product(@cart_products)) %></span>
-          </div>
+      <div class="space-y-4">
+        <!-- Subtotal dos produtos COM desconto -->
+        <div class="flex justify-between text-gray-600">
+          <span>Subtotal com descontos:</span>
+          <span>R$ <%= format_decimal(BatchEcommerce.ShoppingCart.total_price_cart_product(@cart_products)) %></span>
+        </div>
 
           <!-- Frete -->
           <div 
@@ -433,14 +445,23 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
 
         <!-- Botões de ação -->
         <div class="mt-6 space-y-3">
-          <.button 
-            phx-click="toggle_payment_modal"
-            class="w-full bg-green-600 hover:bg-green-700 focus:ring-green-500"
-          >
-            <.icon name="hero-credit-card" class="mr-2 h-5 w-5" />
-            Concluir Compra
-          </.button>
-
+          <%= if @shipping_cost == Decimal.new("0") do %>
+            <.button 
+              phx-click="toggle_address_modal"
+              class="w-full bg-yellow-500 hover:bg-yellow-600"
+            >
+              <.icon name="hero-truck" class="mr-2 h-5 w-5" />
+              Calcular Frete Primeiro
+            </.button>
+          <% else %>
+            <.button 
+              phx-click="toggle_payment_modal"
+              class="w-full bg-green-600 hover:bg-green-700"
+            >
+              <.icon name="hero-credit-card" class="mr-2 h-5 w-5" />
+              Concluir Compra
+            </.button>
+          <% end %>
           <.link
             navigate={~p"/products"}
             class="block w-full text-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -534,6 +555,19 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
     </div>
   </div>
   """
+  end
+
+
+  defp calculate_discounted_price(price, discount) when is_nil(discount) or discount == 0 do
+    price
+  end
+  
+  defp calculate_discounted_price(price, discount) do
+    discount_decimal = Decimal.new(discount)
+    hundred = Decimal.new(100)
+    discount_factor = Decimal.sub(hundred, discount_decimal) |> Decimal.div(hundred)
+    Decimal.mult(price, discount_factor)
+    |> Decimal.round(2)
   end
 
   # Funções auxiliares

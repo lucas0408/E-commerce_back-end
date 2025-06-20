@@ -37,15 +37,28 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   def handle_event("add_to_cart", _params, socket) do
     %{product: product, quantity: quantity, current_user: current_user} = socket.assigns
 
-    ShoppingCart.create_cart_prodcut(current_user.id, %{
+    case ShoppingCart.create_cart_prodcut(current_user.id, %{
       "product_id" => product.id,
       "quantity" => quantity
-    })
-
-    {:noreply,
-    socket
-    |> put_flash(:info, "Produto adicionado ao carrinho com sucesso!")
-    |> push_redirect(to: "/cart_products")}
+    }) do
+      {:ok, _} ->
+        {:noreply,
+        socket
+        |> put_flash(:info, "Produto adicionado ao carrinho com sucesso!")
+        |> push_redirect(to: "/cart_products")}
+      
+      {:error, _} ->
+        cart_products = ShoppingCart.get_cart_user(current_user.id)
+        existing_cart = Enum.find(cart_products, &(&1.product_id == product.id))
+        new_quantity = existing_cart.quantity + quantity
+        
+        ShoppingCart.update_cart_product(existing_cart, %{"quantity" => new_quantity})
+        
+        {:noreply,
+        socket
+        |> put_flash(:info, "Quantidade atualizada no carrinho!")
+        |> push_redirect(to: "/cart_products")}
+    end
   end
 
 

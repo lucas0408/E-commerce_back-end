@@ -16,6 +16,8 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
       |> Orders.list_orders_by_user() 
       # (essa função deve devolver uma lista de %Order{} com :order_products e cada :product pré-carregados)
     
+    IO.inspect(orders)
+
     # 3) Guarda no assign
     socket = 
       socket
@@ -64,7 +66,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
 
                 <!-- Coluna 4: status de entrega (fixo: Preparando Pedido) -->
                 <td class="px-4 py-2 text-blue-600 font-medium">
-                  Preparando Pedido
+                  <%= op.status %>
                 </td>
 
                 <!-- Coluna 5: botão “Ver Mais” que leva para /order/:order_id -->

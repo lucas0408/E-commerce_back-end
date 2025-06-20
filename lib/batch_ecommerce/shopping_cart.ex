@@ -90,10 +90,29 @@ defmodule BatchEcommerce.ShoppingCart do
   end
 
   def total_price_cart_product(cart_products) do
-    Enum.reduce(cart_products, Decimal.new(0), fn cart_product, acc -> 
-            Decimal.add(acc, cart_product.price_when_carted)
-        end)
+    cart_products = cart_products
+    |> preload_product()
+    Enum.reduce(cart_products, Decimal.new("0"), fn cart_product, acc ->
+      price = Decimal.new(cart_product.price_when_carted)
+      discount = cart_product.product.discount || 0
+      discounted_price = calculate_discounted_price(price, discount)
+      total = Decimal.mult(discounted_price, Decimal.new(cart_product.quantity))
+      Decimal.add(acc, total)
+    end)
+    |> Decimal.round(2)
   end
+
+  defp calculate_discounted_price(price, discount) when is_nil(discount) or discount == 0 do
+    price
+  end
+  
+  defp calculate_discounted_price(price, discount) do
+    discount_decimal = Decimal.new(discount)
+    hundred = Decimal.new(100)
+    discount_factor = Decimal.sub(hundred, discount_decimal) |> Decimal.div(hundred)
+    Decimal.mult(price, discount_factor)
+  end
+
 
   def prune_cart_items(user_id) do
     {_, _} =

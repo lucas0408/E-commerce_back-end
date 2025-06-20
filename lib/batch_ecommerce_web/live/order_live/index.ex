@@ -1,11 +1,14 @@
 defmodule BatchEcommerceWeb.Live.OrderLive.Index do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Orders
+  alias BatchEcommerce.Accounts
+
 
   @impl true
   def mount(_params, session, socket) do
     # 1) Pega o user_id da sessão
     user_id = Map.get(session, "current_user")
+    current_user = Accounts.get_user(user_id)
 
     # 2) Busca todos os pedidos desse usuário, já pré-carregando os order_products e cada produto
     orders =
@@ -14,13 +17,17 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
       # (essa função deve devolver uma lista de %Order{} com :order_products e cada :product pré-carregados)
     
     # 3) Guarda no assign
-    socket = assign(socket, orders: orders)
+    socket = 
+      socket
+      |> assign(orders: orders)
+      |> assign(:current_user, current_user)
     {:ok, socket}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
+      <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart} user={@current_user} id="HeaderWithCart"/>
     <div>
       <h1 class="text-2xl font-bold mb-4">Meus Pedidos</h1>
 

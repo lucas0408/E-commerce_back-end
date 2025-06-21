@@ -67,16 +67,34 @@ defmodule BatchEcommerce.Orders do
     result
   end
 
+  def update_order(order_id, attrs) do
+    case Repo.get(Order, order_id) do
+      nil ->
+        {:error, :not_found}
+        
+      order ->
+        order
+        |> Order.changeset(attrs)
+        |> Repo.update()
+    end
+  end
+
+  def update_order_product_status(order_product_id, new_status) do
+    case Repo.get(OrderProduct, order_product_id) do
+      nil ->
+        {:error, :not_found}
+        
+      order_product ->
+        order_product
+        |> OrderProduct.changeset(%{status: new_status})
+        |> Repo.update()
+    end
+  end
+
   def list_orders do
     Repo.all(OrderProduct) |> Repo.preload(:product)
   end
 
-  def get_order!(user_id, id) do
-    Order
-    |> Repo.get_by!(id: id, user_id: user_id)
-    |> Repo.preload(order_products: [:product]) |> Repo.preload(user: [:addresses])
-  end
-  
   def list_orders_by_user(user_id) do
     Repo.all(
       from o in Order,
@@ -85,11 +103,14 @@ defmodule BatchEcommerce.Orders do
     )
   end
 
-  def get_order_by_user_id!(user_id) do
-    from(i in Order, where: i.user_id == ^user_id)
-    |> Repo.all()
-    |> Repo.preload(order_products: [:product]) |> Repo.preload(user: [:addresses])
+  def get_order(id) do
+    Repo.get(Order, id)
   end
+
+  def get_order_product(id) do
+    Repo.get(OrderProduct, id)
+  end
+
 
   def delete_order(%Order{} = order) do
     Repo.delete(order)

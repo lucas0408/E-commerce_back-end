@@ -67,6 +67,7 @@ defmodule BatchEcommerceWeb.Router do
     live "/companies/:id/orders", OrderLive.Index, :index
     live "/cart_products", ShoppingCart.Index, :index
     live "/orders", OrderLive.Index, :index
+    live "/orders/:order_id", OrderLive.Show, :show
 
     get "/", PageController, :home
   end

@@ -6,6 +6,7 @@ defmodule BatchEcommerceWeb.CategoryController do
 
   action_fallback BatchEcommerceWeb.FallbackController
 
+
   def index(conn, _params) do
     categories = Catalog.list_categories()
 
@@ -14,6 +15,7 @@ defmodule BatchEcommerceWeb.CategoryController do
     |> render(:index, categories: categories)
   end
 
+  #TODO: decidir o que fazer com esse caso já que não tem CRUD de categoria por não ter entidade confiável para fazê-lo.
   def create(conn, %{"category" => category_params}) do
     case Catalog.create_category(category_params) do
       {:ok, category} ->
@@ -39,6 +41,7 @@ defmodule BatchEcommerceWeb.CategoryController do
     end
   end
 
+  #TODO: decidir o que fazer com esse caso já que não tem CRUD de categoria por não ter entidade confiável para fazê-lo.
   def update(conn, %{"id" => id, "category" => category_params}) do
     with %Category{} = category_found <- Catalog.get_category(id),
          {:ok, category_updated} <-
@@ -55,6 +58,7 @@ defmodule BatchEcommerceWeb.CategoryController do
     end
   end
 
+  #TODO: decidir o que fazer com esse caso já que não tem CRUD de categoria por não ter entidade confiável para fazê-lo.
   def delete(conn, %{"id" => id}) do
     with %Category{} = category_found <- Catalog.get_category(id),
          {:ok, _deleted_category} <- Catalog.delete_category(category_found) do

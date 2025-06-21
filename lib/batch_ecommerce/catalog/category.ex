@@ -6,11 +6,9 @@ defmodule BatchEcommerce.Catalog.Category do
   use Ecto.Schema
   import Ecto.Changeset
 
-  alias BatchEcommerce.Catalog.Product
-
   schema "categories" do
     field :type, :string
-    many_to_many :products, Product, join_through: "products_categories", on_replace: :delete
+    many_to_many :products, BatchEcommerce.Catalog.Product, join_through: "products_categories", on_replace: :delete
 
     timestamps(type: :utc_datetime)
   end

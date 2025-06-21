@@ -1,5 +1,5 @@
 defmodule BatchEcommerceWeb.OrderJSON do
-  alias BatchEcommerce.Orders.Order
+  alias BatchEcommerce.Order.Order
 
   @doc """
   Renders a list of orders.
@@ -16,10 +16,13 @@ defmodule BatchEcommerceWeb.OrderJSON do
   end
 
   defp data(%Order{} = order) do
+    IO.inspect(order)
+
     %{
       id: order.id,
-      user_uuid: order.user_uuid,
-      total_price: order.total_price
+      user: order.user,
+      total_price: Decimal.round(order.total_price, 2),
+      order_products: order.order_products
     }
   end
 end

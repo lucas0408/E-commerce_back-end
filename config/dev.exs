@@ -2,11 +2,11 @@ import Config
 
 # Configure your database
 config :batch_ecommerce, BatchEcommerce.Repo,
-  username: System.get_env("PGUSER"),
-  password: System.get_env("PGPASSWORD"),
-  database: System.get_env("PGDATABASE"),
-  hostname: System.get_env("PGHOST"),
-  port: System.get_env("PGPORT"),
+  username: System.get_env("PG_USER") || "postgres",
+  password: System.get_env("PG_PASSWORD") || "postgres",
+  database: System.get_env("PG_DATABASE") || "batch_ecommerce_dev",
+  hostname: System.get_env("PG_HOST") || "localhost",
+  port: String.to_integer(System.get_env("PG_PORT") || "5432"),
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
   pool_size: 10
@@ -53,6 +53,16 @@ config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
 # configured to run both http and https servers on
 # different ports.
 
+# Watch static and templates for browser reloading.
+config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
+  live_reload: [
+    patterns: [
+      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/gettext/.*(po)$",
+      ~r"lib/batch_ecommerce_web/(controllers|live|components)/.*(ex|heex)$"
+    ]
+  ]
+
 # Enable dev routes for dashboard and mailbox
 config :batch_ecommerce, dev_routes: true
 
@@ -65,6 +75,12 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :phoenix_live_view,
+  # Include HEEx debug annotations as HTML comments in rendered markup
+  debug_heex_annotations: true,
+  # Enable helpful, but potentially expensive runtime checks
+  enable_expensive_runtime_checks: true
 
 # Disable swoosh api client as it is only required for production adapters.
 config :swoosh, :api_client, false

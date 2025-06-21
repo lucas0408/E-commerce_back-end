@@ -1,6 +1,6 @@
 defmodule BatchEcommerce.AccountsFixtures do
   alias BatchEcommerce.Repo
-  alias BatchEcommerce.{Accounts, ShoppingCart}
+  alias BatchEcommerce.Accounts
 
   @moduledoc """
   This module defines test helpers for creating
@@ -35,7 +35,7 @@ defmodule BatchEcommerce.AccountsFixtures do
       })
       |> Accounts.create_user()
 
-    ShoppingCart.create_cart(%{user_id: user.id})
+    # ShoppingCart.create_cart(%{user_id: user.id})
 
     Repo.preload(user, :addresses)
   end

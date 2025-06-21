@@ -15,16 +15,30 @@ config :batch_ecommerce,
   ecto_repos: [BatchEcommerce.Repo],
   generators: [timestamp_type: :utc_datetime]
 
+config :phoenix_swagger, json_library: Jason
+
 # Configures the endpoint
 config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [json: BatchEcommerceWeb.ErrorJSON],
+    formats: [html: BatchEcommerceWeb.ErrorHTML, json: BatchEcommerceWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: BatchEcommerce.PubSub,
-  live_view: [signing_salt: "9Ln52K6E"]
+  live_view: [signing_salt: "3p3TM+Fu"]
+
+config :batch_ecommerce, :phoenix_swagger,
+  swagger_files: %{
+    "priv/static/swagger.json" => [
+      # phoenix routes will be converted to swagger paths
+      router: BatchEcommerceWeb.Router,
+      # (optional) endpoint config used to set host, port and https schemes.
+      endpoint: BatchEcommerceWeb.Endpoint
+    ]
+  }
+
+config :phoenix_swagger, PhoenixSwagger.Plug.SwaggerUI, otp_app: :batch_ecommerce
 
 # Configures the mailer
 #
@@ -47,7 +61,7 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "3.4.0",
+  version: "3.4.3",
   batch_ecommerce: [
     args: ~w(
       --config=tailwind.config.js
@@ -75,10 +89,11 @@ config :batch_ecommerce, BatchEcommerceFinch,
   }
 
 config :ex_aws,
-  region: "local"
+  region: "us-east-1"
 
 config :ex_aws, :s3,
-  region: "local",
+  region: "us-east-1",
+  host: "localhost",
   scheme: "http://",
   port: 9000
 

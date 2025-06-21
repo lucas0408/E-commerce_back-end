@@ -1,14 +1,12 @@
 defmodule BatchEcommerceWeb.UserController do
   use BatchEcommerceWeb, :controller
 
-  alias BatchEcommerce.ShoppingCart
-  alias BatchEcommerce.ShoppingCart.Cart
-
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.{User, Guardian}
 
   action_fallback BatchEcommerceWeb.FallbackController
 
+  #TODO: remover após fase de testes
   def index(conn, _params) do
     users = Accounts.list_users()
 
@@ -18,19 +16,19 @@ defmodule BatchEcommerceWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
+    IO.inspect(user_params)
     with {:ok, %User{} = user} <- Accounts.create_user(user_params),
-         {:ok, token, _claims} <- Guardian.encode_and_sign(user),
-         {:ok, %Cart{}} <- ShoppingCart.create_cart(%{user_id: user.id}) do
+         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
       |> render(:create, user: user, token: token)
     else
-      nil ->
-        {:error, :bad_request}
-
       {:error, %Ecto.Changeset{} = changeset} ->
         {:error, changeset}
+
+        {:error, _reason} ->
+          {:error, :bad_request}
     end
   end
 

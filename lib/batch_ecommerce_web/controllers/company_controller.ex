@@ -3,6 +3,7 @@ defmodule BatchEcommerceWeb.CompanyController do
 
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.Company
+  alias BatchEcommerce.Catalog.Minio
 
   action_fallback BatchEcommerceWeb.FallbackController
 
@@ -14,11 +15,8 @@ defmodule BatchEcommerceWeb.CompanyController do
   end
 
   def create(conn, %{"company" => company_params}) do
-    user_id = conn.private.guardian_default_resource.id
-
-    company_params = Map.put(company_params, "user_id", user_id)
-
-    with {:ok, %Company{} = company} <- Accounts.create_company(company_params) do
+    with {:ok, %Company{} = company} <- Accounts.create_company(company_params),
+    Minio.create_public_bucket(company_params.name) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/companies/#{company}")

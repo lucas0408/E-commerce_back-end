@@ -5,7 +5,8 @@ defmodule BatchEcommerce.MixProject do
     [
       app: :batch_ecommerce,
       version: "0.1.0",
-      elixir: "~> 1.17.3",
+      elixir: "~> 1.18.2",
+      compilers: Mix.compilers ++ [:phoenix_swagger],
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
@@ -15,7 +16,7 @@ defmodule BatchEcommerce.MixProject do
 
   # Configuration for the OTP application.
   #
-  # Type `mix help compile.app` for more information.
+  # Type mix help compile.app for more information.
   def application do
     [
       mod: {BatchEcommerce.Application, []},
@@ -24,21 +25,28 @@ defmodule BatchEcommerce.MixProject do
   end
 
   # Specifies which paths to compile per environment.
-  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(:test), do: ["lib", "test/factories", "test/support"]
   defp elixirc_paths(_), do: ["lib"]
 
   # Specifies your project dependencies.
   #
-  # Type `mix help deps` for examples and options.
+  # Type mix help deps for examples and options.
   defp deps do
     [
       {:phoenix, "~> 1.7.11"},
       {:phoenix_ecto, "~> 4.4"},
       {:ecto_sql, "~> 3.10"},
+      {:scrivener_ecto, "~> 2.0"},
       {:postgrex, ">= 0.0.0"},
+      {:phoenix_html, "~> 4.1"},
+      {:number, "~> 1.0"},
+      {:phoenix_live_reload, "~> 1.2", only: :dev},
+      {:phoenix_live_view, "~> 1.0"},
+      {:floki, ">= 0.30.0", only: :test},
       {:phoenix_live_dashboard, "~> 0.8.3"},
       {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
       {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
+      {:phoenix_html_helpers, "~> 1.0.1"},
       {:heroicons,
        github: "tailwindlabs/heroicons",
        tag: "v2.1.1",
@@ -47,6 +55,7 @@ defmodule BatchEcommerce.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.5"},
+      {:nimble_csv, "~> 1.2"},
       {:finch, "~> 0.19"},
       {:telemetry_metrics, "~> 0.6"},
       {:telemetry_poller, "~> 1.0"},
@@ -68,8 +77,12 @@ defmodule BatchEcommerce.MixProject do
       {:uuid, "~> 1.1.8"},
       {:cors_plug, "~> 3.0.3"},
       {:plug_crypto, "~> 2.1.0"},
-      {:flop, "~> 0.26.1"}
-    ]
+      {:flop, "~> 0.26.1"},
+      {:ex_machina, "~> 2.8.0", only: :test},
+      {:brcpfcnpj, "~> 2.0.1"},
+      {:phoenix_swagger, "~> 0.8"},
+      {:ex_json_schema, "~> 0.5"}
+      ]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.
@@ -77,7 +90,7 @@ defmodule BatchEcommerce.MixProject do
   #
   #     $ mix setup
   #
-  # See the documentation for `Mix` for more info on aliases.
+  # See the documentation for Mix for more info on aliases.
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],

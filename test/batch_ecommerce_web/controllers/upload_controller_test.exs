@@ -14,7 +14,7 @@ defmodule BatchEcommerceWeb.UploadControllerTest do
 
       upload = %Plug.Upload{
         path: tmp_path,
-        filename: "test.jpg",
+        image_url: "test.jpg",
         content_type: "image/jpeg"
       }
 

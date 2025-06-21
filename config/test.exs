@@ -17,8 +17,12 @@ config :batch_ecommerce, BatchEcommerce.Repo,
 # you can enable the server option below.
 config :batch_ecommerce, BatchEcommerceWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "BUlIP1I4V15VZCxcTTQJpOw2SlaW+huqAHOEXA0HrBxtyqXmzMedVLofEWjl0DBM",
+  secret_key_base: "CltOd0XtQ+HuqaPxeMy4WC95RC0cyIN2x8Fy0UNDpjervkjnkdYTQ9CGi6bVMbRJ",
   server: false
+
+# Enable helpful, but potentially expensive runtime checks
+config :phoenix_live_view,
+  enable_expensive_runtime_checks: true
 
 # In test we don't send emails.
 config :batch_ecommerce, BatchEcommerce.Mailer, adapter: Swoosh.Adapters.Test

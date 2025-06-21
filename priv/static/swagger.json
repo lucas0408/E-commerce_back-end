@@ -1,0 +1,10 @@
+{
+  "info": {
+    "version": "1.0",
+    "title": "BatchEcommerce"
+  },
+  "host": "localhost:4000",
+  "definitions": {},
+  "paths": {},
+  "swagger": "2.0"
+}

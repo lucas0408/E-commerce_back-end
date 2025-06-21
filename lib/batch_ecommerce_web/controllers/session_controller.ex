@@ -2,26 +2,41 @@ defmodule BatchEcommerceWeb.SessionController do
   use BatchEcommerceWeb, :controller
   action_fallback BatchEcommerceWeb.FallbackController
 
-  alias BatchEcommerce.{Accounts, Accounts.Guardian}
+  alias BatchEcommerce.{Accounts}
+  alias BatchEcommerceWeb.UserAuth
 
-  def login(conn, %{"email" => email, "password" => password}) do
-    with {:ok, user} <- Accounts.authenticate_user(email, password),
-         {:ok, token, _claims} <- Guardian.encode_and_sign(user) do
+  def create(conn, %{"_action" => "registered"} = params) do
+    create(conn, params, "Account created successfully!")
+  end
+
+  def create(conn, %{"_action" => "password_updated"} = params) do
+    conn
+    |> put_session(:user_return_to, ~p"/users/settings")
+    |> create(params, "Password updated successfully!")
+  end
+
+  def create(conn, params) do
+    create(conn, params, "Welcome back!")
+  end
+
+  defp create(conn, %{"user" => user_params}, info) do
+    %{"email" => email, "password" => password} = user_params
+
+    if user = Accounts.get_user_by_email_and_password(email, password) do
       conn
-      |> put_status(:ok)
-      |> render(:user_token, user: user, token: token)
+      |> put_flash(:info, info)
+      |> UserAuth.log_in_user(user, user_params)
     else
-      {:error, _reason} ->
-        conn
-        |> put_status(:unauthorized)
-        |> json(%{error: "Invalid credentials"})
+      conn
+      |> put_flash(:error, "Invalid email or password")
+      |> put_flash(:email, String.slice(email, 0, 160))
+      |> redirect(to: ~p"/api/users/log_in")
     end
   end
 
-  def logout(conn, _) do
+  def delete(conn, _) do
     conn
-    |> Guardian.Plug.sign_out()
-    |> put_status(:ok)
-    |> json(%{msg: "Logged out"})
+    |> put_flash(:info, "Logged out successfully.")
+    |> UserAuth.log_out_user()
   end
 end

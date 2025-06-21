@@ -1,0 +1,38 @@
+FROM elixir:1.18-alpine AS build
+
+ENV MIX_ENV=prod
+ENV ERL_AFLAGS="-kernel shell_history enabled"
+ENV LANG=C.UTF-8
+
+RUN apk add --no-cache \
+    git \
+    build-base \
+    bash
+
+WORKDIR /app
+
+RUN mix local.hex --force && \
+    mix local.rebar --force
+
+COPY mix.exs mix.lock ./
+
+RUN mix deps.get --only prod
+
+COPY . .
+
+RUN mix deps.compile
+RUN mix compile
+RUN mix release
+
+
+FROM alpine:3.21.3 AS app
+
+RUN apk add --no-cache libstdc++ openssl ncurses-libs
+
+WORKDIR /app
+
+COPY --from=build /app/_build/prod/rel/batch_ecommerce . 
+
+EXPOSE 4000
+
+CMD ["bin/batch_ecommerce", "start"] 

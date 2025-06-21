@@ -34,7 +34,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_user(id), do: Repo.get(User, id) |> Repo.preload(:addresses)
+  def get_user(id), do: Repo.get(User, id) |> Repo.preload([:addresses])
 
   @doc """
   Creates a user.
@@ -107,6 +107,20 @@ defmodule BatchEcommerce.Accounts do
     Repo.delete(user)
   end
 
+  def insert_change_user(%User{} = user, attrs \\ %{}) do
+    User.insert_changeset(user, attrs)
+  end
+
+  def update_change_user(%User{} = user, attrs \\ %{}) do
+    User.update_changeset(user, attrs)
+  end
+
+  def get_user_by_email_and_password(email, password)
+      when is_binary(email) and is_binary(password) do
+    user = Repo.get_by(User, email: email)
+    if User.valid_password?(user, password), do: user
+  end
+
   def authenticate_user(email, plain_text_password) do
     query = from(u in User, where: u.email == ^email)
 
@@ -123,6 +137,11 @@ defmodule BatchEcommerce.Accounts do
     end
   end
 
+  def user_preload_company(user) do
+    Repo.preload(user, :company)
+  end
+
+
   alias BatchEcommerce.Accounts.Company
 
   @doc """
@@ -134,8 +153,15 @@ defmodule BatchEcommerce.Accounts do
       [%Company{}, ...]
 
   """
+
+
   def list_companies do
-    Repo.all(Company) |> Repo.preload(:addresses)
+    Repo.all(Company) |> companies_preload()
+  end
+
+  def companies_preload(companies) do
+    companies
+    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories])
   end
 
   @doc """
@@ -152,7 +178,10 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_company(id), do: Repo.get(Company, id) |> Repo.preload(:addresses)
+  def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id)
+    |> companies_preload()
+
+  def get_company!(id), do: Repo.get(Company, id) |> companies_preload()
 
   @doc """
   Creates a company.
@@ -172,7 +201,8 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.insert()
     |> case do
       {:ok, company} ->
-        {:ok, Repo.preload(company, :addresses)}
+        IO.inspect(company, label: "company: ")
+        {:ok, companies_preload(company)}
 
       {:error, changeset} ->
         {:error, changeset}
@@ -202,7 +232,7 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.update()
     |> case do
       {:ok, company_updated} ->
-        {:ok, Repo.preload(company_updated, :addresses)}
+        {:ok, companies_preload(company_updated)}
 
       {:error, changeset} ->
         {:error, changeset}

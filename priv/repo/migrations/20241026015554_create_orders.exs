@@ -3,7 +3,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateOrders do
 
   def change do
     create table(:orders) do
-      add :user_uuid, :uuid
+      add :user_id, references(:users, type: :uuid, on_delete: :delete_all)
       add :total_price, :decimal, precision: 15, scale: 6, null: false
 
       timestamps(type: :utc_datetime)

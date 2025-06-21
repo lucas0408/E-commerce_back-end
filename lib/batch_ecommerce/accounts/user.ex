@@ -4,7 +4,8 @@ defmodule BatchEcommerce.Accounts.User do
   import EctoCommons.{EmailValidator, PhoneNumberValidator, DateValidator}
   alias BatchEcommerce.Accounts
 
-  @derive {Jason.Encoder, only: [:id, :cpf, :name, :email, :phone_number, :birth_date, :addresses]}
+  @derive {Jason.Encoder,
+           only: [:id, :cpf, :name, :email, :phone_number, :birth_date, :addresses]}
 
   @required_fields_insert [:cpf, :name, :email, :phone_number, :birth_date, :password]
   @required_fields_update [:name, :email, :phone_number, :birth_date]
@@ -103,4 +104,20 @@ defmodule BatchEcommerce.Accounts.User do
   defp validate_date_before(), do: Date.utc_today() |> Date.shift(year: -18)
 
   defp validate_date_after(), do: Date.new!(1900, 1, 1)
+
+  @doc """
+  Verifies the password.
+
+  If there is no user or the user doesn't have a password, we call
+  `Bcrypt.no_user_verify/0` to avoid timing attacks.
+  """
+  def valid_password?(%BatchEcommerce.Accounts.User{password_hash: password_hash}, password)
+      when is_binary(password_hash) and byte_size(password) > 0 do
+    Bcrypt.verify_pass(password, password_hash)
+  end
+
+  def valid_password?(_, _) do
+    Bcrypt.no_user_verify()
+    false
+  end
 end

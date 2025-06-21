@@ -1,6 +1,8 @@
 defmodule BatchEcommerceWeb.Router do
   use BatchEcommerceWeb, :router
 
+  import BatchEcommerceWeb.UserAuth
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -15,75 +17,80 @@ defmodule BatchEcommerceWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {BatchEcommerceWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :fetch_current_user
     plug :put_secure_browser_headers
-  end
-
-  defp fetch_current_user(conn, _opts) do
-    # Para desenvolvimento - pega o primeiro usuário
-    # Em produção, você deve pegar da sessão ou token de autenticação
-    IO.inspect(BatchEcommerce.Accounts.list_companies())
-    current_user = List.first(BatchEcommerce.Accounts.list_users())
-    company = BatchEcommerce.Accounts.get_company_by_user_id(current_user.id)
-
-
-    conn
-    |> assign(:current_user, current_user)
-    |> put_session(:current_user, current_user.id)
+    plug :fetch_current_user
   end
 
   pipeline :ensure_auth do
     plug Guardian.Plug.EnsureAuthenticated
   end
 
+  #scope para usuários não logados
+  scope "/", BatchEcommerceWeb do
+    pipe_through :browser
+
+    post "/login", SessionController, :create #ok
+    resources "/users", UserController, only: [:create, :show, :index] #ok
+    resources "/products", ProductController, only: [:index, :show] #ok
+    resources "/categories", CategoryController, only: [:index, :show] #ok
+    resources "/companies", CompanyController, only: [:index, :show] #ok
+  end
+
+  #scope para usuários logados
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
 
-
-    live "/users/log_in", UserLoginLive, :new
-    live "/users/register", UserRegistrationLive, :new
-    resources "/users", UserController, only: [:create, :show]
-    resources "/products", ProductController, only: [:index, :show]
-    resources "/categories", CategoryController, only: [:index]
-    post "/login", SessionController, :login
-    get "/logout", SessionController, :logout
-    get "/orders/export-stream", OrderController, :export_stream
+    resources "/users", UserController, only: [:update, :delete] #ok
+    post "/upload", UploadController, :create #ok
+    resources "/cart_products", CartProductController #ok
+    #TODO: revisar action abaixo
+    get "/cart_products/user/:user_id", CartProductController, :get_by_user #ok
+    resources "/orders", OrderController, only: [:create, :show, :index] #ok
+    post "/companies", CompanyController, :create #ok
+    delete "/logout", SessionController, :logout #ok
   end
 
-  scope "/", BatchEcommerceWeb.Live do
+  #TODO: verificar a necessidade de criar um scope para usuários logados sem empresa e um com empresa
+  #para evitar vulnerabilidades na hora de criar empresa.
+
+  #TODO: implementar scope de api com permissão somente pra empresas
+  scope "/api", BatchEcommerceWeb do
     pipe_through :browser
 
-    live "/users", UserLive.Index, :index
-    live "/users/new", UserLive.New, :new
-    live "/users/:id/edit", UserLive.Edit, :edit
-    live "/products/new", ProductLive.New, :new
-    live "/products", ProductLive.Index, :index
-    live "/products/:product_id", ProductLive.Show, :edit
-    live "/products/:product_id/edit", ProductLive.Edit, :edit
-    live "/users/:id", UserLive.Show, :show
-    live "/companies/new", CompanyLive.New, :new
-    live "/companies/:id", CompanyLive.Show, :show
-    live "/companies/:id/edit", CompanyLive.Edit, :edit
-    live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
-    live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
-    live "/companies/:id/orders", OrderLive.Index, :index
-    live "/cart_products", ShoppingCart.Index, :index
-    live "/orders", OrderLive.Index, :index
+    resources "/products", ProductController, only: [:create, :update, :delete] #ok
+    #TODO: validar se orders vai precisar de index para empresas como já definido abaixo
+    #get "/orders", OrderController, :index
+    resources "/companies", CompanyController, only: [:update, :delete] #ok
+    #TODO: revisar action abaixo
+    get "/orders/export-stream", OrderController, :export_stream #ok
 
-    get "/", PageController, :home
   end
 
-  scope "/api", BatchEcommerceWeb do
-    pipe_through [:api, :auth, :ensure_auth]
-    post "/upload", UploadController, :create
-    resources "/users", UserController, except: [:create, :show, :new, :edit]
-    resources "/products", ProductController, except: [:index, :show, :new, :edit]
-    resources "/categories", CategoryController, except: [:new, :index, :edit]
-    resources "/cart_products", CartProductController
-    get "/cart_products/user/:user_id", CartProductController, :get_by_user
-    resources "/orders", OrderController, only: [:create, :show, :index]
-    get "/orders/export-stream", OrderController, :export_stream
-    resources "/companies", CompanyController
+  scope "/users/", BatchEcommerceWeb.Live do
+    pipe_through [:browser, :require_authenticated_user]
+
+    live_session :require_authenticated_user,
+      on_mount: [{BatchEcommerceWeb.UserAuth, :ensure_authenticated}] do
+      live "/users/log_in", UserLoginLive, :new
+      live "/users/register", UserRegistrationLive, :new
+      live "/users", UserLive.Index, :index
+      live "/users/new", UserLive.New, :new
+      live "/users/:id/edit", UserLive.Edit, :edit
+      live "/products/new", ProductLive.New, :new
+      live "/products/:product_id", ProductLive.Show, :edit
+      live "/products/:product_id/edit", ProductLive.Edit, :edit
+      live "/companies/new", CompanyLive.New, :new
+      live "/companies/:id/edit", CompanyLive.Edit, :edit
+      live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
+      live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
+      live "/companies/:id/orders", OrderLive.Index, :index
+      live "/cart_products", ShoppingCart.Index, :index
+      live "/orders", OrderLive.Index, :index
+    end
+
+    live "/companies/:id", CompanyLive.Show, :show
+    live "/users/:id", UserLive.Show, :show
+    live "/products", ProductLive.Index, :index
   end
 
   scope "/api/swagger" do

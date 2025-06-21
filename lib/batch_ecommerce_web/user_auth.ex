@@ -4,7 +4,8 @@ defmodule BatchEcommerceWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
-  alias BatchEcommerce.Accounts
+  alias BatchEcommerce.Accounts.Guardian
+
 
   # Make the remember me cookie valid for 60 days.
   # If you want bump or reduce this value, also change
@@ -26,7 +27,7 @@ defmodule BatchEcommerceWeb.UserAuth do
   if you are not using LiveView.
   """
   def log_in_user(conn, user, params \\ %{}) do
-    token = Accounts.generate_user_session_token(user)
+    {:ok, token, _claims} = Guardian.encode_and_sign(user)
     user_return_to = get_session(conn, :user_return_to)
 
     conn
@@ -73,9 +74,6 @@ defmodule BatchEcommerceWeb.UserAuth do
   It clears all session data for safety. See renew_session.
   """
   def log_out_user(conn) do
-    user_token = get_session(conn, :user_token)
-    user_token && Accounts.delete_user_session_token(user_token)
-
     if live_socket_id = get_session(conn, :live_socket_id) do
       BatchEcommerceWeb.Endpoint.broadcast(live_socket_id, "disconnect", %{})
     end
@@ -83,7 +81,7 @@ defmodule BatchEcommerceWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/")
+    |> redirect(to: ~p"/api/users/log_in")
   end
 
   @doc """
@@ -92,8 +90,7 @@ defmodule BatchEcommerceWeb.UserAuth do
   """
   def fetch_current_user(conn, _opts) do
     {user_token, conn} = ensure_user_token(conn)
-    user = user_token && Accounts.get_user_by_session_token(user_token)
-    assign(conn, :current_user, user)
+    assign(conn, :current_user, user_token)
   end
 
   defp ensure_user_token(conn) do
@@ -158,7 +155,7 @@ defmodule BatchEcommerceWeb.UserAuth do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/users/log_in")
+        |> Phoenix.LiveView.redirect(to: ~p"/api/users/log_in")
 
       {:halt, socket}
     end
@@ -176,8 +173,12 @@ defmodule BatchEcommerceWeb.UserAuth do
 
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
-      if user_token = session["user_token"] do
-        Accounts.get_user_by_session_token(user_token)
+      with token when not is_nil(token) <- session["user_token"],
+           {:ok, claims} <- BatchEcommerce.Accounts.Guardian.decode_and_verify(token),
+           {:ok, user} <- BatchEcommerce.Accounts.Guardian.resource_from_claims(claims) do
+        user
+      else
+        _ -> nil
       end
     end)
   end
@@ -208,7 +209,7 @@ defmodule BatchEcommerceWeb.UserAuth do
       conn
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/users/log_in")
+      |> redirect(to: ~p"/api/users/log_in")
       |> halt()
     end
   end
@@ -225,5 +226,5 @@ defmodule BatchEcommerceWeb.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: ~p"/"
+  defp signed_in_path(_conn), do: ~p"/users"
 end

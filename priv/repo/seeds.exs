@@ -305,6 +305,95 @@ Enum.each(products, fn product ->
   end)
 end)
 
+
+# Buscar usuários e produtos existentes
+users = BatchEcommerce.Repo.all(BatchEcommerce.Accounts.User)
+products = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Product)
+
+# Criar pedidos com diferentes status de pagamento
+orders_data = [
+  %{
+    user_id: Enum.at(users, 0).id,  # João da Silva
+    status_payment: "pendente",
+    order_products: [
+      %{product_id: Enum.at(products, 0).id, quantity: 1, status: "Preparando Pedido"},  # Smartphone Galaxy S21
+      %{product_id: Enum.at(products, 6).id, quantity: 1, status: "Preparando Pedido"}   # Notebook Dell Inspiron
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 1).id,  # Lucas da Silva
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 1).id, quantity: 3, status: "Enviado"},           # Camiseta Básica
+      %{product_id: Enum.at(products, 7).id, quantity: 1, status: "Enviado"},           # Tênis Nike Air Max
+      %{product_id: Enum.at(products, 10).id, quantity: 2, status: "Enviado"}           # Mochila Escolar
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 0).id,  # João da Silva (segundo pedido)
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 2).id, quantity: 1, status: "Entregue"},          # O Senhor dos Anéis
+      %{product_id: Enum.at(products, 8).id, quantity: 1, status: "Entregue"}           # Cafeteira Elétrica
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 1).id,  # Lucas da Silva (segundo pedido)
+    status_payment: "pendente",
+    order_products: [
+      %{product_id: Enum.at(products, 3).id, quantity: 2, status: "Preparando Pedido"}, # Luminária de Mesa
+      %{product_id: Enum.at(products, 9).id, quantity: 1, status: "Preparando Pedido"}  # Fone de Ouvido Bluetooth
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 0).id,  # João da Silva (terceiro pedido)
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 4).id, quantity: 1, status: "A Caminho"},         # Bola de Futebol
+      %{product_id: Enum.at(products, 11).id, quantity: 1, status: "A Caminho"}         # Panela de Pressão Elétrica
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 1).id,  # Lucas da Silva (terceiro pedido)
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 5).id, quantity: 1, status: "Enviado"}            # LEGO Star Wars
+    ]
+  }
+]
+
+# Criar os pedidos e produtos do pedido
+Enum.each(orders_data, fn order_data ->
+  # Calcular o preço total do pedido
+  total_price = 
+    order_data.order_products
+    |> Enum.reduce(Decimal.new("0"), fn order_product, acc ->
+      product = Enum.find(products, &(&1.id == order_product.product_id))
+      product_total = Decimal.mult(product.price, Decimal.new(order_product.quantity))
+      Decimal.add(acc, product_total)
+    end)
+  
+  # Criar o pedido
+  {:ok, order} = BatchEcommerce.Repo.insert(%BatchEcommerce.Order.Order{
+    user_id: order_data.user_id,
+    total_price: total_price,
+    status_payment: order_data.status_payment
+  })
+  
+  # Criar os produtos do pedido
+  Enum.each(order_data.order_products, fn order_product_data ->
+    product = Enum.find(products, &(&1.id == order_product_data.product_id))
+    
+    BatchEcommerce.Repo.insert!(%BatchEcommerce.Order.OrderProduct{
+      order_id: order.id,
+      product_id: order_product_data.product_id,
+      price: product.price,
+      quantity: order_product_data.quantity,
+      status: order_product_data.status
+    })
+  end)
+end)
+
 # Relacionando produtos com categorias
 # Aqui vamos pegar as categorias e produtos já inseridos
 electronics = BatchEcommerce.Repo.get_by!(BatchEcommerce.Catalog.Category, type: "Eletrônicos")

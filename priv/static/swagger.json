@@ -5,237 +5,6 @@
   },
   "host": "localhost:4000",
   "definitions": {
-    "OrdersListResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/Order"
-          }
-        }
-      },
-      "example": {
-        "data": [
-          {
-            "id": 1,
-            "order_products": [
-              {
-                "id": 1,
-                "inserted_at": "2025-05-07T22:35:59Z",
-                "order_id": 1,
-                "price": "17499.950000",
-                "product": {
-                  "company_id": 1,
-                  "description": "Celular potente",
-                  "id": 1,
-                  "image_url": "https://example.com/images/galaxy-s21.jpg",
-                  "inserted_at": "2025-05-07T21:24:20Z",
-                  "name": "Smartphone Galaxy S21",
-                  "price": "3499.99",
-                  "stock_quantity": 50,
-                  "updated_at": "2025-05-07T21:24:20Z"
-                },
-                "product_id": 1,
-                "quantity": 5,
-                "updated_at": "2025-05-07T22:35:59Z"
-              }
-            ],
-            "total_price": "17499.95",
-            "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
-          }
-        ]
-      }
-    },
-    "UserCreateResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "ID único do usuário",
-              "example": "3d33d3e7-dd93-44a6-bf88-f6a4986e762b"
-            },
-            "name": {
-              "type": "string",
-              "description": "Nome completo do usuário",
-              "example": "João da Silva"
-            },
-            "token": {
-              "type": "string",
-              "description": "Token JWT de autenticação",
-              "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."
-            },
-            "cpf": {
-              "type": "string",
-              "description": "CPF do usuário",
-              "example": "12345678901"
-            },
-            "email": {
-              "type": "string",
-              "description": "Email do usuário",
-              "example": "joao.silva@exemplo.com"
-            },
-            "phone_number": {
-              "type": "string",
-              "description": "Número de telefone",
-              "example": "11987654321"
-            },
-            "addresses": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/AddressWithId"
-                  }
-                }
-              }
-            },
-            "birth_date": {
-              "type": "string",
-              "format": "date",
-              "description": "Data de nascimento",
-              "example": "1990-01-15"
-            }
-          }
-        }
-      }
-    },
-    "ProductParams": {
-      "description": "Parâmetros para criar ou atualizar um produto",
-      "example": {
-        "product": {
-          "categories": [
-            1,
-            2
-          ],
-          "company_id": 9,
-          "description": "teste_descrição",
-          "image_url": "http://localhost:9000/batch-bucket/43985685-289d-4837-9a43-2dd172eb9a77-product_image.jpg",
-          "name": "nome_produto_teste",
-          "price": 12.3,
-          "stock_quantity": 30
-        }
-      },
-      "properties": {
-        "categories": {
-          "description": "IDs das categorias",
-          "items": "integer",
-          "type": "array"
-        },
-        "company_id": {
-          "description": "ID da empresa",
-          "type": "integer"
-        },
-        "description": {
-          "description": "Descrição do produto",
-          "type": "string"
-        },
-        "image_url": {
-          "description": "URL da imagem do produto",
-          "type": "string"
-        },
-        "name": {
-          "description": "Nome do produto",
-          "type": "string"
-        },
-        "price": {
-          "description": "Preço do produto",
-          "format": "float",
-          "type": "number"
-        },
-        "stock_quantity": {
-          "description": "Quantidade em estoque",
-          "type": "integer"
-        }
-      },
-      "required": [
-        "stock_quantity",
-        "price",
-        "image_url",
-        "categories",
-        "company_id",
-        "description",
-        "name"
-      ],
-      "title": "Parâmetros do Produto",
-      "type": "object"
-    },
-    "CompanyData": {
-      "properties": {
-        "addresses": {
-          "$ref": "#/definitions/AddressesResponse",
-          "description": "Endereços da empresa"
-        },
-        "cnpj": {
-          "description": "CNPJ da empresa",
-          "type": "string"
-        },
-        "email": {
-          "description": "Email de contato da empresa",
-          "type": "string"
-        },
-        "id": {
-          "description": "ID da empresa",
-          "type": "integer"
-        },
-        "name": {
-          "description": "Nome da empresa",
-          "type": "string"
-        },
-        "phone_number": {
-          "description": "Número de telefone da empresa",
-          "type": "string"
-        },
-        "products": {
-          "$ref": "#/definitions/ProductsResponse",
-          "description": "Produtos da empresa"
-        },
-        "user_id": {
-          "description": "ID do usuário proprietário",
-          "format": "uuid",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "ProductsResponse": {
-      "properties": {
-        "data": {
-          "description": "Lista de produtos",
-          "items": {
-            "$ref": "#/definitions/ProductData"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "CategoriesListResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {}
-        }
-      },
-      "example": {
-        "data": [
-          {
-            "id": 1,
-            "type": "Bebidas"
-          },
-          {
-            "id": 2,
-            "type": "Vestuário"
-          }
-        ]
-      }
-    },
     "OrderProductDetails": {
       "properties": {
         "company_id": {
@@ -279,89 +48,304 @@
       },
       "type": "object"
     },
-    "CategorieData": {
+    "UserParams": {
+      "type": "object",
+      "required": [
+        "user"
+      ],
+      "properties": {
+        "user": {
+          "type": "object",
+          "required": [
+            "cpf",
+            "name",
+            "email",
+            "phone_number",
+            "birth_date",
+            "password"
+          ],
+          "properties": {
+            "name": {
+              "type": "string",
+              "description": "Nome completo do usuário",
+              "example": "João da Silva"
+            },
+            "password": {
+              "type": "string",
+              "description": "Senha do usuário",
+              "example": "Senha@123"
+            },
+            "cpf": {
+              "type": "string",
+              "description": "CPF do usuário",
+              "example": "12345678901"
+            },
+            "email": {
+              "type": "string",
+              "description": "Email do usuário",
+              "example": "joao.silva@exemplo.com"
+            },
+            "phone_number": {
+              "type": "string",
+              "description": "Número de telefone",
+              "example": "11987654321"
+            },
+            "addresses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Address"
+              }
+            },
+            "birth_date": {
+              "type": "string",
+              "format": "date",
+              "description": "Data de nascimento",
+              "example": "1990-01-15"
+            }
+          }
+        }
+      }
+    },
+    "CategorieResponse": {
+      "description": "Representação JSON de uma categoria",
+      "example": {
+        "data": {
+          "id": 1,
+          "type": "Bebidas"
+        }
+      },
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/CategorieData"
+        }
+      },
+      "title": "Resposta de category",
+      "type": "object"
+    },
+    "ProductData": {
+      "properties": {
+        "categories": {
+          "$ref": "#/definitions/CategoryResponse"
+        },
+        "company_id": {
+          "description": "ID da empresa",
+          "type": "integer"
+        },
+        "description": {
+          "description": "Descrição do produto",
+          "type": "string"
+        },
+        "id": {
+          "description": "ID do produto",
+          "type": "integer"
+        },
+        "image_url": {
+          "description": "URL da imagem do produto",
+          "type": "string"
+        },
+        "name": {
+          "description": "Nome do produto",
+          "type": "string"
+        },
+        "price": {
+          "description": "Preço do produto",
+          "format": "float",
+          "type": "number"
+        },
+        "stock_quantity": {
+          "description": "Quantidade em estoque",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "OrderResponse": {
+      "description": "Representação JSON de um pedido",
+      "example": {
+        "data": {
+          "id": 1,
+          "order_products": [
+            {
+              "id": 1,
+              "inserted_at": "2025-05-07T22:35:59Z",
+              "order_id": 1,
+              "price": "17499.950000",
+              "product": {
+                "company_id": 1,
+                "description": "Celular potente",
+                "id": 1,
+                "image_url": "https://example.com/images/galaxy-s21.jpg",
+                "inserted_at": "2025-05-07T21:24:20Z",
+                "name": "Smartphone Galaxy S21",
+                "price": "3499.99",
+                "stock_quantity": 50,
+                "updated_at": "2025-05-07T21:24:20Z"
+              },
+              "product_id": 1,
+              "quantity": 5,
+              "updated_at": "2025-05-07T22:35:59Z"
+            }
+          ],
+          "total_price": "17499.95",
+          "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
+        }
+      },
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/OrderData"
+        }
+      },
+      "title": "Resposta de Pedido",
+      "type": "object"
+    },
+    "OrderData": {
+      "properties": {
+        "id": {
+          "description": "ID do pedido",
+          "type": "integer"
+        },
+        "order_products": {
+          "description": "Produtos do pedido",
+          "items": {
+            "$ref": "#/definitions/OrderProductData"
+          },
+          "type": "array"
+        },
+        "total_price": {
+          "description": "Valor total do pedido",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "ID do usuário",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "ErrorCredencial": {
+      "type": "object",
+      "properties": {
+        "error": {
+          "type": "string",
+          "description": "error Invalid credentials",
+          "example": "Invalid credentials"
+        }
+      }
+    },
+    "ProductResponse": {
+      "description": "Representação JSON de um produto",
+      "example": {
+        "data": {
+          "categories": {
+            "data": [
+              {
+                "id": 1,
+                "type": "Eletrônicos"
+              },
+              {
+                "id": 2,
+                "type": "Smartphones"
+              }
+            ]
+          },
+          "company_id": 9,
+          "description": "teste_descrição",
+          "id": 1,
+          "image_url": "http://localhost:9000/batch-bucket/43985685-289d-4837-9a43-2dd172eb9a77-product_image.jpg",
+          "name": "nome_produto_teste",
+          "price": 12.3,
+          "stock_quantity": 30
+        }
+      },
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/ProductData"
+        }
+      },
+      "title": "Resposta de Produto",
+      "type": "object"
+    },
+    "LogoutResponse": {
+      "type": "object",
+      "properties": {
+        "msg": {
+          "type": "string",
+          "description": "Mensagem de sucesso",
+          "example": "Logged out"
+        }
+      }
+    },
+    "CategoryData": {
       "properties": {
         "id": {
           "description": "ID da categoria",
           "type": "integer"
         },
         "type": {
-          "description": "nome da categotia",
+          "description": "Tipo da categoria",
           "type": "string"
         }
       },
       "type": "object"
     },
-    "CompanyParams": {
-      "description": "Parâmetros para criar ou atualizar uma empresa",
+    "CategoryParams": {
+      "description": "Parâmetros para adicionar uma categoria ao sistema",
       "example": {
-        "company": {
-          "addresses": [
-            {
-              "address": "Avenida Paulista",
-              "cep": "01310930",
-              "city": "São Paulo",
-              "complement": "Conjunto 101",
-              "district": "Bela Vista",
-              "home_number": "1000",
-              "uf": "SP"
-            },
-            {
-              "address": "Rua do Rocio",
-              "cep": "04543011",
-              "city": "São Paulo",
-              "complement": "Andar 8",
-              "district": "Vila Olímpia",
-              "home_number": "313",
-              "uf": "SP"
-            }
-          ],
-          "cnpj": "12345678000199",
-          "email": "contato@empresaexemplo.com",
-          "name": "Empresa Exemplo LTDA",
-          "phone_number": "+5511999999999",
-          "user_id": "89d91017-7a89-4f14-a365-5013b7720278"
+        "category": {
+          "type": "Bebidas"
         }
       },
       "properties": {
-        "addresses": {
-          "description": "Endereços da empresa",
-          "items": {
-            "$ref": "#/definitions/AddressParams"
-          },
-          "type": "array"
-        },
-        "cnpj": {
-          "description": "CNPJ da empresa",
-          "type": "string"
-        },
-        "email": {
-          "description": "Email de contato da empresa",
-          "type": "string"
-        },
-        "name": {
-          "description": "Nome da empresa",
-          "type": "string"
-        },
-        "phone_number": {
-          "description": "Número de telefone da empresa",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "ID do usuário proprietário",
-          "format": "uuid",
+        "type": {
+          "description": "nome da categotia",
           "type": "string"
         }
       },
       "required": [
-        "addresses",
-        "phone_number",
-        "email",
-        "cnpj",
-        "name"
+        "type"
       ],
-      "title": "Parâmetros da Empresa",
+      "title": "Parâmetros da categoria",
       "type": "object"
+    },
+    "CartsListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "example": {
+        "data": [
+          {
+            "id": 1,
+            "price_when_carted": "17499.95",
+            "product": {
+              "data": {
+                "categories": {
+                  "data": [
+                    {
+                      "id": 1,
+                      "type": "Eletrônicos"
+                    }
+                  ]
+                },
+                "company_id": 1,
+                "description": "Celular potente",
+                "id": 1,
+                "image_url": "https://example.com/images/galaxy-s21.jpg",
+                "name": "Smartphone Galaxy S21",
+                "price": "3499.99",
+                "stock_quantity": 50
+              }
+            },
+            "product_id": 1,
+            "quantity": 5,
+            "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
+          }
+        ]
+      }
     },
     "Address": {
       "type": "object",
@@ -408,6 +392,75 @@
           "type": "string",
           "description": "UF",
           "example": "SP"
+        }
+      }
+    },
+    "LoginParams": {
+      "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "password": {
+          "type": "string",
+          "description": "Senha do usuário",
+          "example": "Senha@123"
+        },
+        "email": {
+          "type": "string",
+          "description": "Email do usuário",
+          "example": "joao.silva@exemplo.com"
+        }
+      }
+    },
+    "OrdersListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Order"
+          }
+        }
+      },
+      "example": {
+        "data": [
+          {
+            "id": 1,
+            "order_products": [
+              {
+                "id": 1,
+                "inserted_at": "2025-05-07T22:35:59Z",
+                "order_id": 1,
+                "price": "17499.950000",
+                "product": {
+                  "company_id": 1,
+                  "description": "Celular potente",
+                  "id": 1,
+                  "image_url": "https://example.com/images/galaxy-s21.jpg",
+                  "inserted_at": "2025-05-07T21:24:20Z",
+                  "name": "Smartphone Galaxy S21",
+                  "price": "3499.99",
+                  "stock_quantity": 50,
+                  "updated_at": "2025-05-07T21:24:20Z"
+                },
+                "product_id": 1,
+                "quantity": 5,
+                "updated_at": "2025-05-07T22:35:59Z"
+              }
+            ],
+            "total_price": "17499.95",
+            "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
+          }
+        ]
+      }
+    },
+    "UserResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/User"
         }
       }
     },
@@ -491,6 +544,100 @@
       "title": "Parâmetros de Endereço",
       "type": "object"
     },
+    "ProductParams": {
+      "description": "Parâmetros para criar ou atualizar um produto",
+      "example": {
+        "product": {
+          "categories": [
+            1,
+            2
+          ],
+          "company_id": 9,
+          "description": "teste_descrição",
+          "image_url": "http://localhost:9000/batch-bucket/43985685-289d-4837-9a43-2dd172eb9a77-product_image.jpg",
+          "name": "nome_produto_teste",
+          "price": 12.3,
+          "stock_quantity": 30
+        }
+      },
+      "properties": {
+        "categories": {
+          "description": "IDs das categorias",
+          "items": "integer",
+          "type": "array"
+        },
+        "company_id": {
+          "description": "ID da empresa",
+          "type": "integer"
+        },
+        "description": {
+          "description": "Descrição do produto",
+          "type": "string"
+        },
+        "image_url": {
+          "description": "URL da imagem do produto",
+          "type": "string"
+        },
+        "name": {
+          "description": "Nome do produto",
+          "type": "string"
+        },
+        "price": {
+          "description": "Preço do produto",
+          "format": "float",
+          "type": "number"
+        },
+        "stock_quantity": {
+          "description": "Quantidade em estoque",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "stock_quantity",
+        "price",
+        "image_url",
+        "categories",
+        "company_id",
+        "description",
+        "name"
+      ],
+      "title": "Parâmetros do Produto",
+      "type": "object"
+    },
+    "ErrorList": {
+      "type": "object",
+      "properties": {
+        "errors": {
+          "type": "object",
+          "properties": {
+            "cpf": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Descrição de erro do cpf",
+                "example": "Already in use"
+              }
+            },
+            "email": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Descrição de erro do email",
+                "example": "Already in use"
+              }
+            },
+            "phone_number": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "description": "Descrição de erro do email",
+                "example": "Enter a valid phone number"
+              }
+            }
+          }
+        }
+      }
+    },
     "AddressWithId": {
       "type": "object",
       "required": [
@@ -544,31 +691,6 @@
         }
       }
     },
-    "OrderData": {
-      "properties": {
-        "id": {
-          "description": "ID do pedido",
-          "type": "integer"
-        },
-        "order_products": {
-          "description": "Produtos do pedido",
-          "items": {
-            "$ref": "#/definitions/OrderProductData"
-          },
-          "type": "array"
-        },
-        "total_price": {
-          "description": "Valor total do pedido",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "ID do usuário",
-          "format": "uuid",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "UsersListResponse": {
       "type": "object",
       "properties": {
@@ -576,174 +698,6 @@
           "type": "array",
           "items": {
             "$ref": "#/definitions/User"
-          }
-        }
-      }
-    },
-    "CategoryData": {
-      "properties": {
-        "id": {
-          "description": "ID da categoria",
-          "type": "integer"
-        },
-        "type": {
-          "description": "Tipo da categoria",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "LoginResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "object",
-          "properties": {
-            "id": {
-              "type": "string",
-              "format": "uuid",
-              "description": "ID único do usuário",
-              "example": "6789598c-b26d-446f-bcd7-b4872d664129"
-            },
-            "token": {
-              "type": "string",
-              "description": "Token JWT de autenticação",
-              "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."
-            },
-            "email": {
-              "type": "string",
-              "description": "Email do usuário",
-              "example": "joao.silva@exemplo.com"
-            }
-          }
-        }
-      }
-    },
-    "OrderResponse": {
-      "description": "Representação JSON de um pedido",
-      "example": {
-        "data": {
-          "id": 1,
-          "order_products": [
-            {
-              "id": 1,
-              "inserted_at": "2025-05-07T22:35:59Z",
-              "order_id": 1,
-              "price": "17499.950000",
-              "product": {
-                "company_id": 1,
-                "description": "Celular potente",
-                "id": 1,
-                "image_url": "https://example.com/images/galaxy-s21.jpg",
-                "inserted_at": "2025-05-07T21:24:20Z",
-                "name": "Smartphone Galaxy S21",
-                "price": "3499.99",
-                "stock_quantity": 50,
-                "updated_at": "2025-05-07T21:24:20Z"
-              },
-              "product_id": 1,
-              "quantity": 5,
-              "updated_at": "2025-05-07T22:35:59Z"
-            }
-          ],
-          "total_price": "17499.95",
-          "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
-        }
-      },
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/OrderData"
-        }
-      },
-      "title": "Resposta de Pedido",
-      "type": "object"
-    },
-    "Company": {
-      "description": "Representação JSON de uma empresa",
-      "properties": {
-        "addresses": {
-          "$ref": "#/definitions/AddressesResponse",
-          "description": "Endereços da empresa"
-        },
-        "cnpj": {
-          "description": "CNPJ da empresa",
-          "type": "string"
-        },
-        "email": {
-          "description": "Email de contato da empresa",
-          "type": "string"
-        },
-        "id": {
-          "description": "ID da empresa",
-          "type": "integer"
-        },
-        "name": {
-          "description": "Nome da empresa",
-          "type": "string"
-        },
-        "phone_number": {
-          "description": "Número de telefone da empresa",
-          "type": "string"
-        },
-        "products": {
-          "$ref": "#/definitions/ProductsResponse",
-          "description": "Produtos da empresa"
-        },
-        "user_id": {
-          "description": "ID do usuário proprietário",
-          "format": "uuid",
-          "type": "string"
-        }
-      },
-      "title": "Empresa",
-      "type": "object"
-    },
-    "CategorieResponse": {
-      "description": "Representação JSON de uma categoria",
-      "example": {
-        "data": {
-          "id": 1,
-          "type": "Bebidas"
-        }
-      },
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/CategorieData"
-        }
-      },
-      "title": "Resposta de category",
-      "type": "object"
-    },
-    "ErrorList": {
-      "type": "object",
-      "properties": {
-        "errors": {
-          "type": "object",
-          "properties": {
-            "cpf": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "description": "Descrição de erro do cpf",
-                "example": "Already in use"
-              }
-            },
-            "email": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "description": "Descrição de erro do email",
-                "example": "Already in use"
-              }
-            },
-            "phone_number": {
-              "type": "array",
-              "items": {
-                "type": "string",
-                "description": "Descrição de erro do email",
-                "example": "Enter a valid phone number"
-              }
-            }
           }
         }
       }
@@ -756,156 +710,6 @@
             "$ref": "#/definitions/AddressData"
           },
           "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "CompanyResponse": {
-      "description": "Representação JSON de uma empresa",
-      "example": {
-        "data": {
-          "addresses": {
-            "data": [
-              {
-                "address": "Avenida Paulista",
-                "cep": "01310930",
-                "city": "São Paulo",
-                "complement": "Conjunto 101",
-                "district": "Bela Vista",
-                "home_number": "1000",
-                "id": 4,
-                "uf": "SP"
-              },
-              {
-                "address": "Rua do Rocio",
-                "cep": "04543011",
-                "city": "São Paulo",
-                "complement": "Andar 8",
-                "district": "Vila Olímpia",
-                "home_number": "313",
-                "id": 5,
-                "uf": "SP"
-              }
-            ]
-          },
-          "cnpj": "12345678000199",
-          "email": "contato@empresaexemplo.com",
-          "id": 2,
-          "name": "Empresa Exemplo LTDA",
-          "phone_number": "+5511999999999",
-          "products": {
-            "data": []
-          },
-          "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
-        }
-      },
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/CompanyData"
-        }
-      },
-      "title": "Resposta de Empresa",
-      "type": "object"
-    },
-    "LoginParams": {
-      "type": "object",
-      "required": [
-        "email",
-        "password"
-      ],
-      "properties": {
-        "password": {
-          "type": "string",
-          "description": "Senha do usuário",
-          "example": "Senha@123"
-        },
-        "email": {
-          "type": "string",
-          "description": "Email do usuário",
-          "example": "joao.silva@exemplo.com"
-        }
-      }
-    },
-    "Order": {
-      "description": "Representação JSON de um pedido",
-      "example": {
-        "id": 1,
-        "order_products": [
-          {
-            "id": 1,
-            "inserted_at": "2025-05-07T22:35:59Z",
-            "order_id": 1,
-            "price": "17499.950000",
-            "product": {
-              "company_id": 1,
-              "description": "Celular potente",
-              "id": 1,
-              "image_url": "https://example.com/images/galaxy-s21.jpg",
-              "inserted_at": "2025-05-07T21:24:20Z",
-              "name": "Smartphone Galaxy S21",
-              "price": "3499.99",
-              "stock_quantity": 50,
-              "updated_at": "2025-05-07T21:24:20Z"
-            },
-            "product_id": 1,
-            "quantity": 5,
-            "updated_at": "2025-05-07T22:35:59Z"
-          }
-        ],
-        "total_price": "17499.95",
-        "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
-      },
-      "properties": {
-        "id": {
-          "description": "ID do pedido",
-          "type": "integer"
-        },
-        "order_products": {
-          "description": "Produtos do pedido",
-          "items": {
-            "$ref": "#/definitions/OrderProductData"
-          },
-          "type": "array"
-        },
-        "total_price": {
-          "description": "Valor total do pedido",
-          "type": "string"
-        },
-        "user_id": {
-          "description": "ID do usuário",
-          "format": "uuid",
-          "type": "string"
-        }
-      },
-      "title": "Pedido",
-      "type": "object"
-    },
-    "CartProductData": {
-      "properties": {
-        "id": {
-          "description": "ID do produto no carrinho",
-          "type": "integer"
-        },
-        "price_when_carted": {
-          "description": "Preço total quando adicionado ao carrinho",
-          "type": "string"
-        },
-        "product": {
-          "$ref": "#/definitions/ProductResponse",
-          "description": "Detalhes do produto"
-        },
-        "product_id": {
-          "description": "ID do produto",
-          "type": "integer"
-        },
-        "quantity": {
-          "description": "Quantidade do produto",
-          "type": "integer"
-        },
-        "user_id": {
-          "description": "ID do usuário",
-          "format": "uuid",
-          "type": "string"
         }
       },
       "type": "object"
@@ -958,63 +762,6 @@
             "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
           }
         ]
-      }
-    },
-    "OrderProductData": {
-      "properties": {
-        "id": {
-          "description": "ID do item do pedido",
-          "type": "integer"
-        },
-        "inserted_at": {
-          "description": "Data de criação",
-          "format": "date-time",
-          "type": "string"
-        },
-        "order_id": {
-          "description": "ID do pedido",
-          "type": "integer"
-        },
-        "price": {
-          "description": "Preço total do item",
-          "type": "string"
-        },
-        "product": {
-          "$ref": "#/definitions/OrderProductDetails",
-          "description": "Detalhes do produto"
-        },
-        "product_id": {
-          "description": "ID do produto",
-          "type": "integer"
-        },
-        "quantity": {
-          "description": "Quantidade do produto",
-          "type": "integer"
-        },
-        "updated_at": {
-          "description": "Data de atualização",
-          "format": "date-time",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "ErrorCredencial": {
-      "type": "object",
-      "properties": {
-        "error": {
-          "type": "string",
-          "description": "error Invalid credentials",
-          "example": "Invalid credentials"
-        }
-      }
-    },
-    "UserResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "$ref": "#/definitions/User"
-        }
       }
     },
     "User": {
@@ -1077,32 +824,27 @@
         }
       }
     },
-    "UserParams": {
+    "UserCreateResponse": {
       "type": "object",
-      "required": [
-        "user"
-      ],
       "properties": {
-        "user": {
+        "data": {
           "type": "object",
-          "required": [
-            "cpf",
-            "name",
-            "email",
-            "phone_number",
-            "birth_date",
-            "password"
-          ],
           "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID único do usuário",
+              "example": "3d33d3e7-dd93-44a6-bf88-f6a4986e762b"
+            },
             "name": {
               "type": "string",
               "description": "Nome completo do usuário",
               "example": "João da Silva"
             },
-            "password": {
+            "token": {
               "type": "string",
-              "description": "Senha do usuário",
-              "example": "Senha@123"
+              "description": "Token JWT de autenticação",
+              "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."
             },
             "cpf": {
               "type": "string",
@@ -1120,9 +862,14 @@
               "example": "11987654321"
             },
             "addresses": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/Address"
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/AddressWithId"
+                  }
+                }
               }
             },
             "birth_date": {
@@ -1135,122 +882,113 @@
         }
       }
     },
-    "ProductData": {
+    "CompanyData": {
       "properties": {
-        "categories": {
-          "$ref": "#/definitions/CategoryResponse"
+        "addresses": {
+          "$ref": "#/definitions/AddressesResponse",
+          "description": "Endereços da empresa"
         },
-        "company_id": {
-          "description": "ID da empresa",
-          "type": "integer"
+        "cnpj": {
+          "description": "CNPJ da empresa",
+          "type": "string"
         },
-        "description": {
-          "description": "Descrição do produto",
+        "email": {
+          "description": "Email de contato da empresa",
           "type": "string"
         },
         "id": {
-          "description": "ID do produto",
+          "description": "ID da empresa",
           "type": "integer"
         },
-        "image_url": {
-          "description": "URL da imagem do produto",
+        "name": {
+          "description": "Nome da empresa",
+          "type": "string"
+        },
+        "phone_number": {
+          "description": "Número de telefone da empresa",
+          "type": "string"
+        },
+        "products": {
+          "$ref": "#/definitions/ProductsResponse",
+          "description": "Produtos da empresa"
+        },
+        "user_id": {
+          "description": "ID do usuário proprietário",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CompanyParams": {
+      "description": "Parâmetros para criar ou atualizar uma empresa",
+      "example": {
+        "company": {
+          "addresses": [
+            {
+              "address": "Avenida Paulista",
+              "cep": "01310930",
+              "city": "São Paulo",
+              "complement": "Conjunto 101",
+              "district": "Bela Vista",
+              "home_number": "1000",
+              "uf": "SP"
+            },
+            {
+              "address": "Rua do Rocio",
+              "cep": "04543011",
+              "city": "São Paulo",
+              "complement": "Andar 8",
+              "district": "Vila Olímpia",
+              "home_number": "313",
+              "uf": "SP"
+            }
+          ],
+          "cnpj": "12345678000199",
+          "email": "contato@empresaexemplo.com",
+          "name": "Empresa Exemplo LTDA",
+          "phone_number": "+5511999999999",
+          "user_id": "89d91017-7a89-4f14-a365-5013b7720278"
+        }
+      },
+      "properties": {
+        "addresses": {
+          "description": "Endereços da empresa",
+          "items": {
+            "$ref": "#/definitions/AddressParams"
+          },
+          "type": "array"
+        },
+        "cnpj": {
+          "description": "CNPJ da empresa",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email de contato da empresa",
           "type": "string"
         },
         "name": {
-          "description": "Nome do produto",
+          "description": "Nome da empresa",
           "type": "string"
         },
-        "price": {
-          "description": "Preço do produto",
-          "format": "float",
-          "type": "number"
+        "phone_number": {
+          "description": "Número de telefone da empresa",
+          "type": "string"
         },
-        "stock_quantity": {
-          "description": "Quantidade em estoque",
-          "type": "integer"
-        }
-      },
-      "type": "object"
-    },
-    "CategoryResponse": {
-      "example": {
-        "data": [
-          {
-            "id": 1,
-            "type": "Eletrônicos"
-          },
-          {
-            "id": 2,
-            "type": "Smartphones"
-          }
-        ]
-      },
-      "properties": {
-        "data": {
-          "items": {
-            "$ref": "#/definitions/CategoryData"
-          },
-          "type": "array"
-        }
-      },
-      "type": "object"
-    },
-    "CartsListResponse": {
-      "type": "object",
-      "properties": {
-        "data": {
-          "type": "array",
-          "items": {}
-        }
-      },
-      "example": {
-        "data": [
-          {
-            "id": 1,
-            "price_when_carted": "17499.95",
-            "product": {
-              "data": {
-                "categories": {
-                  "data": [
-                    {
-                      "id": 1,
-                      "type": "Eletrônicos"
-                    }
-                  ]
-                },
-                "company_id": 1,
-                "description": "Celular potente",
-                "id": 1,
-                "image_url": "https://example.com/images/galaxy-s21.jpg",
-                "name": "Smartphone Galaxy S21",
-                "price": "3499.99",
-                "stock_quantity": 50
-              }
-            },
-            "product_id": 1,
-            "quantity": 5,
-            "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
-          }
-        ]
-      }
-    },
-    "CategoryParams": {
-      "description": "Parâmetros para adicionar uma categoria ao sistema",
-      "example": {
-        "category": {
-          "type": "Bebidas"
-        }
-      },
-      "properties": {
-        "type": {
-          "description": "nome da categotia",
+        "user_id": {
+          "description": "ID do usuário proprietário",
+          "format": "uuid",
           "type": "string"
         }
       },
       "required": [
-        "type"
+        "addresses",
+        "phone_number",
+        "email",
+        "cnpj",
+        "name"
       ],
-      "title": "Parâmetros da categoria",
+      "title": "Parâmetros da Empresa",
       "type": "object"
     },
     "CartProductResponse": {
@@ -1291,46 +1029,308 @@
       "title": "Resposta de Produto no Carrinho",
       "type": "object"
     },
-    "ProductResponse": {
-      "description": "Representação JSON de um produto",
+    "ProductsResponse": {
+      "properties": {
+        "data": {
+          "description": "Lista de produtos",
+          "items": {
+            "$ref": "#/definitions/ProductData"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "OrderProductData": {
+      "properties": {
+        "id": {
+          "description": "ID do item do pedido",
+          "type": "integer"
+        },
+        "inserted_at": {
+          "description": "Data de criação",
+          "format": "date-time",
+          "type": "string"
+        },
+        "order_id": {
+          "description": "ID do pedido",
+          "type": "integer"
+        },
+        "price": {
+          "description": "Preço total do item",
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions/OrderProductDetails",
+          "description": "Detalhes do produto"
+        },
+        "product_id": {
+          "description": "ID do produto",
+          "type": "integer"
+        },
+        "quantity": {
+          "description": "Quantidade do produto",
+          "type": "integer"
+        },
+        "updated_at": {
+          "description": "Data de atualização",
+          "format": "date-time",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Order": {
+      "description": "Representação JSON de um pedido",
+      "example": {
+        "id": 1,
+        "order_products": [
+          {
+            "id": 1,
+            "inserted_at": "2025-05-07T22:35:59Z",
+            "order_id": 1,
+            "price": "17499.950000",
+            "product": {
+              "company_id": 1,
+              "description": "Celular potente",
+              "id": 1,
+              "image_url": "https://example.com/images/galaxy-s21.jpg",
+              "inserted_at": "2025-05-07T21:24:20Z",
+              "name": "Smartphone Galaxy S21",
+              "price": "3499.99",
+              "stock_quantity": 50,
+              "updated_at": "2025-05-07T21:24:20Z"
+            },
+            "product_id": 1,
+            "quantity": 5,
+            "updated_at": "2025-05-07T22:35:59Z"
+          }
+        ],
+        "total_price": "17499.95",
+        "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
+      },
+      "properties": {
+        "id": {
+          "description": "ID do pedido",
+          "type": "integer"
+        },
+        "order_products": {
+          "description": "Produtos do pedido",
+          "items": {
+            "$ref": "#/definitions/OrderProductData"
+          },
+          "type": "array"
+        },
+        "total_price": {
+          "description": "Valor total do pedido",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "ID do usuário",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "title": "Pedido",
+      "type": "object"
+    },
+    "CategorieData": {
+      "properties": {
+        "id": {
+          "description": "ID da categoria",
+          "type": "integer"
+        },
+        "type": {
+          "description": "nome da categotia",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "CartProductData": {
+      "properties": {
+        "id": {
+          "description": "ID do produto no carrinho",
+          "type": "integer"
+        },
+        "price_when_carted": {
+          "description": "Preço total quando adicionado ao carrinho",
+          "type": "string"
+        },
+        "product": {
+          "$ref": "#/definitions/ProductResponse",
+          "description": "Detalhes do produto"
+        },
+        "product_id": {
+          "description": "ID do produto",
+          "type": "integer"
+        },
+        "quantity": {
+          "description": "Quantidade do produto",
+          "type": "integer"
+        },
+        "user_id": {
+          "description": "ID do usuário",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "Company": {
+      "description": "Representação JSON de uma empresa",
+      "properties": {
+        "addresses": {
+          "$ref": "#/definitions/AddressesResponse",
+          "description": "Endereços da empresa"
+        },
+        "cnpj": {
+          "description": "CNPJ da empresa",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email de contato da empresa",
+          "type": "string"
+        },
+        "id": {
+          "description": "ID da empresa",
+          "type": "integer"
+        },
+        "name": {
+          "description": "Nome da empresa",
+          "type": "string"
+        },
+        "phone_number": {
+          "description": "Número de telefone da empresa",
+          "type": "string"
+        },
+        "products": {
+          "$ref": "#/definitions/ProductsResponse",
+          "description": "Produtos da empresa"
+        },
+        "user_id": {
+          "description": "ID do usuário proprietário",
+          "format": "uuid",
+          "type": "string"
+        }
+      },
+      "title": "Empresa",
+      "type": "object"
+    },
+    "CategoriesListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {}
+        }
+      },
+      "example": {
+        "data": [
+          {
+            "id": 1,
+            "type": "Bebidas"
+          },
+          {
+            "id": 2,
+            "type": "Vestuário"
+          }
+        ]
+      }
+    },
+    "CompanyResponse": {
+      "description": "Representação JSON de uma empresa",
       "example": {
         "data": {
-          "categories": {
+          "addresses": {
             "data": [
               {
-                "id": 1,
-                "type": "Eletrônicos"
+                "address": "Avenida Paulista",
+                "cep": "01310930",
+                "city": "São Paulo",
+                "complement": "Conjunto 101",
+                "district": "Bela Vista",
+                "home_number": "1000",
+                "id": 4,
+                "uf": "SP"
               },
               {
-                "id": 2,
-                "type": "Smartphones"
+                "address": "Rua do Rocio",
+                "cep": "04543011",
+                "city": "São Paulo",
+                "complement": "Andar 8",
+                "district": "Vila Olímpia",
+                "home_number": "313",
+                "id": 5,
+                "uf": "SP"
               }
             ]
           },
-          "company_id": 9,
-          "description": "teste_descrição",
-          "id": 1,
-          "image_url": "http://localhost:9000/batch-bucket/43985685-289d-4837-9a43-2dd172eb9a77-product_image.jpg",
-          "name": "nome_produto_teste",
-          "price": 12.3,
-          "stock_quantity": 30
+          "cnpj": "12345678000199",
+          "email": "contato@empresaexemplo.com",
+          "id": 2,
+          "name": "Empresa Exemplo LTDA",
+          "phone_number": "+5511999999999",
+          "products": {
+            "data": []
+          },
+          "user_id": "633fb773-aabb-43df-9b09-f277e3a8b93f"
         }
       },
       "properties": {
         "data": {
-          "$ref": "#/definitions/ProductData"
+          "$ref": "#/definitions/CompanyData"
         }
       },
-      "title": "Resposta de Produto",
+      "title": "Resposta de Empresa",
       "type": "object"
     },
-    "LogoutResponse": {
+    "CategoryResponse": {
+      "example": {
+        "data": [
+          {
+            "id": 1,
+            "type": "Eletrônicos"
+          },
+          {
+            "id": 2,
+            "type": "Smartphones"
+          }
+        ]
+      },
+      "properties": {
+        "data": {
+          "items": {
+            "$ref": "#/definitions/CategoryData"
+          },
+          "type": "array"
+        }
+      },
+      "type": "object"
+    },
+    "LoginResponse": {
       "type": "object",
       "properties": {
-        "msg": {
-          "type": "string",
-          "description": "Mensagem de sucesso",
-          "example": "Logged out"
+        "data": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "ID único do usuário",
+              "example": "6789598c-b26d-446f-bcd7-b4872d664129"
+            },
+            "token": {
+              "type": "string",
+              "description": "Token JWT de autenticação",
+              "example": "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9..."
+            },
+            "email": {
+              "type": "string",
+              "description": "Email do usuário",
+              "example": "joao.silva@exemplo.com"
+            }
+          }
         }
       }
     },

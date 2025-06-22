@@ -74,7 +74,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
 
   def update(%{company: company} = assigns, socket) do
-    IO.inspect(socket)
     company =
       if Ecto.assoc_loaded?(company.addresses) and not Enum.empty?(company.addresses) do
         company

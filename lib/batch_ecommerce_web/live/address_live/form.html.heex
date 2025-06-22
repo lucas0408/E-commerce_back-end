@@ -1,0 +1,24 @@
+<div class="max-w-md mx-auto p-4">
+  <h1 class="text-xl font-bold mb-4">Cadastre Um Endereço Adicional</h1>
+
+  <.simple_form
+    for={@form}
+    id="address-form"
+    phx-change="validate"
+    phx-submit="save"
+  >
+    <div class="grid grid-cols-2 gap-4">
+      <.input field={@form[:address]} type="text" label="Rua" />
+      <.input field={@form[:home_number]} type="text" label="Número" />
+      <.input field={@form[:cep]} type="text" label="CEP" placeholder="00000-000" />
+      <.input field={@form[:city]} type="text" label="Cidade" />
+      <.input field={@form[:uf]} type="select" label="Estado" options={@uf_options} prompt="Selecione" />
+      <.input field={@form[:district]} type="text" label="Bairro" class="col-span-2" />
+      <.input field={@form[:complement]} type="text" label="Complemento" class="col-span-2" optional />
+    </div>
+
+    <:actions>
+      <.button class="w-full mt-4">Cadastrar Endereço</.button>
+    </:actions>
+  </.simple_form>
+</div>

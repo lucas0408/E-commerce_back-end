@@ -72,28 +72,41 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
             <p class="font-medium"><%= @order.status %></p>
           </div>
         </div>
+
+  <!-- Mensagem de cancelamento -->
+        <%= if @order.status == "Cancelado" do %>
+          <div class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
+            Pedido cancelado. Entre em contato com o suporte se precisar de ajuda.
+          </div>
+        <% end %>
       </div>
 
-      <!-- Action Buttons -->
-      <div class="flex justify-end space-x-4">
-        <.button
-          phx-click="cancel_order"
-          phx-value-order_product_id={@order.id}
-          phx-value-order_id={@order.order_id}
-          phx-value-price={@order.price}
-          class="bg-red-600 hover:bg-red-700"
-        >
-          Cancelar Pedido
-        </.button>
-        <.button
-          phx-click="confirm_delivery"
-          phx-value-order_id={@order.id}
-          class="bg-green-600 hover:bg-green-700"
-          disabled={@order.status != "A Caminho"}
-        >
-          Confirmar Entrega
-        </.button>
-      </div>
+      <!-- Action Buttons (só aparecem se NÃO for "Entregue" ou "Cancelado") -->
+      <%= if @order.status not in ["Entregue", "Cancelado"] do %>
+        <div class="flex justify-end space-x-4">
+          <!-- Botão de Cancelar (sempre visível, exceto para "Entregue") -->
+          <.button
+            phx-click="cancel_order"
+            phx-value-order_product_id={@order.id}
+            phx-value-order_id={@order.order_id}
+            phx-value-price={@order.price}
+            class="bg-red-600 hover:bg-red-700"
+          >
+            Cancelar Pedido
+          </.button>
+
+          <!-- Botão de Confirmar Entrega (só aparece se status for "A Caminho") -->
+          <%= if @order.status == "A Caminho" do %>
+            <.button
+              phx-click="confirm_delivery"
+              phx-value-order_id={@order.id}
+              class="bg-green-600 hover:bg-green-700"
+            >
+              Confirmar Entrega
+            </.button>
+          <% end %>
+        </div>
+      <% end %>
     </div>
     """
   end
@@ -101,18 +114,20 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
   @impl true
   def handle_event("cancel_order", %{"order_id" => order_id, "order_product_id" => order_product_id, "price" => price}, socket) do
     order = Orders.get_order(order_id)
-    Orders.update_order_product_status(order_product_id, "Cancelado")
+    order = Orders.update_order_product_status(order_product_id, "Cancelado")
     Orders.update_order(order_id, %{
       total_price: Decimal.sub(order.total_price, price),
       status_payment: "Estornado"
     })
     
-    {:noreply, socket}
+    {:noreply, socket
+      |> assign(order: order)}
   end
 
   def handle_event("confirm_delivery", %{"order_id" => order_id}, socket) do
-    Orders.update_order_product_status(order_id, "Entregue")
-    {:noreply, socket}
+    order = Orders.update_order_product_status(order_id, "Entregue")
+    {:noreply, socket
+      |> assign(order: order)}
   end
 
   def format_date(datetime) do

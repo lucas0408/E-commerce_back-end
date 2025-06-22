@@ -10,14 +10,15 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
   def mount(%{"company_id" => company_id}, _session, socket) do
 
     {:ok, 
-     socket
-     |> assign(:company_id, company_id)
-     |> assign(:orders, [])
-     |> assign(:page, 1)
-     |> assign(:per_page, @per_page)
-     |> assign(:total_pages, 1)
-     |> assign(:user, %{name: "ricardo", id: 1})
-     |> load_orders()}
+    socket
+    |> assign(:company_id, company_id)
+    |> assign(:orders, [])
+    |> assign(:page, 1)
+    |> assign(:per_page, @per_page)
+    |> assign(:total_pages, 1)
+    |> assign(:user, %{name: "ricardo", id: 1})
+    |> assign(:filters, %{status: "", customer: ""})
+    |> load_orders()}
   end
 
   @impl true
@@ -27,11 +28,17 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
   end
 
   defp load_orders(socket) do
-    %{company_id: company_id, page: page, per_page: per_page} = socket.assigns
+    %{company_id: company_id, page: page, per_page: per_page, filters: filters} = socket.assigns
     
     %{entries: orders, total_pages: total_pages} = 
-      Orders.list_company_orders_paginated(company_id, page, per_page)
-    IO.inspect(Orders.list_orders, label: "orders list")
+      Orders.list_company_orders_paginated(
+        company_id, 
+        page, 
+        per_page,
+        status: filters.status,
+        customer: filters.customer
+      )
+    
     socket
     |> assign(:orders, orders)
     |> assign(:total_pages, total_pages)
@@ -47,10 +54,105 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
   end
 
   @impl true
+  def handle_event("filter_by_customer", %{"customer_name" => customer_name}, socket) do
+    new_filters = %{
+      status: socket.assigns.filters.status, # Mantém o filtro de status atual
+      customer: customer_name
+    }
+
+    {:noreply,
+    socket
+    |> assign(:filters, new_filters)
+    |> assign(:page, 1)
+    |> load_orders()}
+  end
+
+  @impl true
+  def handle_event("filter", params, socket) do
+    IO.inspect(params, label: "PARAMS RECEBIDOS")
+    IO.inspect(socket.assigns.filters, label: "FILTROS ATUAIS")
+    
+    current_filters = socket.assigns.filters
+    
+    new_filters = %{
+      status: Map.get(params, "status", current_filters.status),
+      customer: String.trim(Map.get(params, "customer", current_filters.customer || ""))
+    }
+    
+    IO.inspect(new_filters, label: "NOVOS FILTROS")
+
+    {:noreply,
+    socket
+    |> assign(:filters, new_filters)
+    |> assign(:page, 1)
+    |> load_orders()}
+  end
+
+  @impl true
+  def handle_event("clear_filters", _, socket) do
+    # Remove todos os filtros
+    {:noreply, 
+    socket 
+    |> assign(:filters, %{status: "", customer: ""})
+    |> assign(:page, 1)
+    |> load_orders()}
+  end
+
+  @impl true
   def render(assigns) do
     ~H"""
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
     <div class="max-w-7xl mx-auto px-4 py-8">
+          
+    <!-- Filtros com form -->
+    <div class="mb-6 bg-white p-4 rounded-lg shadow">
+      <%= if @filters.customer != "" do %>
+        <div class="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+          <div class="flex items-center justify-between">
+            <span class="text-sm text-blue-800">
+              <strong>Filtrando por cliente:</strong> <%= @filters.customer %>
+            </span>
+            <button 
+              type="button"
+              phx-click="clear_customer_filter" 
+              class="text-blue-600 hover:text-blue-800 text-sm underline"
+            >
+              Remover filtro
+            </button>
+          </div>
+        </div>
+      <% end %>
+      
+      <.form for={%{}} phx-change="filter" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+        <!-- Filtro por Status -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+          <select 
+            name="status" 
+            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md"
+          >
+            <option value="" selected={@filters.status == ""}>Todos</option>
+            <option value="Preparando Pedido" selected={@filters.status == "Preparando Pedido"}>Preparando Pedido</option>
+            <option value="Enviado" selected={@filters.status == "Enviado"}>Enviado</option>
+            <option value="A Caminho" selected={@filters.status == "A Caminho"}>A Caminho</option>
+            <option value="Entregue" selected={@filters.status == "Entregue"}>Entregue</option>
+            <option value="Cancelado" selected={@filters.status == "Cancelado"}>Cancelado</option>
+          </select>
+        </div>
+
+        <!-- Botão Limpar Filtros -->
+        <div class="flex items-end">
+          <button 
+            type="button"
+            phx-click="clear_filters" 
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+          >
+            Limpar Todos os Filtros
+          </button>
+        </div>
+      </.form>
+    </div>
+
     
     <!-- Tabela de pedidos -->
     <div class="mt-8 flow-root">
@@ -84,7 +186,14 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
                     </div>
                   </td>
                   <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                    <div class="text-gray-900"><%= order_product.order.user.name %></div>
+                    <div 
+                      class="text-gray-900 cursor-pointer hover:text-indigo-600 hover:underline transition-colors duration-200"
+                      phx-click="filter_by_customer" 
+                      phx-value-customer_name={order_product.order.user.name}
+                      title="Clique para filtrar por este cliente"
+                    >
+                      <%= order_product.order.user.name %>
+                    </div>
                     <div class="mt-1 text-gray-500"><%= order_product.order.user.email %></div>
                   </td>
                   <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">

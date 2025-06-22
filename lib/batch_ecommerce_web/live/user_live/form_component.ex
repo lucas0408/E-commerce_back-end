@@ -1,6 +1,6 @@
 defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
   use BatchEcommerceWeb, :live_component
-  import BatchEcommerceWeb.CoreComponents  # Adicione esta linha
+  import BatchEcommerceWeb.CoreComponents  
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.Address
 
@@ -108,7 +108,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "User updated successfully")
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_navigate(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, :form, to_form(changeset))}
@@ -124,7 +124,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "User created successfully")
-         |> push_patch(to: socket.assigns.patch)}
+         |> push_navigate(to: socket.assigns.patch)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         IO.inspect(changeset)

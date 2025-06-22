@@ -30,7 +30,7 @@ defmodule BatchEcommerceWeb.Router do
     pipe_through :browser
 
     post "/login", SessionController, :create #ok
-    resources "/users", UserController, only: [:create, :show, :index] #ok
+    #resources "/users", UserController, only: [:create, :show, :index] #ok
     resources "/products", ProductController, only: [:index, :show] #ok
     resources "/categories", CategoryController, only: [:index, :show] #ok
     resources "/companies", CompanyController, only: [:index, :show] #ok
@@ -66,15 +66,12 @@ defmodule BatchEcommerceWeb.Router do
 
   end
 
-  scope "/users/", BatchEcommerceWeb.Live do
+  scope "/", BatchEcommerceWeb.Live do
     pipe_through [:browser, :require_authenticated_user]
 
     live_session :require_authenticated_user,
       on_mount: [{BatchEcommerceWeb.UserAuth, :ensure_authenticated}] do
-      live "/users/log_in", UserLoginLive, :new
-      live "/users/register", UserRegistrationLive, :new
       live "/users", UserLive.Index, :index
-      live "/users/new", UserLive.New, :new
       live "/users/:id/edit", UserLive.Edit, :edit
       live "/products/new", ProductLive.New, :new
       live "/products/:product_id", ProductLive.Show, :edit
@@ -89,8 +86,16 @@ defmodule BatchEcommerceWeb.Router do
     end
 
     live "/companies/:id", CompanyLive.Show, :show
-    live "/users/:id", UserLive.Show, :show
+    #live "/users/:id", UserLive.Show, :show
     live "/products", ProductLive.Index, :index
+  end
+
+  scope "/", BatchEcommerceWeb do
+    pipe_through [:browser]
+
+    live "/users/log_in", UserLoginLive, :new
+    live "/users/new", UserLive.New, :new
+    live "/users/register", UserRegistrationLive, :new
   end
 
   scope "/api/swagger" do

@@ -89,9 +89,10 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
   def handle_event("delete_address", %{"address_id" => address_id}, socket) do
     address_id = String.to_integer(address_id)
     # Implemente a função de deletar endereço no seu contexto
-    case Accounts.delete_address(address_id) do
+    address = Accounts.get_address(address_id)
+    case Accounts.delete_address(address) do
       {:ok, _} ->
-        updated_user = Accounts.get_user!(socket.assigns.current_user.id)
+        updated_user = Accounts.get_user(socket.assigns.current_user.id)
         {:noreply, 
         socket
         |> assign(:current_user, updated_user)

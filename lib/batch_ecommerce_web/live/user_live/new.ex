@@ -13,7 +13,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.New do
           id="new-user"
           user={%User{}}
           action={@live_action}
-          patch={~p"/users"}
+          patch={~p"/products"}
         >
           <h1 class="text-2xl font-bold mb-4">Creating a user</h1>
         </.live_component>

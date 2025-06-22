@@ -60,6 +60,7 @@ defmodule BatchEcommerceWeb.Router do
     live "/products/:product_id/edit", ProductLive.Edit, :edit
     live "/users/:id", UserLive.Show, :show
     live "/companies/new", CompanyLive.New, :new
+    live "/address/new", AddressLive.Form, :new
     live "/companies/:id", CompanyLive.Show, :show
     live "/companies/:id/edit", CompanyLive.Edit, :edit
     live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index

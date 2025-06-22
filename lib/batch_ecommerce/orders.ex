@@ -105,6 +105,12 @@ defmodule BatchEcommerce.Orders do
         order_product
         |> OrderProduct.changeset(%{status: new_status})
         |> Repo.update()
+        |> case do
+            {:ok, order_product} ->
+              order_product
+            {:error, changeset} ->
+              changeset
+          end
     end
   end
 

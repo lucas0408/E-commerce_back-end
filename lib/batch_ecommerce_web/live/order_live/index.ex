@@ -15,8 +15,6 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
       user_id
       |> Orders.list_orders_by_user() 
       # (essa função deve devolver uma lista de %Order{} com :order_products e cada :product pré-carregados)
-    
-    IO.inspect(orders)
 
     # 3) Guarda no assign
     socket = 

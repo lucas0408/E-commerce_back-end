@@ -12,7 +12,6 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
       order_id
       |> Orders.get_order_product()
 
-    IO.inspect(order)
     
     socket = 
       socket
@@ -114,14 +113,14 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
   @impl true
   def handle_event("cancel_order", %{"order_id" => order_id, "order_product_id" => order_product_id, "price" => price}, socket) do
     order = Orders.get_order(order_id)
-    order = Orders.update_order_product_status(order_product_id, "Cancelado")
+    order_product = Orders.update_order_product_status(order_product_id, "Cancelado")
     Orders.update_order(order_id, %{
       total_price: Decimal.sub(order.total_price, price),
       status_payment: "Estornado"
     })
     
     {:noreply, socket
-      |> assign(order: order)}
+      |> assign(order: order_product)}
   end
 
   def handle_event("confirm_delivery", %{"order_id" => order_id}, socket) do

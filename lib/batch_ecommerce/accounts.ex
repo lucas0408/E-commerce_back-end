@@ -115,6 +115,12 @@ defmodule BatchEcommerce.Accounts do
     User.update_changeset(user, attrs)
   end
 
+  def get_user_by_email_and_password(email, password)
+      when is_binary(email) and is_binary(password) do
+    user = Repo.get_by(User, email: email)
+    if User.valid_password?(user, password), do: user
+  end
+
   def authenticate_user(email, plain_text_password) do
     query = from(u in User, where: u.email == ^email)
 
@@ -155,7 +161,7 @@ defmodule BatchEcommerce.Accounts do
 
   def companies_preload(companies) do
     companies
-    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories]) 
+    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories])
   end
 
   @doc """
@@ -172,7 +178,7 @@ defmodule BatchEcommerce.Accounts do
       ** (Ecto.NoResultsError)
 
   """
-  def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id) 
+  def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id)
     |> companies_preload()
 
   def get_company!(id), do: Repo.get(Company, id) |> companies_preload()

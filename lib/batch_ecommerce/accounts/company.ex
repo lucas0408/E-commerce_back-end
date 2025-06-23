@@ -29,7 +29,7 @@ defmodule BatchEcommerce.Accounts.Company do
     |> validate_cnpj()
     |> validate_email(:email, message: "invalid email")
     |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
-    |> validate_uniqueness_of_fields([:cnpj, :phone_number, :name, :user_id])
+    |> validate_uniqueness_of_fields([:cnpj, :email, :phone_number, :name, :user_id])
     |> cast_assoc(:addresses)
     |> assoc_constraint(:user)
   end

@@ -311,19 +311,29 @@ end
   defp calculate_discounted_price(price, discount) do
     case discount do
       nil -> price
-      _ -> Decimal.to_float(price) - (Decimal.to_float(price) * Decimal.to_float(discount) / 100)
+      _ -> Decimal.to_float(price) - (Decimal.to_float(price) * discount / 100)
     end
   end
 
+
   defp format_price(price) when is_integer(price) do
     "R$ #{price / 100}"
+  end
+
+  defp format_price(%Decimal{} = price) do
+    # Converte Decimal para float primeiro
+    float_price = Decimal.to_float(price)
+    "R$ #{:erlang.float_to_binary(float_price, decimals: 2)}"
   end
 
   defp format_price(price) when is_float(price) do
     "R$ #{:erlang.float_to_binary(price, decimals: 2)}"
   end
 
-  defp format_price(_), do: "R$ 0,00"
+  defp format_price(_) do
+    "R$ 0.00"
+  end
+
 
 
     attr :click_event, :string, default: "open-menu"
@@ -414,7 +424,7 @@ end
             </li>
             <li>
               <%= if @user && @user do %>
-                <.link navigate={"/companies/#{1}"} class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                <.link navigate={"/companies"} class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
                   <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v18m4.5-18v18M3 9h18" />
                   </svg>

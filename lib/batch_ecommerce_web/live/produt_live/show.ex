@@ -6,16 +6,18 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   alias BatchEcommerce.Accounts
 
   @impl true
-  def mount(%{"product_id" => id}, session, socket) do
+  def mount(%{"product_id" => product_id}, session, socket) do
     user_id = Map.get(session, "current_user")
     current_user = Accounts.get_user(user_id)
-    product = Catalog.get_product(id)
+    rating = Catalog.get_product_rating(product_id)
+    product = Catalog.get_product(product_id)
     {:ok,
      socket
      |> assign(:product, product)
      |> assign(:current_user, current_user)
      |> assign(:user, current_user)
      |> assign(:quantity, 1)
+     |> assign(:rating, rating)
      |> assign(:loading, false)}
   end
 
@@ -35,15 +37,28 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   def handle_event("add_to_cart", _params, socket) do
     %{product: product, quantity: quantity, current_user: current_user} = socket.assigns
 
-    ShoppingCart.create_cart_prodcut(current_user.id, %{
+    case ShoppingCart.create_cart_prodcut(current_user.id, %{
       "product_id" => product.id,
       "quantity" => quantity
-    })
-
-    {:noreply,
-    socket
-    |> put_flash(:info, "Produto adicionado ao carrinho com sucesso!")
-    |> push_redirect(to: "/cart_products")}
+    }) do
+      {:ok, _} ->
+        {:noreply,
+        socket
+        |> put_flash(:info, "Produto adicionado ao carrinho com sucesso!")
+        |> push_redirect(to: "/cart_products")}
+      
+      {:error, _} ->
+        cart_products = ShoppingCart.get_cart_user(current_user.id)
+        existing_cart = Enum.find(cart_products, &(&1.product_id == product.id))
+        new_quantity = existing_cart.quantity + quantity
+        
+        ShoppingCart.update_cart_product(existing_cart, %{"quantity" => new_quantity})
+        
+        {:noreply,
+        socket
+        |> put_flash(:info, "Quantidade atualizada no carrinho!")
+        |> push_redirect(to: "/cart_products")}
+    end
   end
 
 
@@ -64,13 +79,8 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   
   defp format_price(%Decimal{} = price) do
     price
+    |> Decimal.round(2)
     |> Decimal.to_string()
-    |> String.replace(".", ",")
-  end
-  
-  defp format_price(price) when is_number(price) do
-    price
-    |> :erlang.float_to_binary(decimals: 2)
     |> String.replace(".", ",")
   end
 
@@ -123,13 +133,15 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
             <!-- Rating -->
             <div class="mt-6 flex items-center">
               <div class="flex items-center">
-                <% {full_stars, has_half_star, _empty_stars} = render_stars(@product.rating) %>
+                <% {full_stars, has_half_star, empty_stars} = render_stars(@rating) %>
                 
                 <!-- Estrelas cheias -->
-                <%= for _i <- 1..full_stars do %>
-                  <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
+                <%= if full_stars > 0 do %>
+                  <%= for _ <- 1..full_stars do %>
+                    <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                  <% end %>
                 <% end %>
                 
                 <!-- Meia estrela -->
@@ -144,8 +156,15 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                     <path fill="url(#half-star)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 <% end %>
+                
+                <!-- Estrelas vazias -->
+                <%= for _ <- 1..empty_stars do %>
+                  <svg class="h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                  </svg>
+                <% end %>
               </div>
-              <span class="ml-2 text-sm text-gray-600">(<%= @product.rating || 0 %>/5)</span>
+              <span class="ml-2 text-sm text-gray-600">(<%= @rating || 0 %>/5)</span>
             </div>
 
             <!-- Descrição -->

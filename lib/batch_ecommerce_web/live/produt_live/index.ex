@@ -8,6 +8,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Index do
   @impl true
   def mount(_params, session, socket) do
     user_id = Map.get(session, "current_user")
+    IO.inspect(user_id)
     current_user = Accounts.get_user(user_id)
     {:ok, 
       socket

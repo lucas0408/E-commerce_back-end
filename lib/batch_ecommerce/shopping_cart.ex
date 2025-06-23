@@ -17,7 +17,6 @@ defmodule BatchEcommerce.ShoppingCart do
   end
 
   def create_cart_prodcut(user_id, cart_item_params) do
-    IO.inspect(user_id)
     case Map.get(cart_item_params, "product_id") do
       nil ->
         {:error, :not_found}   
@@ -62,6 +61,15 @@ defmodule BatchEcommerce.ShoppingCart do
     Repo.preload(cart_product, product: [:categories, :company])
   end
 
+  def total_cart_products_quantity(product_id) do
+    from(cp in CartProduct, where: cp.product_id == ^product_id, select: sum(cp.quantity))
+    |> Repo.one()
+    |> case do
+      nil -> 0
+      total -> total
+    end
+  end
+
   def update_cart_product(%CartProduct{} = cart_product, cart_product_params) do
     
     product = preload_product(cart_product).product
@@ -90,10 +98,27 @@ defmodule BatchEcommerce.ShoppingCart do
   end
 
   def total_price_cart_product(cart_products) do
-    Enum.reduce(cart_products, Decimal.new(0), fn cart_product, acc -> 
-            Decimal.add(acc, cart_product.price_when_carted)
-        end)
+    cart_products = cart_products
+    |> preload_product()
+    total_price = Enum.reduce(cart_products, Decimal.new("0"), fn cart_product, acc ->
+      price = Decimal.new(cart_product.price_when_carted)
+      discount = cart_product.product.discount || 0
+      discounted_price = calculate_discounted_price(price, discount)
+      Decimal.add(acc, discounted_price)
+    end)
+    |> Decimal.round(2)
+    total_price
   end
+
+  
+  defp calculate_discounted_price(price, discount) do
+    discount_decimal = Decimal.new(discount)
+    hundred = Decimal.new(100)
+    discount_factor = Decimal.sub(hundred, discount_decimal) |> Decimal.div(hundred)
+    discount_price = Decimal.mult(price, discount_factor)
+    discount_price
+  end
+
 
   def prune_cart_items(user_id) do
     {_, _} =

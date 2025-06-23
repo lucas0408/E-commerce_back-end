@@ -35,6 +35,37 @@ users = [
         apartment: "101"  # Adicionei campo extra como exemplo
       }
     ]
+  },
+  %{
+    cpf: "12345674901",
+    name: "Lucas da Silva",
+    email: "lucas.silva@exemplo.com",
+    phone_number: "11983654321",
+    birth_date: ~D[1997-01-15],
+    password: "Senha@123",
+    addresses: [
+      %{
+        id: 1,  # Adicionei um ID para cada endereço para facilitar a manipulação
+        cep: "01311-000",
+        uf: "SP",
+        city: "São Paulo",
+        district: "Bela Vista",
+        address: "Avenida Paulista",
+        complement: "Próximo ao MASP",
+        home_number: "1000"
+      },
+      %{
+        id: 2,
+        cep: "04538-132",
+        uf: "SP",
+        city: "São Paulo",
+        district: "Itaim Bibi",
+        address: "Rua Joaquim Floriano",
+        complement: "Edifício Commercial",
+        home_number: "100",
+        apartment: "101"  # Adicionei campo extra como exemplo
+      }
+    ]
   }
 ]
 
@@ -112,7 +143,6 @@ products = [
     price: Decimal.new("3499.99"),
     description: "Celular potente",
     stock_quantity: 50,
-    rating: 5,
     sales_quantity: 15,
     company_id: company.id,
     image_url: "https://example.com/images/galaxy-s21.jpg",
@@ -123,7 +153,6 @@ products = [
     price: Decimal.new("59.90"),
     stock_quantity: 200,
     description: "Camiseta grande",
-    rating: 5,
     sales_quantity: 74,
     company_id: company.id,
     image_url: "https://example.com/images/camiseta.jpg",
@@ -135,7 +164,6 @@ products = [
     description: "Ótimo livro",
     stock_quantity: 30,
     sales_quantity: 5,
-    rating: 5,
     company_id: company.id,
     image_url: "https://example.com/images/lotr.jpg",
     discount: 8
@@ -147,7 +175,6 @@ products = [
     stock_quantity: 45,
     sales_quantity: 12,
     company_id: company.id,
-    rating: 5,
     image_url: "https://example.com/images/luminaria.jpg",
     discount: 18
   },
@@ -158,7 +185,6 @@ products = [
     stock_quantity: 100,
     company_id: company.id,
     sales_quantity: 98,
-    rating: 5,
     image_url: "https://example.com/images/bola.jpg",
     discount: 35
   },
@@ -167,7 +193,6 @@ products = [
     price: Decimal.new("499.90"),
     description: "Jogo bom",
     stock_quantity: 25,
-    rating: 5,
     company_id: company.id,
     sales_quantity: 45,
     image_url: "https://example.com/images/lego.jpg",
@@ -178,7 +203,6 @@ products = [
     price: Decimal.new("2799.99"),
     description: "Laptop para trabalho e estudos",
     stock_quantity: 35,
-    rating: 4,
     sales_quantity: 28,
     company_id: company.id,
     image_url: "https://example.com/images/notebook-dell.jpg",
@@ -189,7 +213,6 @@ products = [
     price: Decimal.new("349.90"),
     description: "Tênis esportivo confortável",
     stock_quantity: 80,
-    rating: 5,
     sales_quantity: 67,
     company_id: company.id,
     image_url: "https://example.com/images/nike-air-max.jpg",
@@ -200,7 +223,6 @@ products = [
     price: Decimal.new("199.90"),
     description: "Cafeteira automática 12 xícaras",
     stock_quantity: 40,
-    rating: 4,
     sales_quantity: 31,
     company_id: company.id,
     image_url: "https://example.com/images/cafeteira.jpg",
@@ -211,7 +233,6 @@ products = [
     price: Decimal.new("179.90"),
     description: "Fone sem fio com cancelamento de ruído",
     stock_quantity: 65,
-    rating: 4,
     sales_quantity: 52,
     company_id: company.id,
     image_url: "https://example.com/images/fone-bluetooth.jpg",
@@ -222,7 +243,6 @@ products = [
     price: Decimal.new("89.90"),
     description: "Mochila resistente com vários compartimentos",
     stock_quantity: 120,
-    rating: 4,
     sales_quantity: 85,
     company_id: company.id,
     image_url: "https://example.com/images/mochila.jpg",
@@ -233,7 +253,6 @@ products = [
     price: Decimal.new("249.90"),
     description: "Panela elétrica multifuncional 6L",
     stock_quantity: 30,
-    rating: 5,
     sales_quantity: 22,
     company_id: company.id,
     image_url: "https://example.com/images/panela-eletrica.jpg",
@@ -249,7 +268,6 @@ products_with_categories =
   end)
 
 Enum.each(products_with_categories, fn product ->
-  IO.inspect(product)
   %BatchEcommerce.Catalog.Product{}
   |> BatchEcommerce.Catalog.Product.changeset(%{
     name: product.name,
@@ -257,13 +275,123 @@ Enum.each(products_with_categories, fn product ->
     stock_quantity: product.stock_quantity,
     description: product.description,
     company_id: product.company_id,
-    rating: product.rating,
     discount: product.discount,
     sales_quantity: product.sales_quantity,
     image_url: product.image_url
   })
   |> Ecto.Changeset.put_assoc(:categories, product.categories)
   |> BatchEcommerce.Repo.insert!()
+end)
+
+products = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Product)
+
+users = BatchEcommerce.Repo.all(BatchEcommerce.Accounts.User)
+
+Enum.each(products, fn product ->
+
+  number_of_reviews = Enum.random(5..20)
+  
+  Enum.each(users, fn user ->
+    user_id = BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.User, name: "João da Silva").id
+    random_review = Enum.random(1..5)
+    
+    %BatchEcommerce.Catalog.ProductReview{}
+    |> BatchEcommerce.Catalog.ProductReview.changeset(%{
+      review: random_review,
+      product_id: product.id,
+      user_id: user.id
+    })
+    |> BatchEcommerce.Repo.insert!()
+  end)
+end)
+
+
+# Buscar usuários e produtos existentes
+users = BatchEcommerce.Repo.all(BatchEcommerce.Accounts.User)
+products = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Product)
+
+# Criar pedidos com diferentes status de pagamento
+orders_data = [
+  %{
+    user_id: Enum.at(users, 0).id,  # João da Silva
+    status_payment: "pendente",
+    order_products: [
+      %{product_id: Enum.at(products, 0).id, quantity: 1, status: "Preparando Pedido"},  # Smartphone Galaxy S21
+      %{product_id: Enum.at(products, 6).id, quantity: 1, status: "Preparando Pedido"}   # Notebook Dell Inspiron
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 1).id,  # Lucas da Silva
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 1).id, quantity: 3, status: "Enviado"},           # Camiseta Básica
+      %{product_id: Enum.at(products, 7).id, quantity: 1, status: "Enviado"},           # Tênis Nike Air Max
+      %{product_id: Enum.at(products, 10).id, quantity: 2, status: "Enviado"}           # Mochila Escolar
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 0).id,  # João da Silva (segundo pedido)
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 2).id, quantity: 1, status: "Entregue"},          # O Senhor dos Anéis
+      %{product_id: Enum.at(products, 8).id, quantity: 1, status: "Entregue"}           # Cafeteira Elétrica
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 1).id,  # Lucas da Silva (segundo pedido)
+    status_payment: "pendente",
+    order_products: [
+      %{product_id: Enum.at(products, 3).id, quantity: 2, status: "Preparando Pedido"}, # Luminária de Mesa
+      %{product_id: Enum.at(products, 9).id, quantity: 1, status: "Preparando Pedido"}  # Fone de Ouvido Bluetooth
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 0).id,  # João da Silva (terceiro pedido)
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 4).id, quantity: 1, status: "A Caminho"},         # Bola de Futebol
+      %{product_id: Enum.at(products, 11).id, quantity: 1, status: "A Caminho"}         # Panela de Pressão Elétrica
+    ]
+  },
+  %{
+    user_id: Enum.at(users, 1).id,  # Lucas da Silva (terceiro pedido)
+    status_payment: "confirmado",
+    order_products: [
+      %{product_id: Enum.at(products, 5).id, quantity: 1, status: "Enviado"}            # LEGO Star Wars
+    ]
+  }
+]
+
+# Criar os pedidos e produtos do pedido
+Enum.each(orders_data, fn order_data ->
+  # Calcular o preço total do pedido
+  total_price = 
+    order_data.order_products
+    |> Enum.reduce(Decimal.new("0"), fn order_product, acc ->
+      product = Enum.find(products, &(&1.id == order_product.product_id))
+      product_total = Decimal.mult(product.price, Decimal.new(order_product.quantity))
+      Decimal.add(acc, product_total)
+    end)
+  
+  # Criar o pedido
+  {:ok, order} = BatchEcommerce.Repo.insert(%BatchEcommerce.Order.Order{
+    user_id: order_data.user_id,
+    total_price: total_price,
+    status_payment: order_data.status_payment
+  })
+  
+  # Criar os produtos do pedido
+  Enum.each(order_data.order_products, fn order_product_data ->
+    product = Enum.find(products, &(&1.id == order_product_data.product_id))
+    
+    BatchEcommerce.Repo.insert!(%BatchEcommerce.Order.OrderProduct{
+      order_id: order.id,
+      product_id: order_product_data.product_id,
+      price: product.price,
+      quantity: order_product_data.quantity,
+      status: order_product_data.status
+    })
+  end)
 end)
 
 # Relacionando produtos com categorias

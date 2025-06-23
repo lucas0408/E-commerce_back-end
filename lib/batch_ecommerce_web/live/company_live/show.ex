@@ -1,20 +1,31 @@
-# lib/batch_ecommerce_web/live/company_live/show.ex
 defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Catalog
 
   @impl true
-  def mount(%{"id" => id}, _session, socket) do
-    company = Accounts.get_company!(id)
-    IO.inspect(company)
-    top_products = get_top_5_selling_products_by_sales(company.products)
+  def mount(_params, session, socket) do
+    user_id = Map.get(session, "current_user")
+    user = Accounts.get_user(user_id)
 
-    {:ok,
-     socket
-     |> assign(:company, company)
-     |> assign(:user, %{name: "ricardo", id: 1})
-     |> assign(:top_products, top_products)}
+    IO.inspect(user)
+    
+    case Accounts.get_company_by_user_id(user_id) do
+      nil ->
+        {:ok, assign(socket, 
+          has_company: false,
+          user: user
+        )}
+      
+      company ->
+        top_products = get_top_5_selling_products_by_sales(company.products)
+        {:ok,
+         socket
+         |> assign(:has_company, true)
+         |> assign(:company, company)
+         |> assign(:user, user)
+         |> assign(:top_products, top_products)}
+    end
   end
 
   def get_top_5_selling_products_by_sales(products) do
@@ -23,60 +34,79 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
     |> Enum.take(5)
   end
 
-
-
-
   @impl true
   def handle_params(_params, _url, socket), do: {:noreply, socket}
 
+  defp get_product_rating(product_id) do
+    Catalog.get_product_rating(product_id)
+  end
+
   def render(assigns) do
     ~H"""
-      <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
-    <div class="max-w-6xl mx-auto px-4 py-20">
-      <!-- Tabela de produtos -->
-      <div class="px-[15px] py-[7px] mt-[20px] bg-white rounded-lg">
-        <.table id="top-products" rows={@top_products}>
-          <:col :let={product} label="Nome do Produto">
-            <%= product.name %>
-          </:col>
-          <:col :let={product} label="Quantidade Vendida">
-            <%= product.sales_quantity %>
-          </:col>
-          <:col :let={product} label="Quantidade em Carrinhos">
-            <%= product.stock_quantity %>
-          </:col>
-          <:col :let={product} label="Classificação">
-            <%= product.rating %>
-          </:col>
-        </.table>
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
+    
+    <%= if @has_company do %>
+      <div class="max-w-6xl mx-auto px-4 py-8"> <!-- Reduzi o padding-top para 8 -->
+        <!-- Nome da empresa em destaque -->
+        <div class="mb-10">
+          <h1 class="text-3xl font-bold text-gray-800">
+            <%= @company.name %>
+          </h1>
+          <p class="text-lg text-gray-600 mt-2">
+            Painel Administrativo
+          </p>
+        </div>
+
+        <!-- Tabela de produtos -->
+        <div class="px-[15px] py-[7px] mt-[20px] bg-white rounded-lg">
+          <.table id="top-products" rows={@top_products}>
+            <:col :let={product} label="Nome do Produto">
+              <%= product.name %>
+            </:col>
+            <:col :let={product} label="Quantidade Vendida">
+              <%= product.sales_quantity %>
+            </:col>
+            <:col :let={product} label="Quantidade em Carrinhos">
+              <%= BatchEcommerce.ShoppingCart.total_cart_products_quantity(product.id) %>
+            </:col>
+            <:col :let={product} label="Classificação">
+              <%= get_product_rating(product.id) %>/5
+            </:col>
+          </.table>
+        </div>
+
+        <!-- Botões de ação com verificação -->
+        <div class="flex justify-center space-x-10 mt-[50px]">
+          <.link patch={~p"/companies/#{@company.id}/products"}>
+            <.button>Produtos</.button>
+          </.link>
+
+          <.link patch={~p"/companies/#{@company.id}/orders"}>
+            <.button>Pedidos</.button>
+          </.link>
+
+          <.link patch={~p"/companies/#{@company.id}/edit"}>
+            <.button>Alterar Dados</.button>
+          </.link>
+        </div>
       </div>
-
-      <!-- Botões de ação com verificação -->
-      <div class="flex justify-center space-x-10 mt-[50px]">
-
-      <.link patch={~p"/companies/#{@company.id}/products"}>
-        <.button
-        >
-          Produtos
-        </.button>
-      </.link>
-
-      <.link patch={~p"/companies/#{@company.id}/orders"}>
-        <.button
-        >
-          Pedidos
-        </.button>
-      </.link>
-
-      <.link patch={~p"/companies/#{@company.id}/edit"}>
-        <.button
-        >
-          Alterar Dados
-        </.button>
-      </.link>
-
+    <% else %>
+      <!-- Mensagem e botão para cadastrar empresa -->
+      <div class="max-w-md mx-auto px-4 py-20 text-center">
+        <p class="text-xl text-gray-600 mb-6">
+          Você não possui uma empresa cadastrada ainda, o que está esperando?
+        </p>
+        <p class="text-lg text-gray-500 mb-8">
+          Cadastre agora!
+        </p>
+        
+        <.link navigate={~p"/companies/new"} class="inline-block">
+          <.button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg text-lg">
+            Cadastrar Empresa
+          </.button>
+        </.link>
       </div>
-    </div>
+    <% end %>
     """
   end
 end

@@ -5,6 +5,8 @@ defmodule BatchEcommerce.Order.Order do
   schema "orders" do
     field :total_price, :decimal
 
+    field :status_payment, :string
+
     belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
 
     has_many :order_products, BatchEcommerce.Order.OrderProduct
@@ -15,7 +17,7 @@ defmodule BatchEcommerce.Order.Order do
   @doc false
   def changeset(order, attrs) do
     order
-    |> cast(attrs, [:user_id, :total_price])
+    |> cast(attrs, [:user_id, :total_price, :status_payment])
     |> validate_required([:user_id, :total_price])
   end
 end

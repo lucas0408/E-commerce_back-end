@@ -43,7 +43,7 @@ defmodule BatchEcommerceWeb.UserRegistrationLive do
   end
 
   def mount(_params, _session, socket) do
-    changeset = Accounts.change_user_registration(%User{})
+    changeset = Accounts.insert_change_user(%User{})
 
     socket =
       socket
@@ -62,7 +62,7 @@ defmodule BatchEcommerceWeb.UserRegistrationLive do
             &url(~p"/users/confirm/#{&1}")
           )
 
-        changeset = Accounts.change_user_registration(user)
+        changeset = Accounts.insert_change_user(user)
         {:noreply, socket |> assign(trigger_submit: true) |> assign_form(changeset)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -71,7 +71,7 @@ defmodule BatchEcommerceWeb.UserRegistrationLive do
   end
 
   def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset = Accounts.change_user_registration(%User{}, user_params)
+    changeset = Accounts.insert_change_user(%User{}, user_params)
     {:noreply, assign_form(socket, Map.put(changeset, :action, :validate))}
   end
 

@@ -23,7 +23,7 @@ defmodule BatchEcommerceWeb.Router do
     # Para desenvolvimento - pega o primeiro usuário
     # Em produção, você deve pegar da sessão ou token de autenticação
     IO.inspect(BatchEcommerce.Accounts.list_companies())
-    current_user = List.first(BatchEcommerce.Accounts.list_users())
+    current_user = Enum.at(BatchEcommerce.Accounts.list_users(), 0)
     company = BatchEcommerce.Accounts.get_company_by_user_id(current_user.id)
 
 
@@ -61,7 +61,7 @@ defmodule BatchEcommerceWeb.Router do
     live "/users/:id", UserLive.Show, :show
     live "/companies/new", CompanyLive.New, :new
     live "/address/new", AddressLive.Form, :new
-    live "/companies/:id", CompanyLive.Show, :show
+    live "/companies", CompanyLive.Show, :show
     live "/companies/:id/edit", CompanyLive.Edit, :edit
     live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
     live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index

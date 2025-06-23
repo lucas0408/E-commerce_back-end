@@ -424,7 +424,7 @@ end
             </li>
             <li>
               <%= if @user && @user do %>
-                <.link navigate={"/companies/#{1}"} class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                <.link navigate={"/companies"} class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
                   <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 3v18m4.5-18v18M3 9h18" />
                   </svg>

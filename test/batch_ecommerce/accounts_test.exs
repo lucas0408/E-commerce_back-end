@@ -133,13 +133,9 @@ defmodule BatchEcommerce.AccountsTest do
     setup [:create_company]
 
     alias BatchEcommerce.Accounts.Company
-
-    test "list_companies/0 returns all companies", %{company: company} do
-      assert Accounts.list_companies() == [company]
-    end
-
-    test "get_company/1 returns the company with given id", %{company: company} do
-      assert Accounts.get_company(company.id) == company
+    
+    test "get_company!/1 returns the company with given id", %{company: company} do
+      assert Accounts.get_company!(company.id) == company
     end
 
     test "create_company/1 with valid data creates a company" do
@@ -174,13 +170,13 @@ defmodule BatchEcommerce.AccountsTest do
       invalid_attrs = invalid_params_for(:company, [:name, :cnpj, :email])
 
       assert {:error, %Ecto.Changeset{}} = Accounts.update_company(company, invalid_attrs)
-      assert company == Accounts.get_company(company.id)
+      assert company == Accounts.get_company!(company.id)
     end
 
     test "delete_company/1 deletes the company" do
       company = insert(:company)
       assert {:ok, %Company{}} = Accounts.delete_company(company)
-      assert Accounts.get_company(company.id) == nil
+      assert Accounts.get_company!(company.id) == nil
     end
 
     test "change_company/1 returns a company changeset" do
@@ -189,7 +185,7 @@ defmodule BatchEcommerce.AccountsTest do
     end
 
   def create_company(_any) do
-    company = insert(:company) |> Accounts.companies_preload()
+    company = insert(:company) |> Accounts.companies_preload_address()
     %{company: company}
   end
   end

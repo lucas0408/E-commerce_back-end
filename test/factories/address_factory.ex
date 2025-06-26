@@ -8,17 +8,11 @@ defmodule BatchEcommerce.Factories.AddressFactory do
         |> Enum.join()
       end
 
-      defp random_letters_string(length) do
-        letters = Enum.to_list(?a..?z) ++ Enum.to_list(?A..?Z)
-        Enum.map(1..length, fn _ -> Enum.random(letters) end)
-        |> to_string()
-      end
-
       def address_factory do
         %Address{
           address: sequence(:address, &"rua elixir#{&1}"),
-          cep:  random_digits_string(8),
-          uf: random_letters_string(2),
+          cep:  random_digits_string(5) <> "-" <> random_digits_string(3),
+          uf: "MG",
           city: sequence(:city, &"cidade java#{&1}"),
           district: sequence(:district, &"vila programação#{&1}"),
           complement: sequence(:complement, &"casa#{&1}"),

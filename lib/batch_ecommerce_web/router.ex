@@ -19,17 +19,14 @@ defmodule BatchEcommerceWeb.Router do
     plug :put_secure_browser_headers
   end
 
-  #defp fetch_current_user(conn, _opts) do
-  #  Para desenvolvimento - pega o primeiro usuário
-  #  Em produção, você deve pegar da sessão ou token de autenticação
-  #  IO.inspect(BatchEcommerce.Accounts.list_companies())
-  #  current_user = Enum.at(BatchEcommerce.Accounts.list_users(), 0)
-  #  company = BatchEcommerce.Accounts.get_company_by_user_id(current_user.id)
-
-  #  conn
-  #  |> assign(:current_user, current_user)
-  #  |> put_session(:current_user, current_user.id)
-  #end
+  defp fetch_current_user(conn, _opts) do
+    # Para desenvolvimento - pega o primeiro usuário
+    # Em produção, você deve pegar da sessão ou token de autenticação
+    current_user = Enum.at(BatchEcommerce.Accounts.list_users(), 0)
+    conn
+    |> assign(:current_user, current_user)
+    |> put_session(:current_user, current_user.id)
+  end
 
   pipeline :ensure_auth do
     plug Guardian.Plug.EnsureAuthenticated

@@ -210,6 +210,14 @@ defmodule BatchEcommerce.Catalog do
     |> Repo.preload(:categories)
   end
 
+  def get_top_selling_products(company_id, limit \\ 5) do
+    Product
+    |> where([p], p.company_id == ^company_id)
+    |> order_by([p], desc: p.sales_quantity)
+    |> limit(^limit)
+    |> Repo.all()
+  end
+
   @doc """
   Creates a product.
 

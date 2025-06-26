@@ -69,8 +69,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
 
   @impl true
   def handle_event("filter", params, socket) do
-    IO.inspect(params, label: "PARAMS RECEBIDOS")
-    IO.inspect(socket.assigns.filters, label: "FILTROS ATUAIS")
     
     current_filters = socket.assigns.filters
     
@@ -78,8 +76,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
       status: Map.get(params, "status", current_filters.status),
       customer: String.trim(Map.get(params, "customer", current_filters.customer || ""))
     }
-    
-    IO.inspect(new_filters, label: "NOVOS FILTROS")
 
     {:noreply,
     socket

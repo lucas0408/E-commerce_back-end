@@ -7,10 +7,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   def mount(_params, session, socket) do
     user_id = Map.get(session, "current_user")
     user = Accounts.get_user(user_id)
-
-    IO.inspect(user)
     
-    case Accounts.get_company_by_user_id(user_id) do
+    case Accounts.user_preload_company(user).company do
       nil ->
         {:ok, assign(socket, 
           has_company: false,
@@ -18,7 +16,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
         )}
       
       company ->
-        top_products = get_top_5_selling_products_by_sales(company.products)
+        top_products = Catalog.get_top_selling_products(company.id)
         {:ok,
          socket
          |> assign(:has_company, true)
@@ -26,12 +24,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
          |> assign(:user, user)
          |> assign(:top_products, top_products)}
     end
-  end
-
-  def get_top_5_selling_products_by_sales(products) do
-    products
-    |> Enum.sort_by(& &1.sales_quantity, :desc)
-    |> Enum.take(5)
   end
 
   @impl true

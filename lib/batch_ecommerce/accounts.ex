@@ -138,7 +138,7 @@ defmodule BatchEcommerce.Accounts do
   end
 
   def user_preload_company(user) do
-    Repo.preload(user, :company)
+    user = Repo.preload(user, :company)
   end
 
 
@@ -154,34 +154,13 @@ defmodule BatchEcommerce.Accounts do
 
   """
 
-
-  def list_companies do
-    Repo.all(Company) |> companies_preload()
-  end
-
-  def companies_preload(companies) do
+  def companies_preload_address(companies) do
     companies
-    |> Repo.preload(:addresses) |> Repo.preload(products: [:categories])
+    |> Repo.preload(:addresses)
   end
 
-  @doc """
-  Gets a single company.
 
-  Raises `Ecto.NoResultsError` if the Company does not exist.
-
-  ## Examples
-
-      iex> get_company!(123)
-      %Company{}
-
-      iex> get_company!(456)
-      ** (Ecto.NoResultsError)
-
-  """
-  def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id)
-    |> companies_preload()
-
-  def get_company!(id), do: Repo.get(Company, id) |> companies_preload()
+  def get_company!(id), do: Repo.get(Company, id) |> companies_preload_address()
 
   @doc """
   Creates a company.
@@ -202,7 +181,7 @@ defmodule BatchEcommerce.Accounts do
     |> case do
       {:ok, company} ->
         IO.inspect(company, label: "company: ")
-        {:ok, companies_preload(company)}
+        {:ok, companies_preload_address(company)}
 
       {:error, changeset} ->
         {:error, changeset}
@@ -232,7 +211,7 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.update()
     |> case do
       {:ok, company_updated} ->
-        {:ok, companies_preload(company_updated)}
+        {:ok, companies_preload_address(company_updated)}
 
       {:error, changeset} ->
         {:error, changeset}
@@ -271,16 +250,6 @@ defmodule BatchEcommerce.Accounts do
   alias BatchEcommerce.Accounts.Address
 
   @doc """
-  Returns the list of addresses.
-  ## Examples
-      iex> list_addresses()
-      [%Address{}, ...]
-  """
-  def list_addresses do
-    Repo.all(Address)
-  end
-
-  @doc """
   Gets a single address.
   Raises `Ecto.NoResultsError` if the Address does not exist.
   ## Examples
@@ -291,33 +260,7 @@ defmodule BatchEcommerce.Accounts do
   """
   def get_address(id), do: Repo.get(Address, id)
 
-  @doc """
-  Creates a address.
-  ## Examples
-      iex> create_address(%{field: value})
-      {:ok, %Address{}}
-      iex> create_address(%{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-  """
-  def create_address(attrs \\ %{}) do
-    %Address{}
-    |> Address.changeset(attrs)
-    |> Repo.insert()
-  end
 
-  @doc """
-  Updates a address.
-  ## Examples
-      iex> update_address(address, %{field: new_value})
-      {:ok, %Address{}}
-      iex> update_address(address, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-  """
-  def update_address(%Address{} = address, attrs) do
-    address
-    |> Address.changeset(attrs)
-    |> Repo.update()
-  end
 
   @doc """
   Deletes a address.

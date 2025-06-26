@@ -1,6 +1,8 @@
 defmodule BatchEcommerceWeb.Router do
   use BatchEcommerceWeb, :router
 
+  import BatchEcommerceWeb.UserAuth, only: [require_authenticated_user: 2]
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -20,12 +22,13 @@ defmodule BatchEcommerceWeb.Router do
   end
 
   defp fetch_current_user(conn, _opts) do
-    # Para desenvolvimento - pega o primeiro usuário
-    # Em produção, você deve pegar da sessão ou token de autenticação
-    current_user = Enum.at(BatchEcommerce.Accounts.list_users(), 0)
-    conn
-    |> assign(:current_user, current_user)
-    |> put_session(:current_user, current_user.id)
+  #  Para desenvolvimento - pega o primeiro usuário
+  #  Em produção, você deve pegar da sessão ou token de autenticação
+   current_user = Enum.at(BatchEcommerce.Accounts.list_users(), 0)
+
+   conn
+   |> assign(:current_user, current_user)
+   |> put_session(:current_user, current_user.id)
   end
 
   pipeline :ensure_auth do

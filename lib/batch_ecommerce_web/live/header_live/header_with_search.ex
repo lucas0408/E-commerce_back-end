@@ -1,6 +1,6 @@
 defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithSearch do
   use BatchEcommerceWeb, :live_component
-  import BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers
+  import BatchEcommerceWeb.Live.HeaderLive.HeaderBase
 
   def render(assigns) do
     assigns =
@@ -15,8 +15,8 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithSearch do
 
     ~H"""
     <div>
-      <.live_component 
-        module={BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers} 
+      <.live_component
+        module={BatchEcommerceWeb.Live.HeaderLive.HeaderBase }
         id={"header-search-#{@id}"}
         show_cart={@show_cart}
         show_search={@show_search}

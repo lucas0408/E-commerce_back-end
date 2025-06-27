@@ -1,6 +1,6 @@
 defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart do
   use BatchEcommerceWeb, :live_component
-  import BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers
+  import BatchEcommerceWeb.Live.HeaderLive.HeaderBase
 
   def render(assigns) do
     assigns =
@@ -15,8 +15,8 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart do
 
     ~H"""
     <div> <!-- Elemento raiz estático obrigatório -->
-    <.live_component 
-      module={BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers} 
+    <.live_component
+      module={BatchEcommerceWeb.Live.HeaderLive.HeaderBase }
       id={"header-cart-#{@id}"}
       show_cart={@show_cart}
       show_search={@show_search}

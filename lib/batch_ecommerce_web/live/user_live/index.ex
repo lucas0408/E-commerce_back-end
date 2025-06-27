@@ -1,11 +1,9 @@
 defmodule BatchEcommerceWeb.Live.UserLive.Index do
   use BatchEcommerceWeb, :live_view
+  use PhoenixHTMLHelpers
 
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.User
-  import Phoenix.HTML
-  import Phoenix.HTML.Form
-  use PhoenixHTMLHelpers
 
   @impl true
   def mount(_params, _session, socket) do
@@ -42,7 +40,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.Index do
 
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
-    user = Accounts.get_user!(id)
+    user = Accounts.get_user(id)
     {:ok, _} = Accounts.delete_user(user)
 
     {:noreply, stream_delete(socket, :users, user)}

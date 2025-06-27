@@ -1,4 +1,4 @@
-defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers do
+defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
   use BatchEcommerceWeb, :live_component
   import BatchEcommerceWeb.CoreComponents
 

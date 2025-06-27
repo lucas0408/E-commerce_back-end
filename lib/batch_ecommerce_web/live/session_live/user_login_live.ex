@@ -1,8 +1,16 @@
 defmodule BatchEcommerceWeb.UserLoginLive do
+
+  import BatchEcommerceWeb.Live.HeaderLive.HeaderBase
+
   use BatchEcommerceWeb, :live_view
 
   def render(assigns) do
     ~H"""
+       <.live_component
+        module={BatchEcommerceWeb.Live.HeaderLive.HeaderBase}
+        id="header-base"
+        />
+
     <div class="mx-auto max-w-sm b-red-500 mt-[80px]">
       <.header class="text-center">
 

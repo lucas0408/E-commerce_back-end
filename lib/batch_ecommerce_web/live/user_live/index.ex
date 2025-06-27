@@ -18,7 +18,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.Index do
   defp apply_action(socket, :edit, %{"id" => id}) do
     socket
     |> assign(:page_title, "Edit User")
-    |> assign(:user, Accounts.get_user!(id))
+    |> assign(:user, Accounts.get_user(id))
   end
 
   defp apply_action(socket, :new, _params) do

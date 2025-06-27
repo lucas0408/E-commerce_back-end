@@ -1,6 +1,5 @@
 defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderFull do
   use BatchEcommerceWeb, :live_component
-  import BatchEcommerceWeb.Live.HeaderLive.HeaderBase
 
   def render(assigns) do
     assigns =

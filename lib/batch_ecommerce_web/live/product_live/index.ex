@@ -1,20 +1,18 @@
 defmodule BatchEcommerceWeb.Live.ProductLive.Index do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Catalog
-  alias BatchEcommerceWeb.Live.ProductLive.FormComponent
   import BatchEcommerceWeb.CoreComponents
-  alias BatchEcommerce.Accounts
 
   @impl true
   def mount(_params, session, socket) do
-
     {:ok,
       socket
+      |> assign_defaults()
       |> load_products()
     }
   end
 
-  defp assign_defaults(socket, current_user) do
+  defp assign_defaults(socket) do
     assign(socket,
       categories: Catalog.list_categories(),
       selected_categories: [],
@@ -23,8 +21,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Index do
       page: 1,
       per_page: 10,
       products: [],
-      meta: nil,
-      current_user: current_user
+      meta: nil
     )
   end
 
@@ -114,7 +111,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Index do
     <.live_component
       module={BatchEcommerceWeb.Live.HeaderLive.HeaderFull}
       id="header-full"
-      user={@current_user}
       search_query={@search_query}  # Passa o estado atual da pesquisa
     />
     <div class="container mx-auto px-4 py-8">

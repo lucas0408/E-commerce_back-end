@@ -1,9 +1,7 @@
 defmodule BatchEcommerceWeb.Live.CompanyLive.Edit do
   use BatchEcommerceWeb, :live_view
-  alias BatchEcommerce.Accounts.Company
   alias BatchEcommerce.Accounts
   alias BatchEcommerceWeb.Live.CompanyLive.FormComponent
-  alias BatchEcommerceWeb.Live.HeaderLive.HeaderDefault
 
   def mount(%{"id" => id}, session, socket) do
     user_id = Map.get(session, "current_user")

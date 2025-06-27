@@ -41,8 +41,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
         </div>
 
           <.inputs_for :let={af} field={f[:addresses]}>
-            <div class="mt-6 p-4 border rounded-lg space-y-4">
-              <h4 class="font-semibold text-lg">Endereço</h4>
+            <div>
               <div class="grid grid-cols-2 gap-x-20 gap-y-6">
                 <.input field={af[:address]} label="Endereço" />
                 <div class="flex gap-6">

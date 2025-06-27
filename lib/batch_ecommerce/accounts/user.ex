@@ -86,8 +86,8 @@ defmodule BatchEcommerce.Accounts.User do
     |> validate_required(@required_fields_update)
     |> validate_cpf()
     |> validate_name()
-    |> validate_email(:email, message: "Invalid email")
-    |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
+    |> validate_email(:email, message: "Endereço de e-mail inválido")
+    |> validate_phone_number(:phone_number, country: "br", message: "Número de telefone inválido")
     |> validate_date(:birth_date,
       before: validate_date_before(),
       after: validate_date_after(),

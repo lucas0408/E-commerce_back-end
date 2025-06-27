@@ -1,6 +1,6 @@
 defmodule BatchEcommerceWeb.Live.UserLive.Edit do
   use BatchEcommerceWeb, :live_view
-  alias BatchEcommerce.Accounts.User
+
   alias BatchEcommerce.Accounts
   alias BatchEcommerceWeb.Live.UserLive.FormComponent
 
@@ -13,11 +13,11 @@ defmodule BatchEcommerceWeb.Live.UserLive.Edit do
     ~H"""
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart} id="HeaderWithCart"/>
     <div class="pt-20 px-4"> <!-- Adiciona padding-top para compensar o header fixo -->
-      <.live_component 
-        module={FormComponent} 
-        id={@user.id} 
-        user={@user} 
-        action={@live_action} 
+      <.live_component
+        module={FormComponent}
+        id={@user.id}
+        user={@user}
+        action={@live_action}
         patch={~p"/products"}
       >
         <h1 class="text-2xl font-bold mb-4">Creating a user</h1>

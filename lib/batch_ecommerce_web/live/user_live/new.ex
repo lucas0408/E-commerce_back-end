@@ -1,4 +1,4 @@
-defmodule BatchEcommerceWeb.Live.UserLive.New do
+defmodule BatchEcommerceWeb.UserLive.New do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Accounts.User
   alias BatchEcommerceWeb.Live.UserLive.FormComponent
@@ -17,7 +17,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.New do
         >
           <h1 class="text-2xl font-bold mb-4">Creating a user</h1>
         </.live_component>
-        <.back navigate={~p"/users"} class="mt-4 inline-block text-blue-600 hover:text-blue-800">
+        <.back navigate={~p"/users"}>
           Back to users
         </.back>
       </div>

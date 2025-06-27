@@ -107,6 +107,10 @@ defmodule BatchEcommerce.Accounts do
     Repo.delete(user)
   end
 
+  def form_change_user(%User{} = user, attrs \\ %{}) do
+    User.form_changeset(user, attrs)
+  end
+
   def insert_change_user(%User{} = user, attrs \\ %{}) do
     User.insert_changeset(user, attrs)
   end

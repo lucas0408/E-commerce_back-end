@@ -1,6 +1,8 @@
 defmodule BatchEcommerceWeb.Router do
   use BatchEcommerceWeb, :router
 
+  import BatchEcommerceWeb.UserAuth
+
   pipeline :api do
     plug :accepts, ["json"]
   end
@@ -15,37 +17,25 @@ defmodule BatchEcommerceWeb.Router do
     plug :fetch_live_flash
     plug :put_root_layout, html: {BatchEcommerceWeb.Layouts, :root}
     plug :protect_from_forgery
-    plug :fetch_current_user
     plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
-
-  #defp fetch_current_user(conn, _opts) do
-  #  Para desenvolvimento - pega o primeiro usuário
-  #  Em produção, você deve pegar da sessão ou token de autenticação
-  #  IO.inspect(BatchEcommerce.Accounts.list_companies())
-  #  current_user = Enum.at(BatchEcommerce.Accounts.list_users(), 0)
-  #  company = BatchEcommerce.Accounts.get_company_by_user_id(current_user.id)
-
-  #  conn
-  #  |> assign(:current_user, current_user)
-  #  |> put_session(:current_user, current_user.id)
-  #end
 
   pipeline :ensure_auth do
     plug Guardian.Plug.EnsureAuthenticated
   end
-  
+
   #scope para usuários não logados tem que migrar pro liveview
   scope "/", BatchEcommerceWeb do
     pipe_through :browser
 
-    post "/login", SessionController, :create #ok
-    #resources "/users", UserController, only: [:create, :show, :index] #ok
-    #resources "/products", ProductController, only: [:index, :show] #ok
+    post "/login", SessionController, :create #nao migrar
+    #resources "/users", UserController, only: [:create, :show, :index] ---- migrado
+    #resources "/products", ProductController, only: [:index, :show] ---- migrado
     resources "/categories", CategoryController, only: [:index, :show] #ok
     resources "/companies", CompanyController, only: [:index, :show] #ok
   end
-  
+
   #scope para usuários logados tem que migrar pro liveview
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
@@ -66,7 +56,6 @@ defmodule BatchEcommerceWeb.Router do
 
     live_session :require_authenticated_user,
       on_mount: [{BatchEcommerceWeb.UserAuth, :ensure_authenticated}] do
-
       live "/users", UserLive.Index, :index
       live "/users/new", UserLive.New, :new
       live "/users/:id/edit", UserLive.Edit, :edit
@@ -77,14 +66,23 @@ defmodule BatchEcommerceWeb.Router do
       live "/users/:id", UserLive.Show, :show
       live "/companies/new", CompanyLive.New, :new
       live "/address/new", AddressLive.Form, :new
-      live "/companies", CompanyLive.Show, :show
-      live "/companies/:id/edit", CompanyLive.Edit, :edit
-      live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
-      live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
-      live "/companies/:id/orders", OrderLive.Index, :index
       live "/cart_products", ShoppingCart.Index, :index
       live "/orders", OrderLive.Index, :index
       live "/orders/:order_id", OrderLive.Show, :show
+    end
+  end
+
+  #scope de usuário logado e com empresa
+  scope "/companies", BatchEcommerceWeb.Live do
+    pipe_through [:browser]
+
+    live_session :require_authenticated_and_has_company,
+      on_mount: {BatchEcommerceWeb.UserAuth, :require_authenticated_and_has_company} do
+      #live "/companies", CompanyLive.Show, :show
+      live "/companies/:id/edit", CompanyLive.Edit, :edit
+      live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
+      live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
+      #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
     end
   end
 
@@ -105,9 +103,8 @@ defmodule BatchEcommerceWeb.Router do
   scope "/", BatchEcommerceWeb do
     pipe_through [:browser]
 
-    live "/users/log_in", UserLoginLive, :new
-    live "/users/new", UserLive.New, :new
-    live "/users/register", UserRegistrationLive, :new
+    live "/login", UserLoginLive, :new
+    live "/register", UserLive.New, :new
   end
 
   scope "/api/swagger" do

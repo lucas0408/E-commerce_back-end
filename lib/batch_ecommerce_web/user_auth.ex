@@ -4,6 +4,7 @@ defmodule BatchEcommerceWeb.UserAuth do
   import Plug.Conn
   import Phoenix.Controller
 
+  alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.Guardian
 
 
@@ -81,7 +82,7 @@ defmodule BatchEcommerceWeb.UserAuth do
     conn
     |> renew_session()
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/api/users/log_in")
+    |> redirect(to: ~p"/users/log_in")
   end
 
   @doc """
@@ -148,6 +149,7 @@ defmodule BatchEcommerceWeb.UserAuth do
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_current_user(socket, session)
+    IO.inspect(socket, label: "oia ai: ")
 
     if socket.assigns.current_user do
       {:cont, socket}
@@ -155,7 +157,7 @@ defmodule BatchEcommerceWeb.UserAuth do
       socket =
         socket
         |> Phoenix.LiveView.put_flash(:error, "You must log in to access this page.")
-        |> Phoenix.LiveView.redirect(to: ~p"/api/users/log_in")
+        |> Phoenix.LiveView.redirect(to: ~p"/login")
 
       {:halt, socket}
     end
@@ -168,6 +170,28 @@ defmodule BatchEcommerceWeb.UserAuth do
       {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
     else
       {:cont, socket}
+    end
+  end
+
+  def on_mount(:require_authenticated_and_has_company, _params, session, socket) do
+    with user <- mount_current_user(socket, session),
+         company when not is_nil(company) <- Accounts.get_company_by_user_id(user.id) do
+      {:cont,
+       socket
+       |> assign(:current_user, user)
+       |> assign(:current_company, company)}
+    else
+      nil ->
+        {:halt,
+         socket
+         |> put_flash(:error, "Você precisa cadastrar uma empresa para acessar esta área.")
+         |> redirect(to: "/cadastro_empresa")}
+
+      _ ->
+        {:halt,
+         socket
+         |> put_flash(:error, "Você precisa estar logado.")
+         |> redirect(to: "/login")}
     end
   end
 
@@ -209,7 +233,7 @@ defmodule BatchEcommerceWeb.UserAuth do
       conn
       |> put_flash(:error, "You must log in to access this page.")
       |> maybe_store_return_to()
-      |> redirect(to: ~p"/api/users/log_in")
+      |> redirect(to: ~p"/login")
       |> halt()
     end
   end

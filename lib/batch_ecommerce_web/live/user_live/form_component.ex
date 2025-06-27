@@ -1,6 +1,8 @@
 defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
   use BatchEcommerceWeb, :live_component
-  import BatchEcommerceWeb.CoreComponents  
+
+  import BatchEcommerceWeb.CoreComponents
+
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.Address
 
@@ -100,6 +102,18 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
     save_user(socket, socket.assigns.action, user_params)
   end
 
+  def handle_event("validate", %{"user" => user_params}, socket) do
+    changeset =
+      socket.assigns.user
+      |> Accounts.form_change_user(user_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply,
+    socket
+    |> assign(:changeset, changeset)  # ✅ Adicionar esta linha
+    |> assign(:form, to_form(changeset))}
+  end
+
   defp save_user(socket, :edit, user_params) do
     case Accounts.update_user(socket.assigns.user, user_params) do
       {:ok, user} ->
@@ -130,18 +144,6 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
         IO.inspect(changeset)
         {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  def handle_event("validate", %{"user" => user_params}, socket) do
-    changeset =
-      socket.assigns.user
-      |> Accounts.insert_change_user(user_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply,
-    socket
-    |> assign(:changeset, changeset)  # ✅ Adicionar esta linha
-    |> assign(:form, to_form(changeset))}
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

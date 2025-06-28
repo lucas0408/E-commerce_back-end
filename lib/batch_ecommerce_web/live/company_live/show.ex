@@ -5,10 +5,10 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
 
   @impl true
   def mount(_params, session, socket) do
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     user = Accounts.get_user(user_id)
     
-    case Accounts.user_preload_company(user).company do
+    case Accounts.get_company_by_user_id(user_id) do
       nil ->
         {:ok, assign(socket, 
           has_company: false,

@@ -146,7 +146,6 @@ defmodule BatchEcommerce.Accounts do
     user = Repo.preload(user, :company)
   end
 
-
   alias BatchEcommerce.Accounts.Company
 
   @doc """
@@ -163,6 +162,8 @@ defmodule BatchEcommerce.Accounts do
     companies
     |> Repo.preload(:addresses)
   end
+  
+  def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id)
 
 
   def get_company!(id), do: Repo.get(Company, id) |> companies_preload_address()

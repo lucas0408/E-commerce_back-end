@@ -7,10 +7,10 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
   def mount(_params, session, socket) do
     current_user = session["user_id"]
 
-    # Busca os produtos do carrinho e precarrega as associações necessárias
     current_user = Accounts.get_user(current_user)
+    
     cart_products =
-      current_user.id
+      session["user_id"]
       |> ShoppingCart.get_cart_user()
 
     socket =

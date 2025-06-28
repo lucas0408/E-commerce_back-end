@@ -33,7 +33,7 @@ defmodule BatchEcommerceWeb.Router do
     #resources "/users", UserController, only: [:create, :show, :index] ---- migrado
     #resources "/products", ProductController, only: [:index, :show] ---- migrado
     resources "/categories", CategoryController, only: [:index, :show] #ok
-    resources "/companies", CompanyController, only: [:index, :show] #ok
+    #resources "/companies", CompanyController, only: [:index, :show] #ok
   end
 
   #scope para usuários logados tem que migrar pro liveview
@@ -57,8 +57,8 @@ defmodule BatchEcommerceWeb.Router do
     live_session :require_authenticated_user,
       on_mount: [{BatchEcommerceWeb.UserAuth, :ensure_authenticated}] do
       live "/users", UserLive.Index, :index
-      live "/users/new", UserLive.New, :new
       live "/users/:id/edit", UserLive.Edit, :edit
+      live "/products", ProductLive.Index, :index
       live "/products/new", ProductLive.New, :new
       live "/products/:product_id", ProductLive.Show, :edit
       live "/products/:product_id/edit", ProductLive.Edit, :edit
@@ -77,10 +77,10 @@ defmodule BatchEcommerceWeb.Router do
 
     live_session :require_authenticated_and_has_company,
       on_mount: {BatchEcommerceWeb.UserAuth, :require_authenticated_and_has_company} do
-      #live "/companies", CompanyLive.Show, :show
-      live "/companies/:id/edit", CompanyLive.Edit, :edit
-      live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
-      live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
+      live "/", CompanyLive.Show, :show
+      live "/:id/edit", CompanyLive.Edit, :edit
+      live "/:company_id/products", CompanyLive.ProductIndex, :product_index
+      live "/:company_id/orders", CompanyLive.OrderIndex, :order_index
       #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
     end
   end
@@ -90,7 +90,7 @@ defmodule BatchEcommerceWeb.Router do
     pipe_through [:api, :auth, :ensure_auth]
     post "/upload", UploadController, :create
     resources "/users", UserController, except: [:create, :show, :new, :edit]
-    resources "/products", ProductController, except: [:index, :show, :new, :edit]
+    #resources "/products", ProductController, except: [:index, :show, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :index, :edit]
     resources "/cart_products", CartProductController
     get "/cart_products/user/:user_id", CartProductController, :get_by_user
@@ -104,7 +104,6 @@ defmodule BatchEcommerceWeb.Router do
 
     live "/login", UserLoginLive, :new
     live "/register", UserLive.New, :new
-    live "/products", Live.ProductLive.Index, :index
   end
 
   scope "/api/swagger" do

@@ -52,9 +52,9 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
             <div class="flex space-x-2">
             <.link
               navigate={~p"/login"}
-              class="text-sm font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
+              class="text-sm font-bold text-indigo-600 hover:text-indigo-800 "
             >
-              Faça login ou cadastre-se
+              Faça login <br> ou cadastre-se
             </.link>
             </div>
           <% end %>

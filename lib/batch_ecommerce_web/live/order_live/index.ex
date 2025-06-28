@@ -7,7 +7,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
   @impl true
   def mount(_params, session, socket) do
     # 1) Pega o user_id da sessão
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
 
     # 2) Busca todos os pedidos desse usuário, já pré-carregando os order_products e cada produto

@@ -5,7 +5,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
 
   @impl true
   def mount(_params, session, socket) do
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     user = Accounts.get_user(user_id)
 
     IO.inspect(user)

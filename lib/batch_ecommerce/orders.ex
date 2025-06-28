@@ -102,6 +102,9 @@ defmodule BatchEcommerce.Orders do
         {:error, :not_found}
         
       order_product ->
+        if new_status == "Cancelado" do
+          BatchEcommerce.Catalog.return_stock(order_product.quantity, order_product.product_id)
+        end
         order_product
         |> OrderProduct.changeset(%{status: new_status})
         |> Repo.update()
@@ -113,6 +116,7 @@ defmodule BatchEcommerce.Orders do
           end
     end
   end
+
 
   def list_orders do
     Repo.all(OrderProduct) |> Repo.preload(:product)

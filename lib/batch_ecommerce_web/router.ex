@@ -33,7 +33,7 @@ defmodule BatchEcommerceWeb.Router do
     #resources "/users", UserController, only: [:create, :show, :index] ---- migrado
     #resources "/products", ProductController, only: [:index, :show] ---- migrado
     resources "/categories", CategoryController, only: [:index, :show] #ok
-    resources "/companies", CompanyController, only: [:index, :show] #ok
+    #resources "/companies", CompanyController, only: [:index, :show] #ok
   end
 
   #scope para usuários logados tem que migrar pro liveview
@@ -68,7 +68,7 @@ defmodule BatchEcommerceWeb.Router do
       live "/address/new", AddressLive.Form, :new
       live "/cart_products", ShoppingCart.Index, :index
       live "/orders", OrderLive.Index, :index
-      live "/orders/:order_id", OrderLive.Show, :show
+      live "/orders/:order_id", OrderLive.ShowUser, :show
     end
   end
 
@@ -78,10 +78,11 @@ defmodule BatchEcommerceWeb.Router do
 
     live_session :require_authenticated_and_has_company,
       on_mount: {BatchEcommerceWeb.UserAuth, :require_authenticated_and_has_company} do
-      #live "/companies", CompanyLive.Show, :show
-      live "/companies/:id/edit", CompanyLive.Edit, :edit
-      live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
-      live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
+      live "/", CompanyLive.Show, :show
+      live "/:id/edit", CompanyLive.Edit, :edit
+      live "/:company_id/products", CompanyLive.ProductIndex, :product_index
+      live "/:company_id/orders", CompanyLive.OrderIndex, :order_index
+      live "/:company_id/orders/:order_id", OrderLive.ShowCompany, :order_index
       #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
     end
   end

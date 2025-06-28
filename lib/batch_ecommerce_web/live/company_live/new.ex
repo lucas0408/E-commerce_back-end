@@ -6,7 +6,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.New do
 
   def mount(_params, session, socket) do
     # Pega o current_user da sessão
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
 
     {:ok,

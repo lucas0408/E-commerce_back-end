@@ -22,6 +22,7 @@ defmodule BatchEcommerce.Accounts.User do
     field :password_confirmation, :string, virtual: true
     field :password_hash, :string
     field :password, :string, virtual: true
+    field :profile_filename, :string
 
     many_to_many :addresses, BatchEcommerce.Accounts.Address,
       join_through: "users_addresses",
@@ -36,46 +37,16 @@ defmodule BatchEcommerce.Accounts.User do
     timestamps(type: :utc_datetime)
   end
 
-  @doc false
   def form_changeset(user, attrs) do
     user
     |> cast(attrs, [:password_hash | @required_fields_insert])
-    |> validate_required(@required_fields_insert)
-    |> validate_cpf()
-    |> validate_name()
-    |> validate_email(:email)
-    |> validate_phone_number(:phone_number, country: "br")
-    |> validate_date(:birth_date,
-      before: validate_date_before(),
-      after: validate_date_after(),
-      message: "Data inválida"
-    )
-    |> validate_confirmation(:password, message: "As senhas não coincidem")
-    |> cast_assoc(:addresses)
-    |> unique_constraint(:email)
-    |> unique_constraint(:cpf)
-    |> unique_constraint(:phone_number)
+    |> validate_form_fields(@required_fields_insert)
   end
 
-  @doc false
   def insert_changeset(user, attrs) do
     user
     |> cast(attrs, [:password_hash | @required_fields_insert])
-    |> validate_required(@required_fields_insert)
-    |> validate_cpf()
-    |> validate_name()
-    |> validate_email(:email)
-    |> validate_phone_number(:phone_number, country: "br")
-    |> validate_date(:birth_date,
-      before: validate_date_before(),
-      after: validate_date_after(),
-      message: "Data inválida"
-    )
-    |> validate_confirmation(:password, message: "As senhas não coincidem")
-    |> cast_assoc(:addresses)
-    |> unique_constraint(:email)
-    |> unique_constraint(:cpf)
-    |> unique_constraint(:phone_number)
+    |> validate_form_fields(@required_fields_insert)
     |> validate_uniqueness_of_fields(@unique_fields)
     |> password_hash()
   end
@@ -83,7 +54,13 @@ defmodule BatchEcommerce.Accounts.User do
   def update_changeset(user, attrs) do
     user
     |> cast(attrs, @required_fields_update)
-    |> validate_required(@required_fields_update)
+    |> validate_form_fields(@required_fields_update)
+    |> validate_uniqueness_of_fields(@unique_fields)
+  end
+
+  defp validate_form_fields(user, required_fields) do
+    user
+    |> validate_required(required_fields, message: "O campo não pode estar em branco")
     |> validate_cpf()
     |> validate_name()
     |> validate_email(:email, message: "Endereço de e-mail inválido")
@@ -93,8 +70,11 @@ defmodule BatchEcommerce.Accounts.User do
       after: validate_date_after(),
       message: "Data inválida"
     )
+    |> validate_password()
+    |> validate_confirmation(:password, message: "As senhas não coincidem")
     |> cast_assoc(:addresses)
     |> unique_constraint(:email)
+    |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)
   end
 
@@ -109,18 +89,34 @@ defmodule BatchEcommerce.Accounts.User do
       changes = get_change(acc_changeset, field)
 
       if changes && Accounts.user_exists_with_field?(field, changes) do
-        add_error(acc_changeset, field, "Already in use")
+        add_error(acc_changeset, field, "Já está em uso")
       else
         acc_changeset
       end
     end)
   end
 
+  defp validate_password(changeset) do
+    changeset
+    |> validate_errors(:password, &validate_length(&1, :password, min: 6, message: "A senha deve conter no mínimo 6 caracteres"))
+    |> validate_errors(:password, &validate_format(&1, :password, ~r/[A-Za-z]/, message: "A senha deve conter ao menos uma letra"))
+    |> validate_errors(:password, &validate_format(&1, :password, ~r/\d/, message: "A senha deve conter ao menos um número"))
+    |> validate_errors(:password, &validate_format(&1, :password, ~r/[!@#$%^&*()_+\[\]{}:;"'\\|<>,.?\/~=-]/, message: "A senha deve conter ao menos um caractere especial"))
+  end
+
+  defp validate_errors(changeset, field, validation_fn) do
+    if Keyword.has_key?(changeset.errors, field) do
+      changeset
+    else
+      validation_fn.(changeset)
+    end
+  end
+
   defp validate_cpf(changeset),
-    do: changeset |> validate_length(:cpf, is: 11)
+    do: changeset |> validate_length(:cpf, is: 11, message: "CPF inválido")
 
   defp validate_name(changeset),
-    do: changeset |> validate_length(:name, min: 2, max: 60)
+    do: changeset |> validate_length(:name, max: 60, message: "O nome excedeu o limite de caracteres permitidos")
 
   defp validate_date_before(), do: Date.utc_today() |> Date.shift(year: -18)
 

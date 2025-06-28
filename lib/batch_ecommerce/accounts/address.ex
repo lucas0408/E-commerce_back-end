@@ -6,8 +6,8 @@ defmodule BatchEcommerce.Accounts.Address do
   @derive {Jason.Encoder, only: [:cep, :uf, :city, :district, :address, :home_number]}
 
   @required [:cep, :uf, :city, :district, :address, :complement, :home_number]
-  @ufs ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", 
-        "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", 
+  @ufs ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+        "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
         "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
 
   schema "addresses" do
@@ -26,41 +26,29 @@ defmodule BatchEcommerce.Accounts.Address do
   def changeset(address, attrs) do
     address
     |> cast(attrs, @required)
-    |> validate_required(@required)
-    |> validate_postal_code(:cep, country: "br")
+    |> validate_required(@required, message: "O campo não pode estar em branco")
+    |> validate_postal_code(:cep, country: "br", message: "CEP inválido")
     |> validate_uf()
-    |> validate_length(:cep, is: 9)
-    |> validate_format(:cep, ~r/^\d{5}-\d{3}$/, message: "deve estar no formato 00000-000")
-    |> validate_inclusion(:uf, @ufs, message: "não é uma UF válida")
-    |> validate_length(:city, min: 2, max: 50)
-    |> validate_length(:district, min: 2, max: 50)
-    |> validate_length(:address, min: 5, max: 100)
-    |> validate_format(:home_number, ~r/^[0-9]+[a-zA-Z]*$/, 
-         message: "deve conter números e pode ter letras no final")
-    |> validate_no_special_chars(:city)
-    |> validate_no_special_chars(:district)
-    |> validate_no_special_chars(:address)
-    |> validate_no_special_chars(:complement)
+    |> validate_length(:city, min: 3, max: 60, message: "Cidade inválida")
+    |> validate_length(:district, min: 3, max: 50, message: "Bairro inválido")
+    |> validate_length(:address, min: 5, max: 100, message: "Endereço inválido")
+    |> validate_format(:home_number, ~r/^[0-9]+[a-zA-Z]*$/,
+         message: "Numero inválido")
     |> unique_constraint_for_address()
   end
 
   defp validate_uf(changeset) do
     changeset
-    |> validate_length(:uf, is: 2)
+    |> validate_inclusion(:uf, @ufs, message: "não é uma UF válida")
     |> update_change(:uf, &String.upcase/1)
   end
 
-  defp validate_no_special_chars(changeset, field) do
-    validate_format(changeset, field, ~r/^[a-zA-Z0-9\sáàâãéèêíïóôõöúçñÁÀÂÃÉÈÊÍÏÓÔÕÖÚÇÑ\-]+$/,
-      message: "não pode conter caracteres especiais"
-    )
-  end
 
   defp unique_constraint_for_address(changeset) do
     changeset
     |> unique_constraint([:cep, :home_number, :complement],
          name: :addresses_cep_home_number_complement_index,
-         message: "endereço já cadastrado"
+         message: "Endereço já cadastrado"
        )
   end
 end

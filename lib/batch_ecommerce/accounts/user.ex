@@ -37,6 +37,27 @@ defmodule BatchEcommerce.Accounts.User do
   end
 
   @doc false
+  def form_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:password_hash | @required_fields_insert])
+    |> validate_required(@required_fields_insert)
+    |> validate_cpf()
+    |> validate_name()
+    |> validate_email(:email)
+    |> validate_phone_number(:phone_number, country: "br")
+    |> validate_date(:birth_date,
+      before: validate_date_before(),
+      after: validate_date_after(),
+      message: "Data inválida"
+    )
+    |> validate_confirmation(:password, message: "As senhas não coincidem")
+    |> cast_assoc(:addresses)
+    |> unique_constraint(:email)
+    |> unique_constraint(:cpf)
+    |> unique_constraint(:phone_number)
+  end
+
+  @doc false
   def insert_changeset(user, attrs) do
     user
     |> cast(attrs, [:password_hash | @required_fields_insert])
@@ -65,8 +86,8 @@ defmodule BatchEcommerce.Accounts.User do
     |> validate_required(@required_fields_update)
     |> validate_cpf()
     |> validate_name()
-    |> validate_email(:email, message: "Invalid email")
-    |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
+    |> validate_email(:email, message: "Endereço de e-mail inválido")
+    |> validate_phone_number(:phone_number, country: "br", message: "Número de telefone inválido")
     |> validate_date(:birth_date,
       before: validate_date_before(),
       after: validate_date_after(),

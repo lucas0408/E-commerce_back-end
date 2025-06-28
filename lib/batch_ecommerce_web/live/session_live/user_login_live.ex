@@ -1,33 +1,42 @@
 defmodule BatchEcommerceWeb.UserLoginLive do
+
+  import BatchEcommerceWeb.Live.HeaderLive.HeaderBase
+
   use BatchEcommerceWeb, :live_view
 
   def render(assigns) do
     ~H"""
-    <div class="mx-auto max-w-sm">
+       <.live_component
+        module={BatchEcommerceWeb.Live.HeaderLive.HeaderBase}
+        id="header-base"
+        />
+
+    <div class="mx-auto max-w-sm b-red-500 mt-[80px]">
       <.header class="text-center">
-        Log in to account
+
+        Acesse a conta
         <:subtitle>
-          Don't have an account?
-          <.link navigate={~p"/users/register"} class="font-semibold text-brand hover:underline">
-            Sign up
+          Não tem uma conta?
+          <.link navigate={~p"/register"} class="font-semibold text-brand hover:text-indigo-800 text-indigo-500">
+            Inscreva-se
           </.link>
-          for an account now.
+          e crie uma conta agora.
         </:subtitle>
       </.header>
 
       <.simple_form for={@form} id="login_form" action={~p"/login"} phx-update="ignore">
         <.input field={@form[:email]} type="email" label="Email" required />
-        <.input field={@form[:password]} type="password" label="Password" required />
+        <.input field={@form[:password]} type="password" label="Senha" required />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Keep me logged in" />
-          <.link href={~p"/users/reset_password"} class="text-sm font-semibold">
-            Forgot your password?
+          <.input field={@form[:remember_me]} type="checkbox" label="Me manter logado" />
+          <.link href={~p"/users/reset_password"} class="text-sm text-gray-500 hover:text-gray-800 font-semibold">
+            Esqueceu a senha?
           </.link>
         </:actions>
         <:actions>
           <.button phx-disable-with="Logging in..." class="w-full">
-            Log in <span aria-hidden="true">→</span>
+            Entrar<span aria-hidden="true"></span>
           </.button>
         </:actions>
       </.simple_form>

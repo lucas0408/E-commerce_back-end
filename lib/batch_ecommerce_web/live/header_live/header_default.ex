@@ -1,6 +1,5 @@
 defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderDefault do
   use BatchEcommerceWeb, :live_component
-  import BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers
 
   def render(assigns) do
     assigns =
@@ -12,8 +11,8 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderDefault do
 
     ~H"""
     <div>
-      <.live_component 
-        module={BatchEcommerceWeb.Live.HeaderLive.HeaderHelpers} 
+      <.live_component
+        module={BatchEcommerceWeb.Live.HeaderLive.HeaderBase }
         id={"header-default-#{@id}"}
         show_cart={false}
         show_search={false}

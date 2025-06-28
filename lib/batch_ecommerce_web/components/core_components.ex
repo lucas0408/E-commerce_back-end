@@ -178,8 +178,8 @@ defmodule BatchEcommerceWeb.CoreComponents do
 
   def cart_icon(assigns) do
     ~H"""
-    <a 
-      href="/cart_products" 
+    <a
+      href="/cart_products"
       class="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none"
       aria-label="Carrinho de compras"
       {@rest}
@@ -415,12 +415,14 @@ end
         <nav class="p-2">
           <ul class="space-y-1">
             <li>
-              <.link navigate="/orders" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
-                <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                Minhas Compras
-              </.link>
+              <%= if @user && @user do %>
+                <.link navigate="/orders" class="flex items-center px-4 py-3 text-gray-700 hover:bg-gray-100 rounded-lg">
+                  <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                  Minhas Compras
+                </.link>
+              <% end %>
             </li>
             <li>
               <%= if @user && @user do %>
@@ -463,8 +465,8 @@ end
   def flash_group(assigns) do
     ~H"""
     <div id={@id}>
-      <.flash kind={:info} title={gettext("Success!")} flash={@flash} />
-      <.flash kind={:error} title={gettext("Error!")} flash={@flash} />
+      <.flash kind={:info} title={gettext("Sucesso!")} flash={@flash} />
+      <.flash kind={:error} title={gettext("Erro!")} flash={@flash} />
       <.flash
         id="client-error"
         kind={:error}
@@ -518,7 +520,7 @@ end
   def simple_form(assigns) do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
-      <div class="mt-10 space-y-8 bg-white">
+      <div class="mt-10 space-y-8 p-8 rounded-lg shadow-lg bg-white">
         {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
           {render_slot(action, f)}
@@ -812,10 +814,10 @@ end
     ~H"""
     <header class={[@actions != [] && "flex items-center justify-between", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8 text-zinc-800">
+        <h1 class="text-4xl font-semibold leading-8 text-white">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
+        <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-500">
           {render_slot(@subtitle)}
         </p>
       </div>

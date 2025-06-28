@@ -6,17 +6,17 @@ defmodule BatchEcommerceWeb.SessionController do
   alias BatchEcommerceWeb.UserAuth
 
   def create(conn, %{"_action" => "registered"} = params) do
-    create(conn, params, "Account created successfully!")
+    create(conn, params, "Conta criada com sucesso!")
   end
 
   def create(conn, %{"_action" => "password_updated"} = params) do
     conn
     |> put_session(:user_return_to, ~p"/users/settings")
-    |> create(params, "Password updated successfully!")
+    |> create(params, "Senha atualizada com sucesso!")
   end
 
   def create(conn, params) do
-    create(conn, params, "Welcome back!")
+    create(conn, params, "Bem-vindo(a) de volta!")
   end
 
   defp create(conn, %{"user" => user_params}, info) do
@@ -28,15 +28,15 @@ defmodule BatchEcommerceWeb.SessionController do
       |> UserAuth.log_in_user(user, user_params)
     else
       conn
-      |> put_flash(:error, "Invalid email or password")
+      |> put_flash(:error, "E-mail ou senha inválidos!")
       |> put_flash(:email, String.slice(email, 0, 160))
-      |> redirect(to: ~p"/api/users/log_in")
+      |> redirect(to: ~p"/login")
     end
   end
 
   def delete(conn, _) do
     conn
-    |> put_flash(:info, "Logged out successfully.")
+    |> put_flash(:info, "Sessão encerrada com sucesso!")
     |> UserAuth.log_out_user()
   end
 end

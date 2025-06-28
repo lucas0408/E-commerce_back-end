@@ -36,6 +36,7 @@ defmodule BatchEcommerce.Accounts do
   """
   def get_user(id), do: Repo.get(User, id) |> Repo.preload([:addresses])
 
+
   @doc """
   Creates a user.
 
@@ -105,6 +106,10 @@ defmodule BatchEcommerce.Accounts do
   """
   def delete_user(%User{} = user) do
     Repo.delete(user)
+  end
+
+  def form_change_user(%User{} = user, attrs \\ %{}) do
+    User.form_changeset(user, attrs)
   end
 
   def insert_change_user(%User{} = user, attrs \\ %{}) do

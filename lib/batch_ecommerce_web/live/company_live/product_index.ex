@@ -7,7 +7,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
 
   @impl true
   def mount(%{"company_id" => company_id}, session, socket) do
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     {:ok, 
      socket
      |> assign(:company_id, company_id)

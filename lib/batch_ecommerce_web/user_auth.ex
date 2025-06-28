@@ -178,24 +178,22 @@ defmodule BatchEcommerceWeb.UserAuth do
     socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
-      with company when not is_nil(company) <- Accounts.get_company_by_user_id(session["user_id"]) do
-        {:cont,
-          socket
-          |> Phoenix.LiveView.assign(:current_user, session["user_id"])
-          |> Phoenix.LiveView.assign(:current_company, company)}
-      else
+      case Accounts.get_company_by_user_id(session["user_id"]) do
+        %{} = company ->
+          {:cont, Phoenix.Component.assign(socket, :current_company, company)}
+        
         nil ->
           IO.inspect(session, label: "Session when company is nil")
-          {:cont,
-          socket}
+          {:halt,
+          socket
+          |> Phoenix.LiveView.put_flash(:error, "Você precisa cadastrar uma empresa para acessar esta área.")
+          |> Phoenix.LiveView.redirect(to: ~p"/cadastro_empresa")}
       end
     else
-      socket =
-        socket
-        |> Phoenix.LiveView.put_flash(:error, "Você precisa fazer login para acessar esta página.")
-        |> Phoenix.LiveView.redirect(to: ~p"/login")
-
-      {:halt, socket}
+      {:halt,
+      socket
+      |> Phoenix.LiveView.put_flash(:error, "Você precisa fazer login para acessar esta página.")
+      |> Phoenix.LiveView.redirect(to: ~p"/login")}
     end
   end
 

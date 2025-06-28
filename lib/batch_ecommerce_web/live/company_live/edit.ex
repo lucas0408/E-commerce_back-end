@@ -4,7 +4,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Edit do
   alias BatchEcommerceWeb.Live.CompanyLive.FormComponent
 
   def mount(%{"id" => id}, session, socket) do
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
     company = Accounts.get_company!(id)
     {:ok, assign(socket, company: company, user: current_user)}

@@ -81,7 +81,6 @@ defmodule BatchEcommerce.MixProject do
       {:ex_machina, "~> 2.8.0", only: :test},
       {:brcpfcnpj, "~> 2.0.1"},
       {:phoenix_swagger, "~> 0.8"},
-      {:joken, "~> 2.5"},
       {:ex_json_schema, "~> 0.5"}
       ]
   end

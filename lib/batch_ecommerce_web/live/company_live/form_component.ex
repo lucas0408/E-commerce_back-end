@@ -19,7 +19,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
         <div class="grid grid-cols-2 gap-x-20 gap-y-7">
           <!-- Linha 1: nome e CNPJ -->
           <.input field={@form[:name]} type="text" label="Nome" />
-          
+
           <%= if @action == :new do %>
             <.input field={@form[:cnpj]} type="text" label="CNPJ" />
           <% else %>
@@ -66,7 +66,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
     """
   end
 
-
+  @impl true
   def update(%{company: company} = assigns, socket) do
     company =
       if Ecto.assoc_loaded?(company.addresses) and not Enum.empty?(company.addresses) do
@@ -86,6 +86,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
   @impl true
   def handle_event("save", %{"company" => company_params}, socket) do
+    IO.puts("ou ta vindo pra ca")
     save_company(socket, socket.assigns.action, company_params)
   end
 
@@ -131,7 +132,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
     {:noreply,
     socket
-    |> assign(:changeset, changeset)  
+    |> assign(:changeset, changeset)
     |> assign(:form, to_form(changeset))}
   end
 

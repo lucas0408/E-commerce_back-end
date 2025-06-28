@@ -271,7 +271,7 @@ defmodule BatchEcommerceWeb.CoreComponents do
 def product_card(assigns) do
   ~H"""
   <div
-    class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+    class="bg-white rounded-lg shadow-md overflow-hidden hover:scale-[1.03] hover:shadow-lg transition duration-300 cursor-pointer"
     phx-click="redirect_to_product"
     phx-value-product-id={@product.id}
   >

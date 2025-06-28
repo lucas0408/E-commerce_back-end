@@ -254,13 +254,13 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
         <.payment_modal selected_payment_method={@selected_payment_method} />
       <% end %>
 
-      <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
+      <div class="grid grid-cols-1 gap-8">
         <!-- Lista de itens do carrinho (2/3 da tela) -->
         <div class="lg:col-span-2">
           <%= if Enum.empty?(@cart_products) do %>
             <.empty_cart_state />
           <% else %>
-            <div class="space-y-6">
+            <div class="space-y-6 lg:grid-cols-3">
               <%= for cart_product <- @cart_products do %>
                 <.cart_item cart_product={cart_product} />
               <% end %>
@@ -292,7 +292,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
       <div class="mt-6">
         <.link
           navigate={~p"/products"}
-          class="inline-flex items-center rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          class="inline-flex items-center rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <.icon name="hero-shopping-bag" class="-ml-0.5 mr-1.5 h-5 w-5" />
           Continuar Comprando

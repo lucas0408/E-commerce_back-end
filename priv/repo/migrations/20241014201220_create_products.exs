@@ -5,6 +5,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateProducts do
     create table(:products) do
       add :name, :string
       add :price, :decimal
+      add :active, :boolean, default: true
       add :stock_quantity, :integer
       add :image_url, :string
       add :description, :string

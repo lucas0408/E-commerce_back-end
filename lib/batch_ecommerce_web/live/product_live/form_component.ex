@@ -6,29 +6,37 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
   @impl true
   def update(%{product: product} = assigns, socket) do
-    changeset = Catalog.change_product(product)
+    # Define o valor padrão como true apenas para novos produtos
+    initial_active = if assigns.action == :new, do: true, else: product.active
+    
+    changeset = 
+      product
+      |> Catalog.change_product()
+      |> Ecto.Changeset.cast(%{active: initial_active}, [:active])
+
     categories = Catalog.list_categories()
-    IO.inspect(product.discount)
+    
     {selected_categories, preco_total} = if assigns.action == :edit do
       {Enum.map(product.categories, &to_string(&1.id)),
-       calculate_total_price(Decimal.to_float(product.price), product.discount)}
+      calculate_total_price(Decimal.to_float(product.price), product.discount)}
     else
       {[], 0}
     end
+
     {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:form, to_form(changeset))
-     |> assign(:changeset, changeset)
-     |> assign(:categories, categories)
-     |> assign(:selected_categories, selected_categories)
-     |> assign(:uploaded_files, [])
-     |> assign(:preco_total, preco_total)
-     |> allow_upload(:image, 
-         accept: ~w(.jpg .jpeg .png .gif),
-         max_entries: 1,
-         max_file_size: 5_000_000
-       )}
+    socket
+    |> assign(assigns)
+    |> assign(:form, to_form(changeset))
+    |> assign(:changeset, changeset)
+    |> assign(:categories, categories)
+    |> assign(:selected_categories, selected_categories)
+    |> assign(:uploaded_files, [])
+    |> assign(:preco_total, preco_total)
+    |> allow_upload(:image, 
+        accept: ~w(.jpg .jpeg .png .gif),
+        max_entries: 1,
+        max_file_size: 5_000_000
+      )}
   end
 
   @impl true
@@ -196,6 +204,17 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                     value={to_string(f[:stock_quantity].value || "")}
                   />
                 </div>
+              </div>
+
+              <div class="flex items-center mt-4">
+                <.input
+                  field={@form[:active]}
+                  type="checkbox"
+                  label="Produto disponível para venda"
+                  checked_value={true}
+                  unchecked_value={false}
+                  class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                />
               </div>
 
               <!-- Linha 3: Descrição -->

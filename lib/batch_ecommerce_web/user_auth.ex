@@ -151,7 +151,6 @@ defmodule BatchEcommerceWeb.UserAuth do
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_current_user(socket, session)
-    IO.inspect(socket, label: "oia ai: ")
 
     if socket.assigns.current_user do
       {:cont, socket}
@@ -176,27 +175,31 @@ defmodule BatchEcommerceWeb.UserAuth do
   end
 
   def on_mount(:require_authenticated_and_has_company, _params, session, socket) do
-    with user <- mount_current_user(socket, session),
-         company when not is_nil(company) <- Accounts.get_company_by_user_id(user.id) do
-      {:cont,
-       socket
-       |> assign(:current_user, user)
-       |> assign(:current_company, company)}
-    else
-      nil ->
-        {:halt,
-         socket
-         |> put_flash(:error, "Você precisa cadastrar uma empresa para acessar esta área.")
-         |> redirect(to: "/cadastro_empresa")}
+    socket = mount_current_user(socket, session)
 
-      _ ->
-        {:halt,
-         socket
-         |> put_flash(:error, "Você precisa estar logado.")
-         |> redirect(to: "/login")}
+    if socket.assigns.current_user do
+      with company when not is_nil(company) <- Accounts.get_company_by_user_id(session["user_id"]) do
+        {:cont,
+          socket
+          |> Phoenix.LiveView.assign(:current_user, session["user_id"])
+          |> Phoenix.LiveView.assign(:current_company, company)}
+      else
+        nil ->
+          IO.inspect(session, label: "Session when company is nil")
+          {:cont,
+          socket}
+      end
+    else
+      socket =
+        socket
+        |> Phoenix.LiveView.put_flash(:error, "Você precisa fazer login para acessar esta página.")
+        |> Phoenix.LiveView.redirect(to: ~p"/login")
+
+      {:halt, socket}
     end
   end
 
+  # Corrigir a função mount_current_user para retornar apenas o usuário
   defp mount_current_user(socket, session) do
     Phoenix.Component.assign_new(socket, :current_user, fn ->
       with token when not is_nil(token) <- session["user_token"],

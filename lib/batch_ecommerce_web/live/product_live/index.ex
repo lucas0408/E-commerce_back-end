@@ -9,7 +9,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Index do
     user_id = Map.get(session, "user_id")
     IO.inspect(session)
     current_user = Accounts.get_user(user_id)
-    {:ok, 
+    {:ok,
       socket
       |> assign_defaults(current_user)
       |> load_products()
@@ -17,10 +17,10 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Index do
   end
 
   defp assign_defaults(socket, current_user) do
-    assign(socket, 
+    assign(socket,
       categories: Catalog.list_categories(),
       selected_categories: [],
-      search_query: "", 
+      search_query: "",
       no_products_message: nil,
       page: 1,
       per_page: 10,
@@ -116,7 +116,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Index do
     <.live_component
       module={BatchEcommerceWeb.Live.HeaderLive.HeaderFull}
       id="header-full"
-      search_query={@search_query} 
+      search_query={@search_query}
       user={@current_user}
     />
     <div class="container mx-auto px-4 py-8">
@@ -160,7 +160,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Index do
                   <button
                     phx-click="paginate"
                     phx-value-page={page}
-                    class={"px-4 py-2 border #{if page == @meta.page_number, do: "bg-indigo-600 text-white", else: "bg-white text-gray-700 hover:bg-gray-50"}"}
+                    class={"px-4 py-2 border #{if page == @meta.page_number, do: "bg-indigo-600 text-white", else: "bg-white text-indigo-600 hover:bg-gray-100"}"}
                   >
                     <%= page %>
                   </button>

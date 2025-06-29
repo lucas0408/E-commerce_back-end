@@ -111,22 +111,22 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
     ~H"""
 
       <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
-    <div class="bg-white">
-      <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <div class="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+    <div class="bg-white mt-[1px]">
+      <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
+        <div class="lg:grid lg:grid-cols-[3fr_1fr] lg:items-start lg:gap-x-8">
           <!-- Coluna da esquerda - Imagem e informações básicas -->
           <div class="flex flex-col">
             <!-- Nome do produto -->
-            <.header class="mb-6">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4 tracking-tight">
               <%= @product.name %>
-            </.header>
+            </h1>
 
             <!-- Imagem do produto -->
-            <div class="aspect-h-1 aspect-w-1 w-full">
+            <div class="relative w-full aspect-[4/3] bg-gray-100 sm:rounded-lg overflow-hidden">
               <img
                 src={@product.filename}
                 alt={@product.name}
-                class="h-full w-full object-cover object-center sm:rounded-lg"
+                class="absolute top-0 left-0 w-full h-full object-contain"
               />
             </div>
 
@@ -184,8 +184,8 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                 <%= if get_discount(@product.discount) > 0 do %>
                   <!-- Preço original riscado -->
                   <div class="flex items-center space-x-2">
-                    <span class="text-sm text-gray-500">De:</span>
-                    <span class="text-lg text-gray-500 line-through">
+                    <span class="text-sm text-gray-600">De:</span>
+                    <span class="text-lg text-red-600 line-through">
                       R$ <%= format_price(@product.price) %>
                     </span>
                   </div>
@@ -232,6 +232,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                     <.button
                       type="button"
                       phx-click="update_quantity"
+                      class="bg-indigo-600 hover:bg-indigo-800"
                       phx-value-quantity={@quantity - 1}
                       disabled={@quantity <= 1}
                     >
@@ -251,6 +252,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                     <.button
                       type="button"
                       phx-click="update_quantity"
+                      class="bg-indigo-600 hover:bg-indigo-800"
                       phx-value-quantity={@quantity + 1}
                       disabled={@quantity >= (@product.stock_quantity || 0)}
                     >
@@ -263,7 +265,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                 <div class="mt-8">
                   <.button
                     type="button"
-                    class="w-full"
+                    class="w-full bg-green-600 hover:bg-green-800"
                     phx-click="add_to_cart"
                     disabled={@loading}
                   >

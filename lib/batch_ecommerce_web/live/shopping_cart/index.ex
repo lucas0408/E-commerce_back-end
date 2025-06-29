@@ -378,7 +378,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
                   R$ <%= format_decimal(discounted_price) %>
                 </p>
               <% else %>
-                <p class="text-lg font-bold text-gray-900">
+                <p class="text-lg font-bold text-green-600">
                   R$ <%= format_decimal(price) %>
                 </p>
               <% end %>
@@ -407,7 +407,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
   # Componente para resumo do pedido
   defp order_summary(assigns) do
     ~H"""
-    <div class="sticky top-4">
+    <div class="sticky top-4 ml-8">
       <div class="rounded-lg bg-gray-50 p-6">
         <h2 class="text-lg font-semibold text-gray-900 mb-6">Resumo do Pedido</h2>
 
@@ -444,7 +444,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
         </div>
 
     <!-- Botões de ação -->
-        <div class="mt-6 space-y-3">
+        <div class="mt-6 space-y-3 px-10">
           <%= if @shipping_cost == Decimal.new("0") do %>
             <.button
               phx-click="toggle_address_modal"
@@ -464,10 +464,10 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
           <% end %>
           <.link
             navigate={~p"/products"}
-            class="block w-full text-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            class="block w-full text-center rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-50  shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 bg-indigo-600 hover:bg-indigo-800 focus:ring-offset-2"
           >
             <.icon name="hero-arrow-left" class="mr-1.5 h-4 w-4 inline" />
-            Continuar Comprando
+           + Continuar Comprando
           </.link>
         </div>
       </div>
@@ -537,7 +537,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
         <div class="mt-6 flex justify-between">
           <.link
             navigate={~p"/address/new"}
-            class="inline-flex items-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-500"
+            class="inline-flex items-center h-[40px] rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-500 shadow-sm hover:scale-105 transition-transform duration-300"
           >
             <.icon name="hero-plus" class="-ml-1 mr-2 h-5 w-5" />
             Adicionar novo endereço
@@ -546,7 +546,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
           <.button
             phx-click="confirm_address"
             disabled={is_nil(@selected_address_id)}
-            class="inline-flex items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-500 disabled:bg-gray-400"
+            class="inline-flex h-[40px] items-center rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white shadow-none hover:bg-green-800"
           >
             Confirmar Endereço
           </.button>

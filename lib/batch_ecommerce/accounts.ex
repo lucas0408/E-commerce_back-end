@@ -8,6 +8,7 @@ defmodule BatchEcommerce.Accounts do
   alias BatchEcommerce.Repo
 
   alias BatchEcommerce.Accounts.User
+  alias BatchEcommerce.Catalog.Minio
 
   @doc """
   Returns the list of users.
@@ -162,7 +163,7 @@ defmodule BatchEcommerce.Accounts do
     companies
     |> Repo.preload(:addresses)
   end
-  
+
   def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id)
 
 
@@ -181,14 +182,16 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def create_company(attrs \\ %{}) do
-    %Company{}
-    |> Company.changeset(attrs)
-    |> Repo.insert()
-    |> case do
-      {:ok, company} ->
-        IO.inspect(company, label: "company: ")
-        {:ok, companies_preload_address(company)}
+    inserted_company =
+      %Company{}
+      |> Company.changeset(attrs)
+      |> Repo.insert()
 
+    with {:ok, company} <- inserted_company,
+        {:ok, _msg} <- Minio.create_public_bucket(company.name) do
+        IO.puts("ta indo")
+        {:ok, companies_preload_address(company)}
+    else
       {:error, changeset} ->
         {:error, changeset}
     end

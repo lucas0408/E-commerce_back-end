@@ -33,7 +33,7 @@ defmodule BatchEcommerce.Catalog.Minio do
         {:ok, "Bucket #{bucket_name} criado e tornado público."}
 
       {:error, {:http_error, 409, _}} ->
-        {:ok, "Bucket #{bucket_name} já existe."}
+        {:error, "Bucket #{bucket_name} já existe."}
 
       {:error, reason} ->
         {:error, reason}

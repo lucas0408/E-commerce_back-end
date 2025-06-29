@@ -16,8 +16,6 @@ defmodule BatchEcommerceWeb.CoreComponents do
   """
   use Phoenix.Component
   use Gettext, backend: BatchEcommerceWeb.Gettext
-  import Phoenix.HTML
-  import Phoenix.LiveView.Helpers
 
   alias Phoenix.LiveView.JS
 
@@ -482,9 +480,9 @@ end
         <!-- Botão de Logout (apenas para usuários logados) -->
         <%= if @user do %>
           <div class="p-4 border-t border-gray-200">
-            <.link 
-              href="/logout" 
-              method="delete" 
+            <.link
+              href="/logout"
+              method="delete"
               class="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg"
             >
               <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">

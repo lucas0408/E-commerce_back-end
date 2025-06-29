@@ -221,6 +221,16 @@ end
     |> Repo.all()
   end
 
+  def return_stock(return_quantity, product_id) when return_quantity > 0 do
+    product = get_product(product_id)
+
+    IO.inspect(product.stock_quantity)
+    
+    new_stock = product.stock_quantity + return_quantity
+    
+    update_product(product, %{stock_quantity: new_stock})
+  end
+
   @doc """
   Creates a product.
 

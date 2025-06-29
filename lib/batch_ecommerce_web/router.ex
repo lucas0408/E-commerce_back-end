@@ -75,7 +75,7 @@ defmodule BatchEcommerceWeb.Router do
       live "/address/new", AddressLive.Form, :new
       live "/cart_products", ShoppingCart.Index, :index
       live "/orders", OrderLive.Index, :index
-      live "/orders/:order_id", OrderLive.Show, :show
+      live "/orders/:order_id", OrderLive.ShowUser, :show
     end
   end
 
@@ -90,6 +90,7 @@ defmodule BatchEcommerceWeb.Router do
       live "/:company_id/products", CompanyLive.ProductIndex, :product_index
       live "/:company_id/orders", CompanyLive.OrderIndex, :order_index
       live "/:company_id/orders/:order_id", OrderLive.ShowCompany, :order_index
+      #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
     end
   end
 

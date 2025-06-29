@@ -1,29 +1,9 @@
-defmodule BatchEcommerceWeb.Live.OrderLive.Show do
-  use BatchEcommerceWeb, :live_view
-  alias BatchEcommerce.Orders
-  alias BatchEcommerce.Accounts
+# lib/batch_ecommerce_web/live/order_live/order_main_content.ex
+defmodule BatchEcommerceWeb.Live.OrderLive.OrderMainContent do
+  use BatchEcommerceWeb, :live_component
 
-  @impl true
-  def mount(%{"order_id" => order_id}, session, socket) do
-    user_id = Map.get(session, "user_id")
-    current_user = Accounts.get_user(user_id)
-
-    order =
-      order_id
-      |> Orders.get_order_product()
-
-    
-    socket = 
-      socket
-      |> assign(order: order)
-      |> assign(:current_user, current_user)
-    {:ok, socket}
-  end
-
-  @impl true
   def render(assigns) do
     ~H"""
-    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart} user={@current_user} id="HeaderWithCart"/>
     <div class="max-w-4xl mx-auto p-6">
       <.header>
         Acompanhamento do Pedido #<%= @order.id %>
@@ -64,7 +44,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
           </div>
           <div>
             <p class="text-sm text-gray-500">Valor Total</p>
-            <p class="font-medium">R$   <%= Decimal.round(@order.price, 2) %></p>
+            <p class="font-medium">R$ <%= Decimal.round(@order.price, 2) %></p>
           </div>
           <div>
             <p class="text-sm text-gray-500">Status Atual</p>
@@ -72,67 +52,14 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
           </div>
         </div>
 
-  <!-- Mensagem de cancelamento -->
         <%= if @order.status == "Cancelado" do %>
           <div class="mt-4 p-4 bg-red-100 text-red-700 rounded-lg">
             Pedido cancelado. Entre em contato com o suporte se precisar de ajuda.
           </div>
         <% end %>
       </div>
-
-      <!-- Action Buttons (só aparecem se NÃO for "Entregue" ou "Cancelado") -->
-      <%= if @order.status not in ["Entregue", "Cancelado"] do %>
-        <div class="flex justify-end space-x-4">
-          <!-- Botão de Cancelar (sempre visível, exceto para "Entregue") -->
-          <.button
-            phx-click="cancel_order"
-            phx-value-order_product_id={@order.id}
-            phx-value-order_id={@order.order_id}
-            phx-value-price={@order.price}
-            class="bg-red-600 hover:bg-red-700"
-          >
-            Cancelar Pedido
-          </.button>
-
-          <!-- Botão de Confirmar Entrega (só aparece se status for "A Caminho") -->
-          <%= if @order.status == "A Caminho" do %>
-            <.button
-              phx-click="confirm_delivery"
-              phx-value-order_id={@order.id}
-              class="bg-green-600 hover:bg-green-700"
-            >
-              Confirmar Entrega
-            </.button>
-          <% end %>
-        </div>
-      <% end %>
     </div>
     """
-  end
-
-  @impl true
-  def handle_event("cancel_order", %{"order_id" => order_id, "order_product_id" => order_product_id, "price" => price}, socket) do
-    order = Orders.get_order(order_id)
-    order_product = Orders.update_order_product_status(order_product_id, "Cancelado")
-    Orders.update_order(order_id, %{
-      total_price: Decimal.sub(order.total_price, price),
-      status_payment: "Estornado"
-    })
-    
-    {:noreply, socket
-      |> assign(order: order_product)}
-  end
-
-  def handle_event("confirm_delivery", %{"order_id" => order_id}, socket) do
-    order = Orders.update_order_product_status(order_id, "Entregue")
-    {:noreply, socket
-      |> assign(order: order)}
-  end
-
-  def format_date(datetime) do
-    datetime
-    |> DateTime.add(-3, :hour)
-    |> Calendar.strftime("%d/%m/%Y às %H:%M")
   end
 
   defp status_active?(current_status, index) do
@@ -149,5 +76,11 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
       "Entregue" -> "hero-check-circle"
       _ -> "hero-question-mark-circle"
     end
+  end
+
+  defp format_date(datetime) do
+    datetime
+    |> DateTime.add(-3, :hour)
+    |> Calendar.strftime("%d/%m/%Y às %H:%M")
   end
 end

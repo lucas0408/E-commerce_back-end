@@ -3,12 +3,12 @@ defmodule BatchEcommerce.Orders do
   The Orders context.
   """
 
-  import BatchEcommerce.ShoppingCart, only: [list_cart_products: 0]
   import Ecto.Query, warn: false
   alias BatchEcommerce.Repo
   alias BatchEcommerce.Order.Order
   alias BatchEcommerce.Order.OrderProduct
 
+  #review
   def complete_order(user_id, shipping_cost) do
     cart_products = BatchEcommerce.ShoppingCart.get_cart_user(user_id)
 
@@ -16,7 +16,7 @@ defmodule BatchEcommerce.Orders do
       %Order{}
       |> Order.changeset(%{
         user_id: user_id,
-        status_payment: "Peendente",
+        status_payment: "Pendente",
         total_price: Decimal.add(BatchEcommerce.ShoppingCart.total_price_cart_product(cart_products), shipping_cost)
       })
       |>Repo.insert!()
@@ -31,20 +31,20 @@ defmodule BatchEcommerce.Orders do
           quantity: item.quantity,
           order_id: order.id,
           status: "Preparando Pedido",
-        
+
         })
         |>Repo.insert!()
       end)
 
 
       case BatchEcommerce.ShoppingCart.prune_cart_items(user_id) do
-        {:ok, _} -> 
+        {:ok, _} ->
           {:ok, Repo.preload(order, order_products: [:product]) |> Repo.preload(user: [:addresses])}
-        error -> 
-          error
+        error ->
+          {:error, error}
       end
   end
-  
+
   def list_company_orders_paginated(company_id, page, per_page, opts \\ []) do
     status = opts[:status] || ""
     customer = opts[:customer] || ""
@@ -66,7 +66,7 @@ defmodule BatchEcommerce.Orders do
       order_by: [desc: op.inserted_at]
 
     # Aplicar filtros
-    query = 
+    query =
       if status != "" do
         from [op, p, o, u] in base_query,
         where: op.status == ^status
@@ -90,7 +90,7 @@ defmodule BatchEcommerce.Orders do
     case Repo.get(Order, order_id) do
       nil ->
         {:error, :not_found}
-        
+
       order ->
         order
         |> Order.changeset(attrs)
@@ -102,7 +102,7 @@ defmodule BatchEcommerce.Orders do
     case Repo.get(OrderProduct, order_product_id) do
       nil ->
         {:error, :not_found}
-        
+
       order_product ->
         if new_status == "Cancelado" do
           BatchEcommerce.Catalog.return_stock(order_product.quantity, order_product.product_id)

@@ -1,11 +1,11 @@
 defmodule BatchEcommerce.Factory do
   use ExMachina.Ecto, repo: BatchEcommerce.Repo
   use BatchEcommerce.Factories.UserFactory
-  use BatchEcommerce.Factories.AddressFactory
-  use BatchEcommerce.Factories.CompanyFactory
+  #use BatchEcommerce.Factories.AddressFactory
+  #use BatchEcommerce.Factories.CompanyFactory
   use BatchEcommerce.Factories.CategoryFactory
   use BatchEcommerce.Factories.ProductFactory
-  use BatchEcommerce.Factories.UserFactory
+  #use BatchEcommerce.Factories.UserFactory
   use BatchEcommerce.Factories.CartProductFactory
   use BatchEcommerce.Factories.OrderFactory
 

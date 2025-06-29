@@ -1,7 +1,6 @@
 defmodule BatchEcommerceWeb.Live.UserLive.Show do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Accounts
-  import BatchEcommerceWeb.CoreComponents
 
   @impl true
   def mount(%{"id" => id}, _session, socket) do
@@ -9,6 +8,8 @@ defmodule BatchEcommerceWeb.Live.UserLive.Show do
     {:ok, assign(socket, user: user)}
   end
 
+  #review
+  @impl true
   def render(assigns) do
     ~H"""
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>

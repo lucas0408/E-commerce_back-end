@@ -6,8 +6,8 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.Address
 
-  @ufs ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", 
-    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", 
+  @ufs ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA",
+    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN",
     "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
 
   @impl true
@@ -59,13 +59,12 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
                 <div class="flex gap-4">
                   <.input field={af[:city]} label="Cidade" />
                   <div class="max-w-[100px]">
-                    <.input 
-                      field={af[:uf]} 
-                      label="Estado" 
-                      type="select" 
-                      options={@ufs} 
-                      selected={af[:uf].value || ""} 
-                      class="uppercase" 
+                    <.input
+                      field={af[:uf]}
+                      label="Estado"
+                      type="select"
+                      options={@ufs}
+                      class="uppercase"
                       prompt="Selecione"
                     />
                   </div>

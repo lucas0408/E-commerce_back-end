@@ -145,7 +145,7 @@ defmodule BatchEcommerce.Accounts do
   end
 
   def user_preload_company(user) do
-    user = Repo.preload(user, :company)
+    Repo.preload(user, :company)
   end
 
   alias BatchEcommerce.Accounts.Company
@@ -183,14 +183,12 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def create_company(attrs \\ %{}) do
-    inserted_company =
+    changeset =
       %Company{}
       |> Company.changeset(attrs)
-      |> Repo.insert()
 
-    with {:ok, company} <- inserted_company,
+    with {:ok, company} <- Repo.insert(changeset),
         {:ok, _msg} <- Minio.create_public_bucket(company.name) do
-        IO.puts("ta indo")
         {:ok, companies_preload_address(company)}
     else
       {:error, changeset} ->

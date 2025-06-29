@@ -7,9 +7,9 @@ defmodule BatchEcommerce.MinioFixtures do
     # }
   end
 
-  defp create_temp_file do
-    path = Path.join(System.tmp_dir!(), "test_#{:rand.uniform(1000)}.jpg")
-    File.write!(path, "fake image content")
-    path
-  end
+  # defp create_temp_file do
+  #   path = Path.join(System.tmp_dir!(), "test_#{:rand.uniform(1000)}.jpg")
+  #   File.write!(path, "fake image content")
+  #   path
+  # end
 end

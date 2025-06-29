@@ -33,6 +33,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
     Catalog.get_product_rating(product_id)
   end
 
+  @impl true
   def render(assigns) do
     ~H"""
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>

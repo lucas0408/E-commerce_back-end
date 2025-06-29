@@ -7,7 +7,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
   @impl true
   def update(%{product: product} = assigns, socket) do
-    # Define o valor padrão como true apenas para novos produtos
     initial_active = if assigns.action == :new, do: true, else: product.active
 
     changeset =
@@ -155,6 +154,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     end
   end
 
+  #review
   @impl true
   def render(assigns) do
     ~H"""
@@ -405,7 +405,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     </div>
     """
   end
-
 
   # Funções auxiliares
   defp parse_decimal(value) when is_binary(value) do

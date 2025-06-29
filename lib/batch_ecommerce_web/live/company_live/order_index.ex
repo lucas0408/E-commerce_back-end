@@ -1,7 +1,6 @@
 defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
   use BatchEcommerceWeb, :live_view
   alias BatchEcommerce.Orders
-  alias BatchEcommerce.Catalog
   alias BatchEcommerce.Accounts
 
   @per_page 4
@@ -223,7 +222,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
                     R$ <%= order_product.price |> Decimal.round(2) |> Decimal.to_string(:normal) %>
                   </td>
                   <td class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <.link
                     <.link
                       patch={~p"/companies/#{@company_id}/orders/#{order_product.id}"}
                       class="text-indigo-600 hover:text-indigo-900"

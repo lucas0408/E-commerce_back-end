@@ -1,7 +1,5 @@
 defmodule BatchEcommerceWeb.UserLoginLive do
 
-  import BatchEcommerceWeb.Live.HeaderLive.HeaderBase
-
   use BatchEcommerceWeb, :live_view
 
   def render(assigns) do

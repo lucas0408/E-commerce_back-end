@@ -29,25 +29,19 @@ defmodule BatchEcommerceWeb.Router do
   scope "/", BatchEcommerceWeb do
     pipe_through :browser
 
-    post "/login", SessionController, :create #nao migrar
+    post "/login", SessionController, :create
     delete "/logout", SessionController, :delete
-    #resources "/users", UserController, only: [:create, :show, :index] ---- migrado
-    #resources "/products", ProductController, only: [:index, :show] ---- migrado
-    resources "/categories", CategoryController, only: [:index, :show] #ok
-    #resources "/companies", CompanyController, only: [:index, :show] #ok
   end
 
   #scope para usuários logados tem que migrar pro liveview
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth]
 
-    resources "/users", UserController, only: [:update, :delete] 
-    post "/upload", UploadController, :create 
-    resources "/cart_products", CartProductController 
+    resources "/users", UserController, only: [:update, :delete]
+    resources "/cart_products", CartProductController
     #TODO: revisar action abaixo
-    get "/cart_products/user/:user_id", CartProductController, :get_by_user 
-    resources "/orders", OrderController, only: [:create, :show, :index] 
-    post "/companies", CompanyController, :create
+    get "/cart_products/user/:user_id", CartProductController, :get_by_user
+    resources "/orders", OrderController, only: [:create, :show, :index]
   end
 
   scope "/", BatchEcommerceWeb do
@@ -66,7 +60,6 @@ defmodule BatchEcommerceWeb.Router do
       on_mount: [{BatchEcommerceWeb.UserAuth, :ensure_authenticated}] do
       live "/users", UserLive.Index, :index
       live "/users/:id/edit", UserLive.Edit, :edit
-      live "/products", ProductLive.Index, :index
       live "/products/new", ProductLive.New, :new
       live "/products/:product_id", ProductLive.Show, :edit
       live "/products/:product_id/edit", ProductLive.Edit, :edit
@@ -97,15 +90,12 @@ defmodule BatchEcommerceWeb.Router do
   #scope de api que tem que ser migrado
   scope "/api", BatchEcommerceWeb do
     pipe_through [:api, :auth, :ensure_auth]
-    post "/upload", UploadController, :create
     resources "/users", UserController, except: [:create, :show, :new, :edit]
-    #resources "/products", ProductController, except: [:index, :show, :new, :edit]
     resources "/categories", CategoryController, except: [:new, :index, :edit]
     resources "/cart_products", CartProductController
     get "/cart_products/user/:user_id", CartProductController, :get_by_user
     resources "/orders", OrderController, only: [:create, :show, :index]
     get "/orders/export-stream", OrderController, :export_stream
-    resources "/companies", CompanyController
   end
 
   scope "/api/swagger" do

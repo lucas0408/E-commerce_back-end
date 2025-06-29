@@ -18,7 +18,7 @@ defmodule BatchEcommerceWeb.ProductController do
       {:ok, product} ->
         conn
         |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/products/#{product}")
+        #|> put_resp_header("location", ~p"/api/products/#{product}")
         |> render(:show, product: product)
 
       {:error, %Ecto.Changeset{} = changeset} ->

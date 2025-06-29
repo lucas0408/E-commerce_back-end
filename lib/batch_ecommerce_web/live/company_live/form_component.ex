@@ -1,7 +1,7 @@
 defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
   use BatchEcommerceWeb, :live_component
+
   alias BatchEcommerce.Accounts
-  alias BatchEcommerce.Accounts.Company
   alias BatchEcommerce.Accounts.Address
 
   @impl true
@@ -9,7 +9,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
     ~H"""
     <div class="max-w-5xl mx-auto">
       <.form
-        :let={f}
         for={@form}
         id="company-form"
         phx-target={@myself}
@@ -90,6 +89,19 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
     save_company(socket, socket.assigns.action, company_params)
   end
 
+  @impl true
+  def handle_event("validate", %{"company" => company_params}, socket) do
+    changeset =
+      socket.assigns.company
+      |> Accounts.change_company(company_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply,
+    socket
+    |> assign(:changeset, changeset)
+    |> assign(:form, to_form(changeset))}
+  end
+
   defp save_company(socket, :edit, company_params) do
     case Accounts.update_company(socket.assigns.company, company_params) do
       {:ok, company} ->
@@ -121,25 +133,12 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
-
-      {:error, any} ->
+      {:error, _any} ->
         {:noreply,
         socket
         |> put_flash(:warning, "Error to conect with Minio")
         |> push_navigate(to: socket.assigns.patch)}
     end
-  end
-
-  def handle_event("validate", %{"company" => company_params}, socket) do
-    changeset =
-      socket.assigns.company
-      |> Accounts.change_company(company_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply,
-    socket
-    |> assign(:changeset, changeset)
-    |> assign(:form, to_form(changeset))}
   end
 
   defp notify_parent(msg), do: send(self(), {__MODULE__, msg})

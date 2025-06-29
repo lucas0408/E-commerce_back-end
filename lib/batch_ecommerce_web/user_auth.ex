@@ -29,7 +29,7 @@ defmodule BatchEcommerceWeb.UserAuth do
   """
   def log_in_user(conn, user, params \\ %{}) do
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
-    user_return_to = get_session(conn, :user_return_to)
+    #user_return_to = get_session(conn, :user_return_to)
 
 
     conn
@@ -181,7 +181,7 @@ defmodule BatchEcommerceWeb.UserAuth do
       case Accounts.get_company_by_user_id(session["user_id"]) do
         %{} = company ->
           {:cont, Phoenix.Component.assign(socket, :current_company, company)}
-        
+
         nil ->
           IO.inspect(session, label: "Session when company is nil")
           {:cont,

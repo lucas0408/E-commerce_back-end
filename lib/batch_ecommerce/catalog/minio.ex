@@ -46,16 +46,13 @@ defmodule BatchEcommerce.Catalog.Minio do
 
     case create_request do
       {:ok, _response} ->
-        IO.puts("ta indoooooooo")
         apply_public_policy(parsed_bucket_name)
         {:ok, "Bucket #{parsed_bucket_name} criado e tornado público."}
 
       {:error, {:http_error, 409, _}} ->
-        IO.puts("ai meu deus")
         {:error, "Bucket #{parsed_bucket_name} já existe."}
 
       {:error, reason} ->
-        IO.inspect(reason, label: "oia essa porra: ")
         {:error, reason}
     end
   end

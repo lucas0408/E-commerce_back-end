@@ -185,7 +185,6 @@ defmodule BatchEcommerce.Accounts do
   def create_company(attrs \\ %{}) do
     minio_bucket_name = normalize_bucket_name(attrs["name"])
     attrs = Map.put(attrs, "minio_bucket_name", minio_bucket_name)
-    IO.inspect(attrs, label: "como esta aqui: ")
 
     changeset =
       %Company{}
@@ -193,7 +192,6 @@ defmodule BatchEcommerce.Accounts do
 
     with {:ok, company} <- Repo.insert(changeset),
          {:ok, _msg} <- Minio.create_public_bucket(company.name) do
-          IO.puts("olha, foi em")
         {:ok, companies_preload_address(company)}
     else
       {:error, changeset} ->

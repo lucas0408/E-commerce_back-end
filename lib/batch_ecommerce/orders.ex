@@ -23,6 +23,7 @@ defmodule BatchEcommerce.Orders do
 
     order_products =
       Enum.map(cart_products, fn item ->
+        BatchEcommerce.Catalog.remove_stock(item.quantity, item.product_id)
         %OrderProduct{}
         |> OrderProduct.changeset(%{
           product_id: item.product_id,
@@ -34,6 +35,7 @@ defmodule BatchEcommerce.Orders do
         })
         |>Repo.insert!()
       end)
+
 
       case BatchEcommerce.ShoppingCart.prune_cart_items(user_id) do
         {:ok, _} -> 
@@ -102,6 +104,9 @@ defmodule BatchEcommerce.Orders do
         {:error, :not_found}
         
       order_product ->
+        if new_status == "Cancelado" do
+          BatchEcommerce.Catalog.return_stock(order_product.quantity, order_product.product_id)
+        end
         order_product
         |> OrderProduct.changeset(%{status: new_status})
         |> Repo.update()
@@ -113,6 +118,7 @@ defmodule BatchEcommerce.Orders do
           end
     end
   end
+
 
   def list_orders do
     Repo.all(OrderProduct) |> Repo.preload(:product)

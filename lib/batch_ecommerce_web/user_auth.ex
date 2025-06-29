@@ -184,10 +184,9 @@ defmodule BatchEcommerceWeb.UserAuth do
         
         nil ->
           IO.inspect(session, label: "Session when company is nil")
-          {:halt,
+          {:cont,
           socket
-          |> Phoenix.LiveView.put_flash(:error, "Você precisa cadastrar uma empresa para acessar esta área.")
-          |> Phoenix.LiveView.redirect(to: ~p"/cadastro_empresa")}
+          |> Phoenix.LiveView.put_flash(:error, "Você precisa cadastrar uma empresa para acessar esta área.")}
       end
     else
       {:halt,

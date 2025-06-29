@@ -6,6 +6,10 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
   alias BatchEcommerce.Accounts
   alias BatchEcommerce.Accounts.Address
 
+  @ufs ["AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", 
+    "MT", "MS", "MG", "PA", "PB", "PR", "PE", "PI", "RJ", "RN", 
+    "RS", "RO", "RR", "SC", "SP", "SE", "TO"]
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -54,8 +58,16 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
                   <.input field={af[:district]} label="Bairro" />
                 <div class="flex gap-4">
                   <.input field={af[:city]} label="Cidade" />
-                  <div class="max-w-[50px]">
-                    <.input field={af[:uf]} label="Estado" class="uppercase" maxlength="2" />
+                  <div class="max-w-[100px]">
+                    <.input 
+                      field={af[:uf]} 
+                      label="Estado" 
+                      type="select" 
+                      options={@ufs} 
+                      selected={af[:uf].value || ""} 
+                      class="uppercase" 
+                      prompt="Selecione"
+                    />
                   </div>
                 </div>
               </div>
@@ -64,7 +76,10 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
 
           <div class="flex justify-center pt-6">
             <.button type="submit" class="bg-indigo-600 min-w-[300px] hover:bg-indigo-800 px-6 py-2 text-white font-semibold rounded-lg shadow-md">
-              Cadastrar
+              <%= case @action do %>
+                <% :edit -> %>Atualizar Cadastro
+                <% :new -> %>Cadastrar
+              <% end %>
             </.button>
           </div>
         </.form>
@@ -88,6 +103,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
     |> assign(assigns)
     |> assign(:changeset, changeset)
     |> assign(:action, action)
+    |> assign(:ufs, @ufs)
     |> assign(:form, to_form(changeset))}
   end
 

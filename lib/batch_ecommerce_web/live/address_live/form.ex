@@ -9,7 +9,7 @@ defmodule BatchEcommerceWeb.Live.AddressLive.Form do
 
   @impl true
   def mount(_params, session, socket) do
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
     uf_options = Enum.map(@ufs, &{&1, &1})
     

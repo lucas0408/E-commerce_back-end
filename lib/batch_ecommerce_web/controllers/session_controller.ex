@@ -38,5 +38,6 @@ defmodule BatchEcommerceWeb.SessionController do
     conn
     |> put_flash(:info, "Sessão encerrada com sucesso!")
     |> UserAuth.log_out_user()
+    |> redirect(to: "/") # Recomendo adicionar um redirect após o logout
   end
 end

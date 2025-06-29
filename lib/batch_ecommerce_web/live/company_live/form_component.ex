@@ -121,6 +121,12 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
+      
+      {:error, any} ->
+        {:noreply,
+        socket
+        |> put_flash(:warning, "Error to conect with Minio")
+        |> push_navigate(to: socket.assigns.patch)}
     end
   end
 

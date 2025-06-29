@@ -231,6 +231,16 @@ end
     update_product(product, %{stock_quantity: new_stock})
   end
 
+  def remove_stock(add_quantity, product_id) when add_quantity > 0 do
+    product = get_product(product_id)
+
+    IO.inspect(product.stock_quantity)
+    
+    new_stock = product.stock_quantity - add_quantity
+    
+    update_product(product, %{stock_quantity: new_stock})
+  end
+
   @doc """
   Creates a product.
 

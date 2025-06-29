@@ -143,7 +143,7 @@ products = [
     price: Decimal.new("3499.99"),
     description: "Celular potente",
     stock_quantity: 50,
-    sales_quantity: 15,
+    sales_quantity: 1,
     company_id: company.id,
     image_url: "https://example.com/images/galaxy-s21.jpg",
     discount: 12
@@ -153,7 +153,7 @@ products = [
     price: Decimal.new("59.90"),
     stock_quantity: 200,
     description: "Camiseta grande",
-    sales_quantity: 74,
+    sales_quantity: 3,
     company_id: company.id,
     image_url: "https://example.com/images/camiseta.jpg",
     discount: 0
@@ -163,7 +163,7 @@ products = [
     price: Decimal.new("89.90"),
     description: "Ótimo livro",
     stock_quantity: 30,
-    sales_quantity: 5,
+    sales_quantity: 1,
     company_id: company.id,
     image_url: "https://example.com/images/lotr.jpg",
     discount: 8
@@ -173,7 +173,7 @@ products = [
     price: Decimal.new("129.90"),
     description: "Luminária fluorescente",
     stock_quantity: 45,
-    sales_quantity: 12,
+    sales_quantity: 2,
     company_id: company.id,
     image_url: "https://example.com/images/luminaria.jpg",
     discount: 18
@@ -184,7 +184,7 @@ products = [
     description: "Bola redonda",
     stock_quantity: 100,
     company_id: company.id,
-    sales_quantity: 98,
+    sales_quantity: 1,
     image_url: "https://example.com/images/bola.jpg",
     discount: 35
   },
@@ -194,7 +194,7 @@ products = [
     description: "Jogo bom",
     stock_quantity: 25,
     company_id: company.id,
-    sales_quantity: 45,
+    sales_quantity: 1,
     image_url: "https://example.com/images/lego.jpg",
     discount: 22
   },
@@ -203,7 +203,7 @@ products = [
     price: Decimal.new("2799.99"),
     description: "Laptop para trabalho e estudos",
     stock_quantity: 35,
-    sales_quantity: 28,
+    sales_quantity: 1,
     company_id: company.id,
     image_url: "https://example.com/images/notebook-dell.jpg",
     discount: 15
@@ -213,7 +213,7 @@ products = [
     price: Decimal.new("349.90"),
     description: "Tênis esportivo confortável",
     stock_quantity: 80,
-    sales_quantity: 67,
+    sales_quantity: 1,
     company_id: company.id,
     image_url: "https://example.com/images/nike-air-max.jpg",
     discount: 25
@@ -223,7 +223,7 @@ products = [
     price: Decimal.new("199.90"),
     description: "Cafeteira automática 12 xícaras",
     stock_quantity: 40,
-    sales_quantity: 31,
+    sales_quantity: 1,
     company_id: company.id,
     image_url: "https://example.com/images/cafeteira.jpg",
     discount: 10
@@ -233,7 +233,7 @@ products = [
     price: Decimal.new("179.90"),
     description: "Fone sem fio com cancelamento de ruído",
     stock_quantity: 65,
-    sales_quantity: 52,
+    sales_quantity: 1,
     company_id: company.id,
     image_url: "https://example.com/images/fone-bluetooth.jpg",
     discount: 20
@@ -243,7 +243,7 @@ products = [
     price: Decimal.new("89.90"),
     description: "Mochila resistente com vários compartimentos",
     stock_quantity: 120,
-    sales_quantity: 85,
+    sales_quantity: 2,
     company_id: company.id,
     image_url: "https://example.com/images/mochila.jpg",
     discount: 5
@@ -253,7 +253,7 @@ products = [
     price: Decimal.new("249.90"),
     description: "Panela elétrica multifuncional 6L",
     stock_quantity: 30,
-    sales_quantity: 22,
+    sales_quantity: 1,
     company_id: company.id,
     image_url: "https://example.com/images/panela-eletrica.jpg",
     discount: 30

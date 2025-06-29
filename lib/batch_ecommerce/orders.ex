@@ -23,6 +23,7 @@ defmodule BatchEcommerce.Orders do
 
     order_products =
       Enum.map(cart_products, fn item ->
+        BatchEcommerce.Catalog.remove_stock(item.quantity, item.product_id)
         %OrderProduct{}
         |> OrderProduct.changeset(%{
           product_id: item.product_id,
@@ -34,6 +35,7 @@ defmodule BatchEcommerce.Orders do
         })
         |>Repo.insert!()
       end)
+
 
       case BatchEcommerce.ShoppingCart.prune_cart_items(user_id) do
         {:ok, _} -> 

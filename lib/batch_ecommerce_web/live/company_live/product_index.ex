@@ -134,6 +134,9 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
         <:col :let={product} label="Preço">
           <%= product.price %>
         </:col>
+        <:col :let={product} label="Estoque">
+          <%= product.stock_quantity || 0 %>  <!-- Use || 0 para tratar valores nil -->
+        </:col>
         <:col :let={product} label="Ações">
           <.link
             patch={~p"/products/#{product.id}/edit"}

@@ -7,14 +7,14 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   def mount(_params, session, socket) do
     user_id = Map.get(session, "user_id")
     user = Accounts.get_user(user_id)
-    
+
     case Accounts.get_company_by_user_id(user_id) do
       nil ->
-        {:ok, assign(socket, 
+        {:ok, assign(socket,
           has_company: false,
           user: user
         )}
-      
+
       company ->
         top_products = Catalog.get_top_selling_products(company.id)
         {:ok,
@@ -36,11 +36,11 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   def render(assigns) do
     ~H"""
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
-    
+
     <%= if @has_company do %>
-      <div class="max-w-6xl mx-auto px-4 py-8"> <!-- Reduzi o padding-top para 8 -->
+      <div class="max-w-6xl mx-auto mt-[20px] px-4 py-8"> <!-- Reduzi o padding-top para 8 -->
         <!-- Nome da empresa em destaque -->
-        <div class="mb-10">
+        <div class="bg-white p-5 rounded-lg">
           <h1 class="text-3xl font-bold text-gray-800">
             <%= @company.name %>
           </h1>
@@ -50,7 +50,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
         </div>
 
         <!-- Tabela de produtos -->
-        <div class="px-[15px] py-[7px] mt-[20px] bg-white rounded-lg">
+        <div class="px-[15px] py-[7px] mt-[10px] bg-white rounded-lg">
           <.table id="top-products" rows={@top_products}>
             <:col :let={product} label="Nome do Produto">
               <%= product.name %>
@@ -91,7 +91,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
         <p class="text-lg text-gray-500 mb-8">
           Cadastre agora!
         </p>
-        
+
         <.link navigate={~p"/companies/new"} class="inline-block">
           <.button class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-lg text-lg">
             Cadastrar Empresa

@@ -8,14 +8,14 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   def update(%{product: product} = assigns, socket) do
     # Define o valor padrão como true apenas para novos produtos
     initial_active = if assigns.action == :new, do: true, else: product.active
-    
-    changeset = 
+
+    changeset =
       product
       |> Catalog.change_product()
       |> Ecto.Changeset.cast(%{active: initial_active}, [:active])
 
     categories = Catalog.list_categories()
-    
+
     {selected_categories, preco_total} = if assigns.action == :edit do
       {Enum.map(product.categories, &to_string(&1.id)),
       calculate_total_price(Decimal.to_float(product.price), product.discount)}
@@ -32,7 +32,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     |> assign(:selected_categories, selected_categories)
     |> assign(:uploaded_files, [])
     |> assign(:preco_total, preco_total)
-    |> allow_upload(:image, 
+    |> allow_upload(:image,
         accept: ~w(.jpg .jpeg .png .gif),
         max_entries: 1,
         max_file_size: 5_000_000
@@ -100,8 +100,8 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   @impl true
   def handle_event("remove-category", %{"category-id" => category_id}, socket) do
     selected_categories = Enum.reject(socket.assigns.selected_categories, &(&1 == category_id))
-    
-    {:noreply, 
+
+    {:noreply,
     socket
     |> assign(:selected_categories, selected_categories)}
   end
@@ -213,7 +213,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                   label="Produto disponível para venda"
                   checked_value={true}
                   unchecked_value={false}
-                  class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                  class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300 rounded"
                 />
               </div>
 
@@ -260,9 +260,9 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                   <%= if category do %>
                     <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
                       <%= category.type %>
-                      <button 
-                        type="button" 
-                        phx-click="remove-category" 
+                      <button
+                        type="button"
+                        phx-click="remove-category"
                         phx-value-category-id={category_id}
                         phx-target={@myself}
                         class="ml-1 text-blue-600 hover:text-blue-800"

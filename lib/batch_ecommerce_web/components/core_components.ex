@@ -403,9 +403,9 @@ end
             <%= if @user do %>
               <%= if @user do %>
                 <!-- Mostra a foto do usuário se existir -->
-                <img 
-                  class="w-10 h-10 rounded-full object-cover" 
-                  src={"/images/default-avatar.png"} 
+                <img
+                  class="w-10 h-10 rounded-full object-cover"
+                  src={"/images/default-avatar.png"}
                   alt="Foto do usuário"
                 />
               <% else %>
@@ -672,7 +672,7 @@ end
           name={@name}
           value="true"
           checked={@checked}
-          class="rounded border-zinc-300 text-zinc-900 focus:ring-0"
+          class="rounded border-zinc-300 text-indigo-600 focus:ring-0"
           {@rest}
         />
         {@label}

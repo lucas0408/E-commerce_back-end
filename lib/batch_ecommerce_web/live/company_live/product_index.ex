@@ -8,7 +8,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
   @impl true
   def mount(%{"company_id" => company_id}, session, socket) do
     user_id = Map.get(session, "user_id")
-    {:ok, 
+    {:ok,
      socket
      |> assign(:company_id, company_id)
      |> assign(:products, [])
@@ -101,11 +101,11 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
 
         <div class="flex space-x-8">
           <a href={~p"/api/orders/export-stream"}
-            class="btn btn-primary font-bold text-green-600 border border-[2px] border-green-600 rounded-lg p-1 hover:bg-green-600 hover:text-white hover:scale-105"
+            class="btn btn-primary font-bold text-green-600 hover:scale-105"
             download>
             Exportar relatório
           </a>
-          <.link patch={~p"/products/new"} color="primary" class="font-bold text-white bg-indigo-600 rounded-lg p-1 hover:bg-indigo-800 hover:scale-105">
+          <.link patch={~p"/products/new"} color="primary" class="font-bold text-indigo-600 hover:scale-105">
             Adicionar Produto
           </.link>
         </div>

@@ -53,14 +53,14 @@ defmodule BatchEcommerceWeb.Live.UserLive.Show do
 
         <.link
           patch={~p"/users/#{@user}/addresses/new"}
-          class="block w-full w-full mb-3 text-center py-2 bg-gray-50 hover:scale-105 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-200"
+          class="block w-full w-full mb-3 text-center py-2 bg-gray-50 hover:scale-105 transition duration-200 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-200"
         >
-          Adicionar Novo Endereço
+         + Adicionar Novo Endereço
         </.link>
 
         <.link
           patch={~p"/users/#{@user}/edit"}
-          class="block w-full text-center py-2 px-4 border hover:scale-105 border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-800"
+          class="block w-full text-center py-2 px-4 border hover:scale-105 transition duration-200 border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-800"
         >
           Alterar Dados Pessoais
         </.link>

@@ -8,7 +8,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
     current_user = session["user_id"]
 
     current_user = Accounts.get_user(current_user)
-    
+
     cart_products =
       session["user_id"]
       |> ShoppingCart.get_cart_user()
@@ -292,7 +292,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
       <div class="mt-6">
         <.link
           navigate={~p"/products"}
-          class="inline-flex items-center rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 hover:scale-105 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          class="inline-flex items-center rounded-md bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-800 hover:scale-105 transition duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
           <.icon name="hero-shopping-bag" class="-ml-0.5 mr-1.5 h-5 w-5" />
           Continuar Comprando

@@ -6,7 +6,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
   @impl true
   def update(%{product: product} = assigns, socket) do
-    # Define o valor padrão como true apenas para novos produtos
     initial_active = if assigns.action == :new, do: true, else: product.active
 
     changeset =
@@ -18,26 +17,130 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
     {selected_categories, preco_total} = if assigns.action == :edit do
       {Enum.map(product.categories, &to_string(&1.id)),
-      calculate_total_price(Decimal.to_float(product.price), product.discount)}
+       calculate_total_price(Decimal.to_float(product.price), product.discount)}
     else
       {[], 0}
     end
 
     {:ok,
-    socket
-    |> assign(assigns)
-    |> assign(:form, to_form(changeset))
-    |> assign(:changeset, changeset)
-    |> assign(:categories, categories)
-    |> assign(:selected_categories, selected_categories)
-    |> assign(:uploaded_files, [])
-    |> assign(:preco_total, preco_total)
-    |> allow_upload(:image,
-        accept: ~w(.jpg .jpeg .png .gif),
-        max_entries: 1,
-        max_file_size: 5_000_000
-      )}
+     socket
+     |> assign(assigns)
+     |> assign(:form, to_form(changeset))
+     |> assign(:changeset, changeset)
+     |> assign(:categories, categories)
+     |> assign(:selected_categories, selected_categories)
+     |> assign(:uploaded_files, [])
+     |> assign(:preco_total, preco_total)
+     |> assign(:show_categories_dropdown, false)
+     |> allow_upload(:image,
+       accept: ~w(.jpg .jpeg .png .gif),
+       max_entries: 1,
+       max_file_size: 5_000_000
+     )}
   end
+
+  @impl true
+  def handle_event("validate", %{"product" => product_params}, socket) do
+    preco = parse_decimal(product_params["price"] || "0")
+    desconto = parse_decimal(product_params["discount"] || "0")
+    preco_total = calculate_total_price(preco, desconto)
+
+    new_selected = Map.get(product_params, "categories", [])
+    previous_selected = socket.assigns.selected_categories
+
+    selected_categories = Enum.uniq(previous_selected ++ new_selected)
+
+    changeset =
+      %Product{}
+      |> Catalog.change_product(product_params)
+      |> Map.put(:action, :validate)
+
+    {:noreply,
+     socket
+     |> assign(:form, to_form(changeset))
+     |> assign(:selected_categories, selected_categories)
+     |> assign(:preco_total, preco_total)}
+  end
+
+  @impl true
+  def handle_event("toggle-categories-dropdown", _params, socket) do
+    {:noreply, update(socket, :show_categories_dropdown, fn val -> !val end)}
+  end
+
+  @impl true
+  def handle_event("hide-categories-dropdown", _params, socket) do
+    {:noreply, assign(socket, :show_categories_dropdown, false)}
+  end
+
+  @impl true
+  def handle_event("toggle-category", %{"category-id" => id}, socket) do
+    id_str = to_string(id)
+    selected =
+      if id_str in socket.assigns.selected_categories do
+        Enum.reject(socket.assigns.selected_categories, &(&1 == id_str))
+      else
+        [id_str | socket.assigns.selected_categories]
+      end
+
+    {:noreply, assign(socket, :selected_categories, selected)}
+  end
+
+  @impl true
+  def handle_event("save", %{"product" => product_params}, socket) do
+    product_params_with_categories =
+      product_params
+      |> Map.put("categories", socket.assigns.selected_categories)
+      |> Map.put("company_id", socket.assigns.company_id)
+
+    case socket.assigns.action do
+      :edit -> update_product(socket, product_params_with_categories)
+      :new -> create_product(socket, product_params_with_categories)
+    end
+  end
+
+  defp create_product(socket, product_params) do
+    product_params_with_rating = Map.put(product_params, "rating", 4)
+
+    case Catalog.create_product(product_params_with_rating) do
+      {:ok, product} ->
+        notify_parent({:saved, product})
+        {:noreply,
+         socket
+         |> put_flash(:info, "Produto criado com sucesso")
+         |> push_redirect(to: ~p"/companies/#{socket.assigns.company_id}/products")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        IO.inspect(changeset, label: "Changeset Error")
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  @impl true
+  def handle_event("remove-category", %{"category-id" => category_id}, socket) do
+    selected_categories = Enum.reject(socket.assigns.selected_categories, &(&1 == category_id))
+    {:noreply, assign(socket, :selected_categories, selected_categories)}
+  end
+
+  defp update_product(socket, product_params) do
+    case Catalog.update_product(socket.assigns.product, product_params) do
+      {:ok, product} ->
+        notify_parent({:updated, product})
+        {:noreply,
+         socket
+         |> put_flash(:info, "Produto atualizado com sucesso")
+         |> push_redirect(to: ~p"/companies/#{socket.assigns.company_id}/products")}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        IO.inspect(changeset, label: "Changeset Error")
+        {:noreply, assign(socket, form: to_form(changeset))}
+    end
+  end
+
+  @impl true
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :image, ref)}
+  end
+
 
   @impl true
   def handle_event("validate", %{"product" => product_params}, socket) do
@@ -230,42 +333,64 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
             </div>
           <div class="grid gap-12">
 
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Categorias *
-              </label>
-              <select
-                name="product[categories][]"
-                multiple
-                class="w-full px-4 py-2 border-2 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32">
-                <%= for category <- @categories do %>
-                  <option
-                    value={category.id}
-                    selected={to_string(category.id) in @selected_categories}
-                  >
-                    <%= category.type %>
-                  </option>
-                <% end %>
-              </select>
-            </div>
+            <div class="space-y-4">
+              <!-- Botão Dropdown -->
+              <button
+                type="button"
+                phx-click="toggle-categories-dropdown"
+                phx-target={@myself}
+                class="flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                Selecionar Categorias
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
 
-            <!-- Categorias Selecionadas -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                Categorias Selecionadas
-              </label>
+              <!-- Menu Dropdown -->
+              <div
+                class={"absolute z-10 mt-1 w-64 bg-white border border-gray-200 rounded-lg shadow-md #{if @show_categories_dropdown, do: "block", else: "hidden"}"}
+              >
+                <ul
+                  class="max-h-64 overflow-y-auto p-4 space-y-2 text-sm text-gray-800"
+                  phx-click-away="hide-categories-dropdown"
+                  phx-target={@myself}
+                >
+                  <%= for category <- @categories do %>
+                    <li>
+                      <label
+                        for={"category-checkbox-#{category.id}"}
+                        phx-click="toggle-category"
+                        phx-value-category-id={category.id}
+                        phx-target={@myself}
+                        class="flex items-center space-x-2 cursor-pointer"
+                      >
+                        <input
+                          id={"category-checkbox-#{category.id}"}
+                          type="checkbox"
+                          checked={to_string(category.id) in @selected_categories}
+                          class="w-4 h-4 text-indigo-600 border-gray-300 rounded pointer-events-none"
+                        />
+                        <span><%= category.type %></span>
+                      </label>
+                    </li>
+                  <% end %>
+                </ul>
+              </div>
+
+              <!-- Categorias Selecionadas -->
               <div class="flex flex-wrap gap-2">
                 <%= for category_id <- @selected_categories do %>
                   <% category = Enum.find(@categories, &(to_string(&1.id) == category_id)) %>
                   <%= if category do %>
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                    <span class="flex items-center px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full">
                       <%= category.type %>
                       <button
                         type="button"
                         phx-click="remove-category"
                         phx-value-category-id={category_id}
                         phx-target={@myself}
-                        class="ml-1 text-blue-600 hover:text-blue-800"
+                        class="ml-2 text-blue-600 hover:text-blue-800 focus:outline-none"
                       >
                         &times;
                       </button>
@@ -274,6 +399,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                 <% end %>
               </div>
             </div>
+
 
               <!-- Upload de Imagem -->
               <div>
@@ -336,7 +462,9 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
               <div class="flex justify-center pt-6">
                 <button
                   type="submit"
-                  class="px-8 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform duration-300"
+                  class="px-8 py-1.5 h-[50px] text-base font-semibold bg-indigo-600 text-white rounded-lg shadow-md
+                  hover:bg-indigo-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition
+                  transition duration-200 hover:scale-105"
                 >
                   <%= if @action == :edit do %>
                     Salvar Produto

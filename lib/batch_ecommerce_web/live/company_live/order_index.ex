@@ -97,8 +97,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
     # Remove todos os filtros
     {:noreply,
     socket
-    {:noreply,
-    socket
     |> assign(:filters, %{status: "", customer: ""})
     |> assign(:page, 1)
     |> load_orders()}
@@ -285,6 +283,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
             <p class="text-sm text-gray-700">
               Mostrando <span class="font-medium"><%= min((@page - 1) * @per_page + 1, length(@orders)) %></span> a
               <span class="font-medium"><%= min(@page * @per_page, length(@orders)) %></span> de
+            </p>
             <p class="text-sm text-gray-500">
               Mostrando <span class="font-medium"><%= min((@page - 1) * @per_page + 1, length(@orders)) %></span> a
               <span class="font-medium"><%= min(@page * @per_page, length(@orders)) %></span> de

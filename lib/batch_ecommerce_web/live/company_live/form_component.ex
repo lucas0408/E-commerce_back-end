@@ -57,7 +57,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
         <!-- Botão dinâmico -->
         <div class="col-span-2 flex justify-center mt-10">
-          <.button class="bg-blue-600 text-white px-6 py-2 rounded">
+          <.button class="bg-indigo-600 hover:bg-indigo-800 text-white px-6 py-2 rounded">
             <%= if @action == :new, do: "Cadastrar Empresa", else: "Salvar Empresa" %>
           </.button>
         </div>
@@ -121,7 +121,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, form: to_form(changeset))}
-      
+
       {:error, any} ->
         {:noreply,
         socket

@@ -482,9 +482,9 @@ end
         <!-- Botão de Logout (apenas para usuários logados) -->
         <%= if @user do %>
           <div class="p-4 border-t border-gray-200">
-            <.link 
-              href="/logout" 
-              method="delete" 
+            <.link
+              href="/logout"
+              method="delete"
               class="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg"
             >
               <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -598,8 +598,8 @@ end
     <button
       type={@type}
       class={[
-        "phx-submit-loading:opacity-75 rounded-lg bg-indigo-600 hover:bg-indigo-800 py-3.5 px-10 shadow-lg
-        hover:scale-105 transition-transform duration-300",
+        "phx-submit-loading:opacity-75 rounded-lg py-3.5 px-10 shadow-lg
+         hover:scale-105 transition-transform duration-300",
         "text-base font-semibold leading-6 text-white active:text-white/80",
         @class
       ]}

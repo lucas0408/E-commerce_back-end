@@ -53,7 +53,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.Show do
 
         <.link
           patch={~p"/users/#{@user}/addresses/new"}
-          class="block w-full w-full mb-3 text-center py-2 bg-gray-50 hover:scale-105 transition duration-200 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-200"
+          class="block w-full w-full mb-3 text-center py-2 bg-white hover:scale-105 transition duration-200 px-4 rounded-md shadow-sm text-sm font-medium text-gray-700"
         >
          + Adicionar Novo Endereço
         </.link>

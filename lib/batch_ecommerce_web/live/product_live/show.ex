@@ -111,9 +111,9 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
     ~H"""
 
       <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
-    <div class="bg-white">
+    <div class="bg-white mt-[1px]">
       <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <div class="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+        <div class="lg:grid lg:grid-cols-[3fr_1fr] lg:items-start lg:gap-x-8">
           <!-- Coluna da esquerda - Imagem e informações básicas -->
           <div class="flex flex-col">
             <!-- Nome do produto -->
@@ -234,6 +234,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                       variant="outline"
                       size="sm"
                       phx-click="update_quantity"
+                      class="bg-indigo-600 hover:bg-indigo-800"
                       phx-value-quantity={@quantity - 1}
                       disabled={@quantity <= 1}
                     >
@@ -255,6 +256,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                       variant="outline"
                       size="sm"
                       phx-click="update_quantity"
+                      class="bg-indigo-600 hover:bg-indigo-800"
                       phx-value-quantity={@quantity + 1}
                       disabled={@quantity >= (@product.stock_quantity || 0)}
                     >
@@ -267,7 +269,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                 <div class="mt-8">
                   <.button
                     type="button"
-                    class="w-full"
+                    class="w-full bg-green-600 hover:bg-green-800"
                     phx-click="add_to_cart"
                     disabled={@loading}
                   >

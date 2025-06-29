@@ -35,7 +35,7 @@ defmodule BatchEcommerceWeb.UserLoginLive do
           </.link>
         </:actions>
         <:actions>
-          <.button phx-disable-with="Logging in..." class="w-full">
+          <.button phx-disable-with="Logging in..." class="w-full bg-indigo-600 hover:bg-indigo-800">
             Entrar<span aria-hidden="true"></span>
           </.button>
         </:actions>

@@ -28,12 +28,14 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
   def render(assigns) do
     ~H"""
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart} user={@current_user} id="HeaderWithCart"/>
-    <div>
-      <h1 class="text-2xl font-bold mb-4">Meus Pedidos</h1>
+    <div class="p-10">
+      <div class="mb-2 bg-white p-3 rounded-t-lg">
+        <h1 class="text-3xl text-gray-900 font-bold text-center">Meus Pedidos</h1>
+      </div>
 
-      <table class="min-w-full border-collapse">
+      <table class="min-w-full border-collapse bg-white rounded-b-lg">
         <thead>
-          <tr class="bg-gray-100">
+          <tr class="text-gray-600">
             <th class="px-4 py-2 text-left">Imagem</th>
             <th class="px-4 py-2 text-left">Nome do Produto</th>
             <th class="px-4 py-2 text-left">Status de Pagamento</th>
@@ -41,6 +43,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
             <th class="px-4 py-2 text-left">Ações</th>
           </tr>
         </thead>
+
         <tbody>
           <%= for order <- @orders do %>
             <%= for op <- order.order_products do %>
@@ -48,8 +51,8 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
                 <!-- Coluna 1: imagem do produto -->
                 <td class="px-4 py-2">
                   <img src={op.product.filename}
-                       alt={op.product.name}
-                       class="w-16 h-16 object-cover rounded" />
+                      alt={op.product.name}
+                      class="w-16 h-16 object-cover rounded" />
                 </td>
 
                 <!-- Coluna 2: nome do produto -->
@@ -57,20 +60,40 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
                   <%= op.product.name %>
                 </td>
 
-                <!-- Coluna 3: status de pagamento (fixo: Pendente) -->
-                <td class="px-4 py-2 text-yellow-600 font-medium">
-                  <%= order.status_payment %>
-                </td>
-
-                <!-- Coluna 4: status de entrega (fixo: Preparando Pedido) -->
-                <td class="px-4 py-2 text-blue-600 font-medium">
-                  <%= op.status %>
-                </td>
-
-                <!-- Coluna 5: botão “Ver Mais” que leva para /order/:order_id -->
+                <!-- Coluna 3: status de pagamento com cor dinâmica -->
                 <td class="px-4 py-2">
+                  <span class={
+                    "px-2 py-1 rounded-full text-xs font-semibold " <>
+                    case order.status_payment do
+                      "confirmado" -> "bg-green-100 text-green-700"
+                      "pendente" -> "bg-yellow-100 text-amber-700"
+                      "Peendente" -> "bg-yellow-100 text-amber-700"
+                      _ -> "bg-gray-100 text-gray-600"
+                    end
+                  }>
+                    <%= order.status_payment %>
+                  </span>
+                </td>
+
+                <!-- Coluna 4: status de entrega com cor dinâmica -->
+                <td class="px-4 py-2">
+                  <span class={
+                    "px-2 py-1 rounded-full text-xs font-semibold " <>
+                    case op.status do
+                      "Entregue" -> "bg-green-100 text-green-700"
+                      "Preparando Pedido" -> "bg-indigo-100 text-gray-500"
+                      "A Caminho" -> "bg-yellow-100 text-amber-700"
+                      _ -> "bg-gray-100 text-gray-600"
+                    end
+                  }>
+                    <%= op.status %>
+                  </span>
+                </td>
+
+                <!-- Coluna 5: botão “Ver Mais” -->
+                <td class="px-4 py-2 text-blue-600">
                   <.link patch={~p"/orders/#{op.id}"}>
-                    <button>Ver mais</button>
+                    <button class="text-sm text-blue-600 hover:underline font-medium hover:text-blue-900">Ver mais</button>
                   </.link>
                 </td>
               </tr>
@@ -78,6 +101,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
           <% end %>
         </tbody>
       </table>
+
     </div>
     """
   end

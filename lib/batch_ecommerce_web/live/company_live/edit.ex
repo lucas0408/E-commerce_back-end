@@ -25,7 +25,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Edit do
           patch={~p"/companies"}
         />
 
-        <.back navigate={~p"/companies"} class="mt-6 inline-block text-blue-600 hover:text-blue-800">
+        <.back navigate={~p"/companies"}>
           ← Voltar para empresas
         </.back>
       </div>

@@ -34,7 +34,7 @@ defmodule BatchEcommerceWeb.OrderController do
     stream =
       Stream.resource(
         fn -> 0 end,
-        fn cursor ->
+        fn _cursor ->
           entries = Orders.list_orders()
 
           if Enum.empty?(entries) do
@@ -66,36 +66,37 @@ defmodule BatchEcommerceWeb.OrderController do
     end)
   end
 
-  defp format_timesheet_entry(%Order{} = order) do
-    [
-      order.user.name,
-      order.user.cpf,
-      order.addresses.cep,
-      order.addresses.uf,
-      order.addresses.city,
-      order.addresses.district,
-      order.addresses.address,
-      order.addresses.home_number,
-      Decimal.round(order.total_price, 2),
-      length(order.order_products)
-    ]
+  defp format_timesheet_entry(%Order{} = _order) do
+    # [
+    #   order.user.name,
+    #   order.user.cpf,
+    #   order.addresses.cep,
+    #   order.addresses.uf,
+    #   order.addresses.city,
+    #   order.addresses.district,
+    #   order.addresses.address,
+    #   order.addresses.home_number,
+    #   Decimal.round(order.total_price, 2),
+    #   length(order.order_products)
+    # ]
+    ["yes"]
   end
 
-  def create(conn, _params) do
-    case Orders.complete_order(conn.private.guardian_default_resource.id) do
-      {:ok, order} ->
-        conn
-        |> put_status(:created)
-        |> put_resp_header("location", ~p"/api/products/#{order}")
-        |> render(:show, order: order)
-    end
-  end
+  # def create(conn, _params) do
+  #   case Orders.complete_order(conn.private.guardian_default_resource.id) do
+  #     {:ok, order} ->
+  #       conn
+  #       |> put_status(:created)
+  #       |> put_resp_header("location", ~p"/api/products/#{order}")
+  #       |> render(:show, order: order)
+  #   end
+  # end
 
-  def show(conn, %{"id" => id}) do
-    order = Orders.get_order!(conn.private[:guardian_default_resource].id, id)
+  # def show(conn, %{"id" => id}) do
+  #  order = Orders.get_order!(conn.private[:guardian_default_resource].id, id)
 
-    conn
-    |> put_status(:ok)
-    |> render(:show, order: order)
-  end
+  #   conn
+  #   |> put_status(:ok)
+  #   |> render(:show, order: order)
+  # end
 end

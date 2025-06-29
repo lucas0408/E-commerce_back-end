@@ -4,14 +4,11 @@ defmodule BatchEcommerce.OrdersFixtures do
   entities via the `BatchEcommerce.Orders` context.
   """
 
-  @doc """
-  Generate a order.
-  """
-  def order_fixture(conn) do
-    {:ok, order} = BatchEcommerce.Orders.complete_order(conn)
+  # def order_fixture(conn) do
+  #   {:ok, order} = BatchEcommerce.Orders.complete_order(conn)
 
-    order
-  end
+  #   order
+  # end
 
   # def line_item_fixture(attrs \\ %{}) do
   #   {:ok, line_item} =

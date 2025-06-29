@@ -33,6 +33,7 @@ defmodule BatchEcommerce.Catalog.Product do
     |> validate_price()
     |> validate_stock_quantity()
     |> validate_description()
+    |> validate_discount()
     |> put_products_categories(attrs)
   end
 

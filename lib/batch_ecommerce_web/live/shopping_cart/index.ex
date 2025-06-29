@@ -1,5 +1,6 @@
 defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
   use BatchEcommerceWeb, :live_view
+
   alias BatchEcommerce.ShoppingCart
   alias BatchEcommerce.Orders
   alias BatchEcommerce.Accounts
@@ -37,7 +38,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
           {:noreply,
           socket
           |> put_flash(:info, "Compra realizada com sucesso")
-          |> push_redirect(to: ~p"/orders")}
+          |> push_navigate(to: ~p"/orders")}
 
         {:error, _reason} ->
           {:noreply, put_flash(socket, :error, "Erro ao processar pedido")}
@@ -340,8 +341,6 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
                   phx-value-quantity={@cart_product.quantity - 1}
                   disabled={@cart_product.quantity <= 1}
                   class="!rounded-none !rounded-l-md px-3 py-1.5 text-sm"
-                  size="sm"
-                  variant="outline"
                 >
                   <.icon name="hero-minus" class="h-4 w-4" />
                 </.button>
@@ -355,8 +354,6 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
                   phx-value-cart_product_id={@cart_product.id}
                   phx-value-quantity={@cart_product.quantity + 1}
                   class="!rounded-none !rounded-r-md px-3 py-1.5 text-sm"
-                  size="sm"
-                  variant="outline"
                   disabled={@cart_product.quantity >= (@cart_product.product.stock_quantity || 0)}
                 >
                   <.icon name="hero-plus" class="h-4 w-4" />
@@ -373,7 +370,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
                 discounted_price = calculate_discounted_price(price, discount)
               %>
 
-              <%= if Decimal.cmp(discounted_price, price) == :lt do %>
+              <%= if Decimal.compare(discounted_price, price) == :lt do %>
                 <p class="text-sm text-gray-500 line-through">
                   R$ <%= format_decimal(price) %>
                 </p>
@@ -395,8 +392,6 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
               phx-click="remove_item"
               phx-value-cart_product_id={@cart_product.id}
               data-confirm="Tem certeza que deseja remover este item do carrinho?"
-              variant="outline"
-              size="sm"
               class="text-red-600 border-red-300 hover:bg-red-50"
             >
               <.icon name="hero-trash" class="mr-1.5 h-4 w-4" />

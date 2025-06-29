@@ -45,7 +45,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
         {:noreply,
         socket
         |> put_flash(:info, "Produto adicionado ao carrinho com sucesso!")
-        |> push_redirect(to: "/cart_products")}
+        |> push_navigate(to: "/cart_products")}
 
       {:error, _} ->
         cart_products = ShoppingCart.get_cart_user(current_user.id)
@@ -57,7 +57,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
         {:noreply,
         socket
         |> put_flash(:info, "Quantidade atualizada no carrinho!")
-        |> push_redirect(to: "/cart_products")}
+        |> push_navigate(to: "/cart_products")}
     end
   end
 
@@ -231,8 +231,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                   <div class="flex items-center space-x-3">
                     <.button
                       type="button"
-                      variant="outline"
-                      size="sm"
                       phx-click="update_quantity"
                       phx-value-quantity={@quantity - 1}
                       disabled={@quantity <= 1}
@@ -252,8 +250,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
 
                     <.button
                       type="button"
-                      variant="outline"
-                      size="sm"
                       phx-click="update_quantity"
                       phx-value-quantity={@quantity + 1}
                       disabled={@quantity >= (@product.stock_quantity || 0)}

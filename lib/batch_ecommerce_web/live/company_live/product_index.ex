@@ -105,7 +105,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
             download>
             Exportar relatório
           </a>
-          <.link patch={~p"/products/new"} color="primary" class="font-bold text-indigo-600 hover:scale-105 transition duration-200">
+          <.link patch={~p"/products/new"} class="font-bold text-indigo-600 hover:scale-105 transition duration-200">
             Adicionar Produto
           </.link>
         </div>

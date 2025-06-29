@@ -37,7 +37,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.New do
         <h1 class="text-2xl font-bold mb-4">Creating a product</h1>
       </.live_component>
 
-      <.back navigate={~p"/products"} class="mt-4 inline-block text-blue-600 hover:text-blue-800">
+      <.back navigate={~p"/products"}>
         Back to products
       </.back>
     </div>

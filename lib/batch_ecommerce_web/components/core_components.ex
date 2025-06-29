@@ -16,8 +16,6 @@ defmodule BatchEcommerceWeb.CoreComponents do
   """
   use Phoenix.Component
   use Gettext, backend: BatchEcommerceWeb.Gettext
-  import Phoenix.HTML
-  import Phoenix.LiveView.Helpers
 
   alias Phoenix.LiveView.JS
 

@@ -1,15 +1,14 @@
 defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
   use BatchEcommerceWeb, :live_component
-  alias BatchEcommerce.Accounts
 
+  alias BatchEcommerce.Accounts
   alias BatchEcommerce.Catalog
-  alias BatchEcommerce.Catalog.{Category, Product}
+  alias BatchEcommerce.Catalog.Product
 
   @impl true
   def update(%{product: product} = assigns, socket) do
+    # Define o valor padrão como true apenas para novos produtos
     initial_active = if assigns.action == :new, do: true, else: product.active
-
-    changeset =
 
     changeset =
       product
@@ -18,29 +17,28 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
     categories = Catalog.list_categories()
 
-
     {selected_categories, preco_total} = if assigns.action == :edit do
       {Enum.map(product.categories, &to_string(&1.id)),
-       calculate_total_price(Decimal.to_float(product.price), product.discount)}
+      calculate_total_price(Decimal.to_float(product.price), product.discount)}
     else
       {[], 0}
     end
 
     {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:form, to_form(changeset))
-     |> assign(:changeset, changeset)
-     |> assign(:categories, categories)
-     |> assign(:selected_categories, selected_categories)
-     |> assign(:uploaded_files, [])
-     |> assign(:preco_total, preco_total)
-     |> assign(:show_categories_dropdown, false)
-     |> allow_upload(:image,
-       accept: ~w(.jpg .jpeg .png .gif),
-       max_entries: 1,
-       max_file_size: 5_000_000
-     )}
+    socket
+    |> assign(assigns)
+    |> assign(:form, to_form(changeset))
+    |> assign(:changeset, changeset)
+    |> assign(:categories, categories)
+    |> assign(:selected_categories, selected_categories)
+    |> assign(:uploaded_files, [])
+    |> assign(:preco_total, preco_total)
+    |> assign(:show_categories_dropdown, false)
+    |> allow_upload(:image,
+        accept: ~w(.jpg .jpeg .png .gif),
+        max_entries: 1,
+        max_file_size: 5_000_000
+      )}
   end
 
   @impl true
@@ -54,16 +52,17 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
     selected_categories = Enum.uniq(previous_selected ++ new_selected)
 
+
     changeset =
       %Product{}
       |> Catalog.change_product(product_params)
       |> Map.put(:action, :validate)
 
     {:noreply,
-     socket
-     |> assign(:form, to_form(changeset))
-     |> assign(:selected_categories, selected_categories)
-     |> assign(:preco_total, preco_total)}
+    socket
+    |> assign(:form, to_form(changeset))
+    |> assign(:selected_categories, selected_categories)
+    |> assign(:preco_total, preco_total)}
   end
 
   @impl true
@@ -91,88 +90,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
 
   @impl true
   def handle_event("save", %{"product" => product_params}, socket) do
-    product_params_with_categories =
-      product_params
-      |> Map.put("categories", socket.assigns.selected_categories)
-      |> Map.put("company_id", socket.assigns.company_id)
-
-    case socket.assigns.action do
-      :edit -> update_product(socket, product_params_with_categories)
-      :new -> create_product(socket, product_params_with_categories)
-    end
-  end
-
-  defp create_product(socket, product_params) do
-    product_params_with_rating = Map.put(product_params, "rating", 4)
-
-    case Catalog.create_product(product_params_with_rating) do
-      {:ok, product} ->
-        notify_parent({:saved, product})
-        {:noreply,
-         socket
-         |> put_flash(:info, "Produto criado com sucesso")
-         |> push_redirect(to: ~p"/companies/#{socket.assigns.company_id}/products")}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect(changeset, label: "Changeset Error")
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  @impl true
-  def handle_event("remove-category", %{"category-id" => category_id}, socket) do
-    selected_categories = Enum.reject(socket.assigns.selected_categories, &(&1 == category_id))
-    {:noreply, assign(socket, :selected_categories, selected_categories)}
-  end
-
-  defp update_product(socket, product_params) do
-    case Catalog.update_product(socket.assigns.product, product_params) do
-      {:ok, product} ->
-        notify_parent({:updated, product})
-        {:noreply,
-         socket
-         |> put_flash(:info, "Produto atualizado com sucesso")
-         |> push_redirect(to: ~p"/companies/#{socket.assigns.company_id}/products")}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect(changeset, label: "Changeset Error")
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  @impl true
-  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
-    {:noreply, cancel_upload(socket, :image, ref)}
-  end
-
-
-  @impl true
-  def handle_event("validate", %{"product" => product_params}, socket) do
-    preco = parse_decimal(product_params["price"] || "0")
-    desconto = parse_decimal(product_params["discount"] || "0")
-    preco_total = calculate_total_price(preco, desconto)
-
-    new_selected = Map.get(product_params, "categories", [])
-    previous_selected = socket.assigns.selected_categories
-
-    selected_categories = Enum.uniq(previous_selected ++ new_selected)
-
-
-    changeset =
-      %Product{}
-      |> Catalog.change_product(product_params)
-      |> Map.put(:action, :validate)
-
-    {:noreply,
-    socket
-    |> assign(:form, to_form(changeset))
-    |> assign(:selected_categories, selected_categories)
-    |> assign(:preco_total, preco_total)}
-  end
-
-
-  @impl true
-  def handle_event("save", %{"product" => product_params}, socket) do
     # Garantir que categories está presente nos parâmetros
     product_params_with_categories =
       product_params
@@ -185,6 +102,20 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
       :new ->
         create_product(socket, product_params_with_categories)
     end
+  end
+
+  @impl true
+  def handle_event("remove-category", %{"category-id" => category_id}, socket) do
+    selected_categories = Enum.reject(socket.assigns.selected_categories, &(&1 == category_id))
+
+    {:noreply,
+    socket
+    |> assign(:selected_categories, selected_categories)}
+  end
+
+  @impl true
+  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
+    {:noreply, cancel_upload(socket, :image, ref)}
   end
 
   defp create_product(socket, product_params) do
@@ -208,15 +139,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     end
   end
 
-  @impl true
-  def handle_event("remove-category", %{"category-id" => category_id}, socket) do
-    selected_categories = Enum.reject(socket.assigns.selected_categories, &(&1 == category_id))
-
-    {:noreply,
-    socket
-    |> assign(:selected_categories, selected_categories)}
-  end
-
   defp update_product(socket, product_params) do
     IO.inspect(product_params)
     case Catalog.update_product(socket.assigns.product, product_params) do
@@ -225,17 +147,12 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
         {:noreply,
          socket
          |> put_flash(:info, "Produto atualizado com sucesso")
-         |> push_redirect(to: ~p"/companies/#{socket.assigns.company_id}/products")}
+         |> push_navigate(to: ~p"/companies/#{socket.assigns.company_id}/products")}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         IO.inspect(changeset, label: "Changeset Error")
         {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  @impl true
-  def handle_event("cancel-upload", %{"ref" => ref}, socket) do
-    {:noreply, cancel_upload(socket, :image, ref)}
   end
 
   @impl true
@@ -488,6 +405,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     </div>
     """
   end
+
 
   # Funções auxiliares
   defp parse_decimal(value) when is_binary(value) do

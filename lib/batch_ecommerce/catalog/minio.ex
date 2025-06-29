@@ -38,6 +38,7 @@ defmodule BatchEcommerce.Catalog.Minio do
   end
 
   def create_public_bucket(bucket_name) do
+    IO.inspect(bucket_name, label: "Nome do balde: ")
     create_request =
       ExAws.S3.put_bucket(bucket_name, "us-east-1")
        |> ExAws.request()
@@ -45,12 +46,15 @@ defmodule BatchEcommerce.Catalog.Minio do
     case create_request do
       {:ok, _response} ->
         apply_public_policy(bucket_name)
+        IO.puts("Está dando certo")
         {:ok, "Bucket #{bucket_name} criado e tornado público."}
 
       {:error, {:http_error, 409, _}} ->
+        IO.puts("Já tem um igual")
         {:error, "Bucket #{bucket_name} já existe."}
 
       {:error, reason} ->
+        IO.inspect(reason, label: "motivo do erro: ")
         {:error, reason}
     end
   end

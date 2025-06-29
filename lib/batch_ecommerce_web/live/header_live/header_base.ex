@@ -49,13 +49,22 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
             <% end %>
             <.user_profile name={@user.name} id={@user.id} avatar={"/images/default-avatar.png"} />
           <% else %>
-            <div class="flex space-x-2">
-            <.link
-              navigate={~p"/login"}
-              class="text-sm font-bold text-indigo-600 hover:text-indigo-800 "
-            >
-              Faça login <br> ou cadastre-se
-            </.link>
+            <div class="flex items-center space-x-2">
+              <!-- Ícone com fundo cinza e borda circular -->
+              <span class="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200">
+                <svg class="w-6 h-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+              </span>
+
+              <!-- Link de login/cadastro -->
+              <.link
+                navigate={~p"/login"}
+                class="text-sm font-bold text-gray-600 hover:text-gray-800 leading-tight"
+              >
+                Faça login<br />ou cadastre-se
+              </.link>
             </div>
           <% end %>
         </div>

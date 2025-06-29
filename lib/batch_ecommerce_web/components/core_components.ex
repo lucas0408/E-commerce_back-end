@@ -273,11 +273,11 @@ def product_card(assigns) do
     phx-click="redirect_to_product"
     phx-value-product-id={@product.id}
   >
-    <div class="aspect-w-4 aspect-h-3">
+    <div class="relative w-full aspect-[4/3] bg-gray-100 overflow-hidden">
       <img
         src={@product.filename || "https://via.placeholder.com/300"}
         alt={@product.name}
-        class="w-full h-48 object-cover"
+        class="absolute top-0 left-0 w-full h-full object-contain"
       />
     </div>
     <div class="p-4">

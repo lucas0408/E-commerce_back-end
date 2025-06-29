@@ -124,7 +124,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
       |> Map.put("company_id", socket.assigns.company_id)
     company = Accounts.get_company!(socket.assigns.company_id)
 
-    with {:ok, filename} <- Catalog.upload_image(socket, company.name),
+    with {:ok, filename} <- Catalog.upload_image(socket, company.minio_bucket_name),
         {:ok, product} <- Catalog.create_product(product_params_with_rating, filename) do
         notify_parent({:saved, product})
         {:noreply,

@@ -1,4 +1,5 @@
 defmodule BatchEcommerce.Catalog.Minio do
+  alias BatchEcommerce.Accounts
   #@behaviour BatchEcommerce.Catalog.MinioBehaviour
 
 
@@ -28,29 +29,33 @@ defmodule BatchEcommerce.Catalog.Minio do
   end
 
   defp build_preview_url(bucket, filename) do
-    base_url = get_base_url()  # You'll need to implement this
+    base_url = get_base_url()
     "#{base_url}/api/v1/buckets/#{bucket}/objects/download?preview=true&prefix=#{filename}&version_id=null"
   end
 
-  # You can get the base URL from config or environment
   defp get_base_url() do
     "http://localhost:9001"
   end
 
   def create_public_bucket(bucket_name) do
+    parsed_bucket_name = Accounts.normalize_bucket_name(bucket_name)
+
     create_request =
-      ExAws.S3.put_bucket(bucket_name, "us-east-1")
+      ExAws.S3.put_bucket(parsed_bucket_name, "us-east-1")
        |> ExAws.request()
 
     case create_request do
       {:ok, _response} ->
-        apply_public_policy(bucket_name)
-        {:ok, "Bucket #{bucket_name} criado e tornado público."}
+        IO.puts("ta indoooooooo")
+        apply_public_policy(parsed_bucket_name)
+        {:ok, "Bucket #{parsed_bucket_name} criado e tornado público."}
 
       {:error, {:http_error, 409, _}} ->
-        {:error, "Bucket #{bucket_name} já existe."}
+        IO.puts("ai meu deus")
+        {:error, "Bucket #{parsed_bucket_name} já existe."}
 
       {:error, reason} ->
+        IO.inspect(reason, label: "oia essa porra: ")
         {:error, reason}
     end
   end

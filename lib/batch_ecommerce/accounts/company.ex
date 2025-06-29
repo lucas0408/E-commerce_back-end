@@ -9,6 +9,7 @@ defmodule BatchEcommerce.Accounts.Company do
     field :cnpj, :string
     field :email, :string
     field :phone_number, :string
+    field :minio_bucket_name, :string
 
     belongs_to :user, BatchEcommerce.Accounts.User, type: :binary_id
     has_many  :products, BatchEcommerce.Catalog.Product
@@ -23,8 +24,8 @@ defmodule BatchEcommerce.Accounts.Company do
   @doc false
   def changeset(company, attrs) do
     company
-    |> cast(attrs, [:cnpj, :name, :email, :phone_number, :user_id])
-    |> validate_required([:cnpj, :name, :email, :phone_number])
+    |> cast(attrs, [:cnpj, :name, :email, :phone_number, :user_id, :minio_bucket_name])
+    |> validate_required([:cnpj, :name, :email, :phone_number, :minio_bucket_name])
     |> validate_name()
     |> validate_cnpj()
     |> validate_email(:email, message: "Endereço de e-mail inválido")

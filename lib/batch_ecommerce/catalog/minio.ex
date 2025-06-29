@@ -3,7 +3,6 @@ defmodule BatchEcommerce.Catalog.Minio do
 
 
   def upload_images(socket, bucket, upload_name \\ :image) do
-
     uploaded_files =
       Phoenix.LiveView.consume_uploaded_entries(socket, upload_name, fn %{path: path}, entry ->
         new_filename = "#{UUID.uuid4()}-#{entry.client_name}"

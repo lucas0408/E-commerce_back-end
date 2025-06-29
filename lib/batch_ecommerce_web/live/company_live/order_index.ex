@@ -36,8 +36,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
       Orders.list_company_orders_paginated(
         company_id,
         page,
-        company_id,
-        page,
         per_page,
         status: filters.status,
         customer: filters.customer

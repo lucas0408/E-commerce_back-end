@@ -54,10 +54,10 @@ defmodule BatchEcommerce.Catalog.Product do
 
   defp validate_discount(changeset),
     do:
-      validate_length(changeset, :discount,
-        min: 0,
-        max: 100,
-        menssage: "Insira um numero de desconto"
+      validate_number(changeset, :discount,
+        greater_than_or_equal_to: 0,
+        less_than_or_equal_to: 100,
+        message: "O desconto deve ser entre 0 e 100"
       )
 
   defp validate_description(changeset),

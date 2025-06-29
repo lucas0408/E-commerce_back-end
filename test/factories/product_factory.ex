@@ -11,7 +11,7 @@ defmodule BatchEcommerce.Factories.ProductFactory do
           name: sequence(:type, &"name_product_test_#{&1}"),
           price: 12.30,
           stock_quantity: 30,
-          image_url: "http://localhost:9000/batch-bucket/#{Ecto.UUID.generate()}-product_image.jpg",
+          filename: "http://localhost:9000/batch-bucket/#{Ecto.UUID.generate()}-product_image.jpg",
           description: "teste_descrição",
           company_id: company.id,
           categories: [category]

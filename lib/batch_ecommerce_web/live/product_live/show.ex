@@ -25,11 +25,11 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   def handle_event("update_quantity", %{"quantity" => quantity}, socket) do
     quantity = String.to_integer(quantity)
     max_quantity = socket.assigns.product.stock_quantity || 0
-    
+
     # Limita a quantidade ao estoque disponível
     quantity = if quantity > max_quantity, do: max_quantity, else: quantity
     quantity = if quantity < 1, do: 1, else: quantity
-    
+
     {:noreply, assign(socket, :quantity, quantity)}
   end
 
@@ -46,14 +46,14 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
         socket
         |> put_flash(:info, "Produto adicionado ao carrinho com sucesso!")
         |> push_redirect(to: "/cart_products")}
-      
+
       {:error, _} ->
         cart_products = ShoppingCart.get_cart_user(current_user.id)
         existing_cart = Enum.find(cart_products, &(&1.product_id == product.id))
         new_quantity = existing_cart.quantity + quantity
-        
+
         ShoppingCart.update_cart_product(existing_cart, %{"quantity" => new_quantity})
-        
+
         {:noreply,
         socket
         |> put_flash(:info, "Quantidade atualizada no carrinho!")
@@ -66,7 +66,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   defp calculate_discounted_price(price, discount) when is_nil(discount) or discount == 0 do
     price
   end
-  
+
   defp calculate_discounted_price(price, discount) do
     discount_decimal = Decimal.new(discount)
     hundred = Decimal.new(100)
@@ -76,7 +76,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
 
   # Função auxiliar para formatar preço
   defp format_price(price) when is_nil(price), do: "0,00"
-  
+
   defp format_price(%Decimal{} = price) do
     price
     |> Decimal.round(2)
@@ -86,19 +86,19 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
 
   # Função auxiliar para renderizar estrelas de rating
   defp render_stars(rating) when is_nil(rating), do: {0, false, 5}
-  
+
   defp render_stars(rating) do
     # Limita o rating entre 0 e 5
     rating = max(0, min(rating, 5))
-    
+
     full_stars = trunc(rating)
     has_half_star = rating - full_stars >= 0.5
     empty_stars = 5 - full_stars - (if has_half_star, do: 1, else: 0)
-    
+
     # Garante que nunca ultrapasse 5 estrelas no total
     full_stars = min(full_stars, 5)
     empty_stars = max(empty_stars, 0)
-    
+
     {full_stars, has_half_star, empty_stars}
   end
 
@@ -109,7 +109,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    
+
       <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
     <div class="bg-white">
       <div class="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
@@ -123,8 +123,8 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
 
             <!-- Imagem do produto -->
             <div class="aspect-h-1 aspect-w-1 w-full">
-              <img 
-                src={@product.image_url} 
+              <img
+                src={@product.filename}
                 alt={@product.name}
                 class="h-full w-full object-cover object-center sm:rounded-lg"
               />
@@ -134,7 +134,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
             <div class="mt-6 flex items-center">
               <div class="flex items-center">
                 <% {full_stars, has_half_star, empty_stars} = render_stars(@rating) %>
-                
+
                 <!-- Estrelas cheias -->
                 <%= if full_stars > 0 do %>
                   <%= for _ <- 1..full_stars do %>
@@ -143,7 +143,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                     </svg>
                   <% end %>
                 <% end %>
-                
+
                 <!-- Meia estrela -->
                 <%= if has_half_star do %>
                   <svg class="h-5 w-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
@@ -156,7 +156,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                     <path fill="url(#half-star)" d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                   </svg>
                 <% end %>
-                
+
                 <!-- Estrelas vazias -->
                 <%= for _ <- 1..empty_stars do %>
                   <svg class="h-5 w-5 text-gray-300" fill="currentColor" viewBox="0 0 20 20">
@@ -189,7 +189,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                       R$ <%= format_price(@product.price) %>
                     </span>
                   </div>
-                  
+
                   <!-- Preço com desconto -->
                   <div class="flex items-center space-x-3">
                     <span class="text-3xl font-bold text-gray-900">
@@ -229,19 +229,19 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                 <div class="space-y-2">
                   <label class="text-sm font-medium text-gray-900">Quantidade:</label>
                   <div class="flex items-center space-x-3">
-                    <.button 
-                      type="button" 
-                      variant="outline" 
+                    <.button
+                      type="button"
+                      variant="outline"
                       size="sm"
-                      phx-click="update_quantity" 
+                      phx-click="update_quantity"
                       phx-value-quantity={@quantity - 1}
                       disabled={@quantity <= 1}
                     >
                       -
                     </.button>
-                    
-                    <.input 
-                      type="number" 
+
+                    <.input
+                      type="number"
                       value={@quantity}
                       min="1"
                       max={@product.stock_quantity || 0}
@@ -249,12 +249,12 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
                       name="quantity"
                       class="w-20 text-center"
                     />
-                    
-                    <.button 
-                      type="button" 
-                      variant="outline" 
+
+                    <.button
+                      type="button"
+                      variant="outline"
                       size="sm"
-                      phx-click="update_quantity" 
+                      phx-click="update_quantity"
                       phx-value-quantity={@quantity + 1}
                       disabled={@quantity >= (@product.stock_quantity || 0)}
                     >
@@ -265,7 +265,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
 
                 <!-- Botão adicionar ao carrinho -->
                 <div class="mt-8">
-                  <.button 
+                  <.button
                     type="button"
                     class="w-full"
                     phx-click="add_to_cart"

@@ -145,7 +145,7 @@ products = [
     stock_quantity: 50,
     sales_quantity: 15,
     company_id: company.id,
-    image_url: "https://example.com/images/galaxy-s21.jpg",
+    filename: "https://example.com/images/galaxy-s21.jpg",
     discount: 12
   },
   %{
@@ -155,7 +155,7 @@ products = [
     description: "Camiseta grande",
     sales_quantity: 74,
     company_id: company.id,
-    image_url: "https://example.com/images/camiseta.jpg",
+    filename: "https://example.com/images/camiseta.jpg",
     discount: 0
   },
   %{
@@ -165,7 +165,7 @@ products = [
     stock_quantity: 30,
     sales_quantity: 5,
     company_id: company.id,
-    image_url: "https://example.com/images/lotr.jpg",
+    filename: "https://example.com/images/lotr.jpg",
     discount: 8
   },
   %{
@@ -175,7 +175,7 @@ products = [
     stock_quantity: 45,
     sales_quantity: 12,
     company_id: company.id,
-    image_url: "https://example.com/images/luminaria.jpg",
+    filename: "https://example.com/images/luminaria.jpg",
     discount: 18
   },
   %{
@@ -185,7 +185,7 @@ products = [
     stock_quantity: 100,
     company_id: company.id,
     sales_quantity: 98,
-    image_url: "https://example.com/images/bola.jpg",
+    filename: "https://example.com/images/bola.jpg",
     discount: 35
   },
   %{
@@ -195,7 +195,7 @@ products = [
     stock_quantity: 25,
     company_id: company.id,
     sales_quantity: 45,
-    image_url: "https://example.com/images/lego.jpg",
+    filename: "https://example.com/images/lego.jpg",
     discount: 22
   },
   %{
@@ -205,7 +205,7 @@ products = [
     stock_quantity: 35,
     sales_quantity: 28,
     company_id: company.id,
-    image_url: "https://example.com/images/notebook-dell.jpg",
+    filename: "https://example.com/images/notebook-dell.jpg",
     discount: 15
   },
   %{
@@ -215,7 +215,7 @@ products = [
     stock_quantity: 80,
     sales_quantity: 67,
     company_id: company.id,
-    image_url: "https://example.com/images/nike-air-max.jpg",
+    filename: "https://example.com/images/nike-air-max.jpg",
     discount: 25
   },
   %{
@@ -225,7 +225,7 @@ products = [
     stock_quantity: 40,
     sales_quantity: 31,
     company_id: company.id,
-    image_url: "https://example.com/images/cafeteira.jpg",
+    filename: "https://example.com/images/cafeteira.jpg",
     discount: 10
   },
   %{
@@ -235,7 +235,7 @@ products = [
     stock_quantity: 65,
     sales_quantity: 52,
     company_id: company.id,
-    image_url: "https://example.com/images/fone-bluetooth.jpg",
+    filename: "https://example.com/images/fone-bluetooth.jpg",
     discount: 20
   },
   %{
@@ -245,7 +245,7 @@ products = [
     stock_quantity: 120,
     sales_quantity: 85,
     company_id: company.id,
-    image_url: "https://example.com/images/mochila.jpg",
+    filename: "https://example.com/images/mochila.jpg",
     discount: 5
   },
   %{
@@ -255,7 +255,7 @@ products = [
     stock_quantity: 30,
     sales_quantity: 22,
     company_id: company.id,
-    image_url: "https://example.com/images/panela-eletrica.jpg",
+    filename: "https://example.com/images/panela-eletrica.jpg",
     discount: 30
   }
 ]
@@ -277,7 +277,7 @@ Enum.each(products_with_categories, fn product ->
     company_id: product.company_id,
     discount: product.discount,
     sales_quantity: product.sales_quantity,
-    image_url: product.image_url
+    filename: product.filename
   })
   |> Ecto.Changeset.put_assoc(:categories, product.categories)
   |> BatchEcommerce.Repo.insert!()
@@ -290,11 +290,11 @@ users = BatchEcommerce.Repo.all(BatchEcommerce.Accounts.User)
 Enum.each(products, fn product ->
 
   number_of_reviews = Enum.random(5..20)
-  
+
   Enum.each(users, fn user ->
     user_id = BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.User, name: "João da Silva").id
     random_review = Enum.random(1..5)
-    
+
     %BatchEcommerce.Catalog.ProductReview{}
     |> BatchEcommerce.Catalog.ProductReview.changeset(%{
       review: random_review,
@@ -365,25 +365,25 @@ orders_data = [
 # Criar os pedidos e produtos do pedido
 Enum.each(orders_data, fn order_data ->
   # Calcular o preço total do pedido
-  total_price = 
+  total_price =
     order_data.order_products
     |> Enum.reduce(Decimal.new("0"), fn order_product, acc ->
       product = Enum.find(products, &(&1.id == order_product.product_id))
       product_total = Decimal.mult(product.price, Decimal.new(order_product.quantity))
       Decimal.add(acc, product_total)
     end)
-  
+
   # Criar o pedido
   {:ok, order} = BatchEcommerce.Repo.insert(%BatchEcommerce.Order.Order{
     user_id: order_data.user_id,
     total_price: total_price,
     status_payment: order_data.status_payment
   })
-  
+
   # Criar os produtos do pedido
   Enum.each(order_data.order_products, fn order_product_data ->
     product = Enum.find(products, &(&1.id == order_product_data.product_id))
-    
+
     BatchEcommerce.Repo.insert!(%BatchEcommerce.Order.OrderProduct{
       order_id: order.id,
       product_id: order_product_data.product_id,

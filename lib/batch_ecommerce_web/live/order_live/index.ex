@@ -13,11 +13,11 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
     # 2) Busca todos os pedidos desse usuário, já pré-carregando os order_products e cada produto
     orders =
       user_id
-      |> Orders.list_orders_by_user() 
+      |> Orders.list_orders_by_user()
       # (essa função deve devolver uma lista de %Order{} com :order_products e cada :product pré-carregados)
 
     # 3) Guarda no assign
-    socket = 
+    socket =
       socket
       |> assign(orders: orders)
       |> assign(:current_user, current_user)
@@ -47,8 +47,8 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Index do
               <tr class="border-t">
                 <!-- Coluna 1: imagem do produto -->
                 <td class="px-4 py-2">
-                  <img src={op.product.image_url} 
-                       alt={op.product.name} 
+                  <img src={op.product.filename}
+                       alt={op.product.name}
                        class="w-16 h-16 object-cover rounded" />
                 </td>
 

@@ -11,10 +11,8 @@ defmodule BatchEcommerce.AccountsTest do
 
   describe "users" do
     test "list_users/0 returns all users" do
-      inserted_users = insert_list(2, :user) 
+      inserted_users = insert_list(2, :user)
       user_list = Accounts.list_users()
-
-      IO.inspect(build(:user))
 
       fields_to_remove = [:password]
 
@@ -133,7 +131,7 @@ defmodule BatchEcommerce.AccountsTest do
     setup [:create_company]
 
     alias BatchEcommerce.Accounts.Company
-    
+
     test "get_company!/1 returns the company with given id", %{company: company} do
       assert Accounts.get_company!(company.id) == company
     end

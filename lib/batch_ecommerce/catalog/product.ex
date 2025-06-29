@@ -2,16 +2,16 @@ defmodule BatchEcommerce.Catalog.Product do
   use Ecto.Schema
   import Ecto.Changeset
 
-  @derive {Jason.Encoder, only: [:id, :name, :sales_quantity, :discount, :price, :stock_quantity, :image_url, :description, :company_id, :inserted_at, :updated_at]}
+  @derive {Jason.Encoder, only: [:id, :name, :sales_quantity, :discount, :price, :stock_quantity, :filename, :description, :company_id, :inserted_at, :updated_at]}
 
-  @required_fields [:name, :price, :stock_quantity, :description, :company_id, :discount, :active]
+  @required_fields [:name, :price, :stock_quantity, :filename, :description, :company_id, :discount, :active]
   @filename_regex ~r|^http://localhost:9000/batch-bucket/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-.*\.jpg$|
 
   schema "products" do
     field :name, :string
     field :price, :decimal
     field :stock_quantity, :integer
-    field :image_url, :string
+    field :filename, :string
     field :description, :string
     field :sales_quantity, :integer, default: 0
     field :discount, :integer
@@ -26,7 +26,7 @@ defmodule BatchEcommerce.Catalog.Product do
   @doc false
   def changeset(product, attrs) do
     product
-    |> cast(attrs, [:image_url | @required_fields])
+    |> cast(attrs, @required_fields)
     |> validate_required(@required_fields)
     |> validate_name()
     |> foreign_key_constraint(:company_id)
@@ -73,11 +73,11 @@ defmodule BatchEcommerce.Catalog.Product do
   defp validate_stock_quantity(changeset),
     do: validate_number(changeset, :stock_quantity, greater_than: 0)
 
-  def image_url_changeset(product, attrs) do
+  def image_filename_changeset(product, attrs) do
     product
-    |> cast(attrs, [:image_url])
-    |> validate_required([:image_url])
-    |> validate_format(:image_url, @filename_regex,
+    |> cast(attrs, [:filename])
+    |> validate_required([:filename])
+    |> validate_format(:filename, @filename_regex,
       message: "Deve começar com o padrão correto e terminar com .jpg"
     )
   end

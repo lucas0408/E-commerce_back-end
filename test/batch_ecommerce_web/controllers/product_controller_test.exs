@@ -15,10 +15,10 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
     name: "some updated name",
     price: "456.7",
     stock_quantity: 43,
-    image_url: "some updated image_url",
+    filename: "some updated filename",
     description: "some description"
   }
-  @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, categories: nil, image_url: nil}
+  @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, categories: nil, filename: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -48,7 +48,7 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
 
       assert product.id == response_data["id"]
 
-      assert product.image_url == response_data["image_url"]
+      assert product.filename == response_data["filename"]
 
       assert product.name == response_data["name"]
 
@@ -64,8 +64,6 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
       categories = insert_list(2, :category)
       category_ids = Enum.map(categories, fn category -> category.id end)
       product = params_for(:product, [categories: category_ids])
-
-      IO.inspect(product)
 
       conn = post(conn, ~p"/api/products", product: product)
       assert %{"id" => id} = json_response(conn, 201)["data"]
@@ -110,7 +108,7 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
 
       assert product.company_id != response_data["company_id"]
 
-      assert product.image_url != response_data["image_url"]
+      assert product.filename != response_data["filename"]
 
       assert product.name != response_data["name"]
 

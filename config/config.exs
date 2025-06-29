@@ -93,7 +93,7 @@ config :ex_aws,
 
 config :ex_aws, :s3,
   region: "us-east-1",
-  host: "localhost",
+  host: "minio",
   scheme: "http://",
   port: 9000
 

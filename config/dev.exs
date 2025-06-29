@@ -92,9 +92,8 @@ config :ex_aws,
 
 config :ex_aws, :s3,
   scheme: "http://",
-  host: "localhost",
+  host: "minio",
   port: 9000,
-  bucket: "batch-bucket",
   force_path_style: true
 
 # TODO: see a better way to get env config in the future

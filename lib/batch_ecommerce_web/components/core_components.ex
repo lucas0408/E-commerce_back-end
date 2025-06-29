@@ -277,7 +277,7 @@ def product_card(assigns) do
   >
     <div class="aspect-w-4 aspect-h-3">
       <img
-        src={@product.image_url || "https://via.placeholder.com/300"}
+        src={@product.filename || "https://via.placeholder.com/300"}
         alt={@product.name}
         class="w-full h-48 object-cover"
       />
@@ -403,9 +403,9 @@ end
             <%= if @user do %>
               <%= if @user do %>
                 <!-- Mostra a foto do usuário se existir -->
-                <img 
-                  class="w-10 h-10 rounded-full object-cover" 
-                  src={"/images/default-avatar.png"} 
+                <img
+                  class="w-10 h-10 rounded-full object-cover"
+                  src={"/images/default-avatar.png"}
                   alt="Foto do usuário"
                 />
               <% else %>

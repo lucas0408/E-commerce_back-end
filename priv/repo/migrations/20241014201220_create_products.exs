@@ -7,7 +7,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateProducts do
       add :price, :decimal
       add :active, :boolean, default: true
       add :stock_quantity, :integer
-      add :image_url, :string
+      add :filename, :string
       add :description, :string
       add :sales_quantity, :integer
       add :discount, :integer

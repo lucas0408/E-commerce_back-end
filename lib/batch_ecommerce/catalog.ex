@@ -5,9 +5,7 @@ defmodule BatchEcommerce.Catalog do
   import Ecto.Query, warn: false
   alias BatchEcommerce.Repo
 
-  alias BatchEcommerce.Catalog.Category
-  alias BatchEcommerce.Catalog.Product
-  alias BatchEcommerce.Catalog.ProductReview
+  alias BatchEcommerce.Catalog.{Category, Product, ProductReview, Minio}
 
   @doc """
   Returns the list of categories.
@@ -122,7 +120,7 @@ defmodule BatchEcommerce.Catalog do
   end
 
   def list_products_by_all_category_ids(category_ids) do
-    category_ids = 
+    category_ids =
       category_ids
       |> Enum.map(fn id ->
         if is_binary(id), do: String.to_integer(id), else: id
@@ -144,7 +142,7 @@ def list_products_paginated(params) do
   base_query = from p in Product, where: p.active == true
 
   # Aplica filtro de pesquisa se houver termo
-  base_query = 
+  base_query =
     if params[:search_query] && params.search_query != "" do
       search_term = "%#{params.search_query}%"
       from p in base_query, where: (ilike(p.name, ^search_term))
@@ -155,7 +153,7 @@ def list_products_paginated(params) do
   # Aplica filtro de categorias se houver seleção
   final_query =
     if params[:category_ids] && !Enum.empty?(params.category_ids) do
-      subquery = 
+      subquery =
         from p in base_query,
           join: pc in "products_categories", on: pc.product_id == p.id,
           where: pc.category_id in ^params.category_ids,
@@ -233,17 +231,25 @@ end
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_product(attrs \\ %{}) do
-    %Product{}
-    |> Product.changeset(attrs)
-    |> Repo.insert()
-    |> case do
-      {:ok, product} ->
-        {:ok, Repo.preload(product, :categories)}
+  def create_product(attrs \\ %{}, filename) do
+    product_with_filename = Map.put(attrs, "filename", filename)
 
-      {:error, changeset} ->
-        {:error, changeset}
+    inserted_product =
+      %Product{}
+      |> Product.changeset(product_with_filename)
+      |> Repo.insert()
+
+      with {:ok, product} <- inserted_product,
+           {:ok, product_preloaded} <- {:ok, Repo.preload(product, :categories)} do
+        {:ok, product_preloaded}
+      else
+        {:error, changeset} ->
+          {:error, changeset}
     end
+  end
+
+  def upload_image(socket, company_name) do
+    Minio.upload_images(socket, company_name, :image)
   end
 
   @doc """
@@ -315,12 +321,12 @@ end
     Repo.all(from c in Category, where: c.id in ^category_ids)
   end
 
-  def put_image_url(product_id, image_url) do
+  def put_image_filename(product_id, image_filename) do
     case Repo.get(Product, product_id) do
       %Product{} = product ->
         product_with_image =
           product
-          |> Product.image_url_changeset(%{image_url: image_url})
+          |> Product.image_filename_changeset(%{filename: image_filename})
           |> Repo.update()
 
         product_with_image
@@ -334,10 +340,10 @@ end
     query = from r in ProductReview,
             where: r.product_id == ^product_id,
             select: avg(r.review)
-    
+
     case Repo.one(query) do
       nil -> 0.0  # Nenhuma avaliação encontrada
-      average -> 
+      average ->
         average
         |> Decimal.to_float()
         |> Float.round(1)  # Arredonda para 1 casa decimal

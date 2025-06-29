@@ -11,7 +11,7 @@ defmodule BatchEcommerce.MinioTest do
 
       upload = %Plug.Upload{
         path: tmp_path,
-        image_url: "test.jpg",
+        filename: "test.jpg",
         content_type: "image/jpeg"
       }
 
@@ -51,14 +51,14 @@ defmodule BatchEcommerce.MinioTest do
                "http://localhost:9000/test-bucket/test.jpg"
     end
 
-    test "handles special characters in image_url" do
-      image_url = "test file with spaces.jpg"
+    test "handles special characters in filename" do
+      filename = "test file with spaces.jpg"
 
-      expect(BatchEcommerce.Catalog.MockMinio, :get_file_url, fn "test-bucket", ^image_url ->
-        "http://localhost:9000/test-bucket/#{image_url}"
+      expect(BatchEcommerce.Catalog.MockMinio, :get_file_url, fn "test-bucket", ^filename ->
+        "http://localhost:9000/test-bucket/#{filename}"
       end)
 
-      assert BatchEcommerce.Catalog.MockMinio.get_file_url("test-bucket", image_url) ==
+      assert BatchEcommerce.Catalog.MockMinio.get_file_url("test-bucket", filename) ==
                "http://localhost:9000/test-bucket/test file with spaces.jpg"
     end
   end

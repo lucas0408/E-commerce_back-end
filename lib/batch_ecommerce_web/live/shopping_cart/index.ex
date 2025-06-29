@@ -8,7 +8,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
     current_user = session["user_id"]
 
     current_user = Accounts.get_user(current_user)
-    
+
     cart_products =
       session["user_id"]
       |> ShoppingCart.get_cart_user()
@@ -310,7 +310,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
         <!-- Imagem do produto -->
         <div class="h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg border border-gray-200">
           <img
-            src={@cart_product.product.image_url}
+            src={@cart_product.product.filename}
             alt={@cart_product.product.name}
             class="h-full w-full object-cover object-center"
           />

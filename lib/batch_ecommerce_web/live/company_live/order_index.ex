@@ -7,8 +7,9 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
   @per_page 4
 
   @impl true
-  def mount(%{"company_id" => company_id}, _session, socket) do
-
+  def mount(%{"company_id" => company_id}, session, socket) do
+    user_id = Map.get(session, "user_id")
+    current_user = Accounts.get_user(user_id)
     {:ok, 
     socket
     |> assign(:company_id, company_id)
@@ -16,7 +17,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
     |> assign(:page, 1)
     |> assign(:per_page, @per_page)
     |> assign(:total_pages, 1)
-    |> assign(:user, %{name: "ricardo", id: 1})
+    |> assign(:user, current_user)
     |> assign(:filters, %{status: "", customer: ""})
     |> load_orders()}
   end

@@ -479,6 +479,21 @@ end
             <% end %>
           </ul>
         </nav>
+        <!-- Botão de Logout (apenas para usuários logados) -->
+        <%= if @user do %>
+          <div class="p-4 border-t border-gray-200">
+            <.link 
+              href="/logout" 
+              method="delete" 
+              class="flex items-center w-full px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg"
+            >
+              <svg class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Sair
+            </.link>
+          </div>
+        <% end %>
       </div>
     </div>
     """

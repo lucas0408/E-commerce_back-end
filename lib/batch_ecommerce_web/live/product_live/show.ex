@@ -7,7 +7,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
 
   @impl true
   def mount(%{"product_id" => product_id}, session, socket) do
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
     rating = Catalog.get_product_rating(product_id)
     product = Catalog.get_product(product_id)

@@ -5,7 +5,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.Show do
 
   @impl true
   def mount(%{"order_id" => order_id}, session, socket) do
-    user_id = Map.get(session, "current_user")
+    user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
 
     order =

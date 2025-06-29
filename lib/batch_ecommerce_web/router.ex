@@ -30,6 +30,7 @@ defmodule BatchEcommerceWeb.Router do
     pipe_through :browser
 
     post "/login", SessionController, :create #nao migrar
+    delete "/logout", SessionController, :delete
     #resources "/users", UserController, only: [:create, :show, :index] ---- migrado
     #resources "/products", ProductController, only: [:index, :show] ---- migrado
     resources "/categories", CategoryController, only: [:index, :show] #ok
@@ -47,7 +48,14 @@ defmodule BatchEcommerceWeb.Router do
     get "/cart_products/user/:user_id", CartProductController, :get_by_user 
     resources "/orders", OrderController, only: [:create, :show, :index] 
     post "/companies", CompanyController, :create
-    delete "/logout", SessionController, :logout
+  end
+
+  scope "/", BatchEcommerceWeb do
+    pipe_through [:browser]
+
+    live "/login", UserLoginLive, :new
+    live "/products", Live.ProductLive.Index, :index
+    live "/register", UserLive.New, :new
   end
 
   #scope de usuarios logados com o liveview
@@ -81,7 +89,7 @@ defmodule BatchEcommerceWeb.Router do
       live "/:id/edit", CompanyLive.Edit, :edit
       live "/:company_id/products", CompanyLive.ProductIndex, :product_index
       live "/:company_id/orders", CompanyLive.OrderIndex, :order_index
-      #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
+      live "/:company_id/orders/:order_id", OrderLive.ShowCompany, :order_index
     end
   end
 
@@ -97,13 +105,6 @@ defmodule BatchEcommerceWeb.Router do
     resources "/orders", OrderController, only: [:create, :show, :index]
     get "/orders/export-stream", OrderController, :export_stream
     resources "/companies", CompanyController
-  end
-
-  scope "/", BatchEcommerceWeb do
-    pipe_through [:browser]
-
-    live "/login", UserLoginLive, :new
-    live "/register", UserLive.New, :new
   end
 
   scope "/api/swagger" do

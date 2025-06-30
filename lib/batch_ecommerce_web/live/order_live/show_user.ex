@@ -162,9 +162,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowUser do
     <% end %>
     """
   end
-<<<<<<< HEAD
-end
-=======
+
 
   @impl true
   def handle_event("cancel_order", %{"order_id" => order_id, "order_product_id" => order_product_id, "price" => price}, socket) do
@@ -183,4 +181,3 @@ end
     {:noreply, assign(socket, order: order)}
   end
 end
->>>>>>> 9be736c528ef2cf80b6e9dcb249cf014e93cc297

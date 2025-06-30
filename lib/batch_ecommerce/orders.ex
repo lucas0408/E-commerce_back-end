@@ -21,7 +21,6 @@ defmodule BatchEcommerce.Orders do
       })
       |>Repo.insert!()
 
-
     Enum.map(cart_products, fn item ->
       BatchEcommerce.Catalog.remove_stock(item.quantity, item.product_id)
       %OrderProduct{}
@@ -40,8 +39,8 @@ defmodule BatchEcommerce.Orders do
         body: "#{item.quantity} #{product.name} foram pedidos",
         recipient_company_id: product.company_id,
       }) do
-        {:ok, _notification} ->
-          {:ok, _notification}
+        {:ok, notification} ->
+          {:ok, notification}
         error ->
           {:error, error}
       end
@@ -55,7 +54,7 @@ defmodule BatchEcommerce.Orders do
           {:error, error}
       end
 
-      
+
   end
 
   def list_company_orders_paginated(company_id, page, per_page, opts \\ []) do
@@ -118,8 +117,8 @@ defmodule BatchEcommerce.Orders do
       body: "Peido nº #{order_product_id} #{new_status}",
       recipient_company_id: company_id,
     }) do
-      {:ok, _notification} ->
-        {:ok, _notification}
+      {:ok, notification} ->
+        {:ok, notification}
       error ->
         {:error, error}
     end

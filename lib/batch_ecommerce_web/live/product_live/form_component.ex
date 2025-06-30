@@ -154,7 +154,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
     end
   end
 
-  #review
   @impl true
   def render(assigns) do
     ~H"""

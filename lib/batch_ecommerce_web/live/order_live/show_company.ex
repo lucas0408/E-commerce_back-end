@@ -61,11 +61,8 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
     """
   end
 
-  #review
   @impl true
   def handle_event("cancel_and_refund", %{"order_id" => order_id, "order_product_id" => order_product_id, "price" => _price}, socket) do
-    # Lógica para cancelar e fazer estorno
-    #order = Orders.get_order(order_id) REVIEW
     order_product = Orders.update_order_product_status(order_id, "Cancelado", Orders.get_order(order_id).user_id)
 
     {:noreply, assign(socket, order: order_product)}

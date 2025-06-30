@@ -33,23 +33,18 @@ defmodule BatchEcommerceWeb.Router do
     delete "/logout", SessionController, :delete
   end
 
-  #scope para usuários logados tem que migrar pro liveview
-  scope "/api", BatchEcommerceWeb do
-    pipe_through [:api, :auth]
-
-    resources "/users", UserController, only: [:update, :delete]
-    resources "/cart_products", CartProductController
-    #TODO: revisar action abaixo
-    get "/cart_products/user/:user_id", CartProductController, :get_by_user
-    resources "/orders", OrderController, only: [:create, :show, :index]
-  end
-
   scope "/", BatchEcommerceWeb do
-    pipe_through [:browser]
+    pipe_through :browser
 
-    live "/login", UserLoginLive, :new
+    live_session :redirect_if_user_is_authenticated,
+    on_mount: [{BatchEcommerceWeb.UserAuth, :redirect_if_user_is_authenticated}] do
+      live "/login", UserLoginLive, :new
+      live "/register", UserLive.New, :new
+    end
+
     live "/products", Live.ProductLive.Index, :index
-    live "/register", UserLive.New, :new
+    live "/products/:product_id", ProductLive.Show, :edit
+    live "/users/:id", UserLive.Show, :show
   end
 
   #scope de usuarios logados com o liveview
@@ -60,10 +55,6 @@ defmodule BatchEcommerceWeb.Router do
       on_mount: [{BatchEcommerceWeb.UserAuth, :ensure_authenticated}] do
       live "/users", UserLive.Index, :index
       live "/users/:id/edit", UserLive.Edit, :edit
-      live "/products/new", ProductLive.New, :new
-      live "/products/:product_id", ProductLive.Show, :edit
-      live "/products/:product_id/edit", ProductLive.Edit, :edit
-      live "/users/:id", UserLive.Show, :show
       live "/companies/new", CompanyLive.New, :new
       live "/address/new", AddressLive.Form, :new
       live "/cart_products", ShoppingCart.Index, :index
@@ -83,19 +74,10 @@ defmodule BatchEcommerceWeb.Router do
       live "/:company_id/products", CompanyLive.ProductIndex, :product_index
       live "/:company_id/orders", CompanyLive.OrderIndex, :order_index
       live "/:company_id/orders/:order_id", OrderLive.ShowCompany, :order_index
+      live "/products/new", ProductLive.New, :new
+      live "/products/:product_id/edit", ProductLive.Edit, :edit
       #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
     end
-  end
-
-  #scope de api que tem que ser migrado
-  scope "/api", BatchEcommerceWeb do
-    pipe_through [:api, :auth, :ensure_auth]
-    resources "/users", UserController, except: [:create, :show, :new, :edit]
-    resources "/categories", CategoryController, except: [:new, :index, :edit]
-    resources "/cart_products", CartProductController
-    get "/cart_products/user/:user_id", CartProductController, :get_by_user
-    resources "/orders", OrderController, only: [:create, :show, :index]
-    get "/orders/export-stream", OrderController, :export_stream
   end
 
   scope "/api/swagger" do

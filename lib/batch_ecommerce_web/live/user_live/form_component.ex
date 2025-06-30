@@ -26,9 +26,9 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
 
           <div class="grid grid-cols-2 gap-x-20 gap-y-6">
             <.input field={f[:name]} label="Nome"/>
-            <.input field={f[:cpf]} label="CPF" disabled={@action == :edit}/>
+            <.input field={f[:cpf]} label="CPF" disabled={@action == :edit} phx-hook="CpfMask"/>
             <.input field={f[:email]} label="E-mail" type="email" disabled={@action == :edit}/>
-            <.input field={f[:phone_number]} label="Telefone" disabled={@action == :edit}/>
+            <.input field={f[:phone_number]} label="Telefone" disabled={@action == :edit} phx-hook="PhoneMask"/>
           </div>
 
           <div class="grid grid-cols-2 gap-x-20 gap-y-6">
@@ -52,7 +52,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.FormComponent do
                   <div class="max-w-[85px]">
                     <.input field={af[:home_number]} label="Número" />
                   </div>
-                  <.input field={af[:cep]} label="CEP" />
+                  <.input field={af[:cep]} label="CEP" phx-hook="CepMask"/>
                 </div>
                   <.input field={af[:complement]} label="Complemento" />
                   <.input field={af[:district]} label="Bairro" />

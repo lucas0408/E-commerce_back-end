@@ -1,7 +1,9 @@
 defmodule BatchEcommerce.Accounts.User do
   use Ecto.Schema
+
   import Ecto.Changeset
   import EctoCommons.{EmailValidator, PhoneNumberValidator, DateValidator}
+
   alias BatchEcommerce.Accounts
 
   @derive {Jason.Encoder,
@@ -112,8 +114,16 @@ defmodule BatchEcommerce.Accounts.User do
     end
   end
 
-  defp validate_cpf(changeset),
-    do: changeset |> validate_length(:cpf, is: 11, message: "CPF inválido")
+
+  defp validate_cpf(changeset) do
+    cpf = get_field(changeset, :cpf)
+
+    if Brcpfcnpj.cpf_valid?(cpf) do
+      changeset
+    else
+      add_error(changeset, :cpf, "CPF inválido")
+    end
+  end
 
   defp validate_name(changeset),
     do: changeset |> validate_length(:name, max: 60, message: "O nome excedeu o limite de caracteres permitidos")

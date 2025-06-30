@@ -8,7 +8,6 @@ defmodule BatchEcommerceWeb.Live.UserLive.Show do
     {:ok, assign(socket, user: user)}
   end
 
-  #review
   @impl true
   def render(assigns) do
     ~H"""

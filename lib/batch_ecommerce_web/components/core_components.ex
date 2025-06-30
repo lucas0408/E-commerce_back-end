@@ -279,7 +279,7 @@ def product_card(assigns) do
       <img
         src={@product.filename || "https://via.placeholder.com/300"}
         alt={@product.name}
-        class="absolute top-0 left-0 w-full h-full object-contain"
+        class="absolute top-0 left-0 w-full h-full object-cover object-top"
       />
     </div>
     <div class="p-4">
@@ -355,6 +355,27 @@ end
                 d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
+      """
+    end
+
+    @doc """
+    Botão de voltar estilizado.
+    """
+    attr :to, :any, required: true, doc: "Path ou URL para navegar"
+    attr :text, :string, default: "Voltar", doc: "Texto do botão"
+    attr :class, :string, default: "inline-flex items-center text-gray-400 hover:text-gray-700"
+    attr :icon_class, :string, default: "h-5 w-5 mr-1"
+
+    def back_link(assigns) do
+      ~H"""
+      <div class="mb-4">
+        <.link navigate={@to} class={@class}>
+          <svg xmlns="http://www.w3.org/2000/svg" class={@icon_class} viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+          </svg>
+          <%= @text %>
+        </.link>
+      </div>
       """
     end
 

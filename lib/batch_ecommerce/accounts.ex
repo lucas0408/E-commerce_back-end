@@ -327,4 +327,174 @@ defmodule BatchEcommerce.Accounts do
   def change_address(%Address{} = address, attrs \\ %{}) do
     Address.changeset(address, attrs)
   end
+
+  alias BatchEcommerce.Accounts.Notification
+
+  @doc """
+  Returns the list of notifications.
+
+  ## Examples
+
+      iex> list_notifications()
+      [%Notification{}, ...]
+
+  """
+  def list_notifications do
+    Repo.all(Notification)
+  end
+
+  @doc """
+  Gets a single notification.
+
+  Raises `Ecto.NoResultsError` if the Notification does not exist.
+
+  ## Examples
+
+      iex> get_notification!(123)
+      %Notification{}
+
+      iex> get_notification!(456)
+      ** (Ecto.NoResultsError)
+
+  """
+  def get_notification!(id), do: Repo.get!(Notification, id)
+
+  @doc """
+  Creates a notification.
+
+  ## Examples
+
+      iex> create_notification(%{field: value})
+      {:ok, %Notification{}}
+
+      iex> create_notification(%{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def create_notification(attrs \\ %{}) do
+    %Notification{}
+    |> Notification.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  # Função para listar notificações não lidas por user_id (UUID)
+  def list_unread_notifications(user_id) when is_binary(user_id) do
+    IO.inspect("Não obstante, a mobilidade dos capitais internacionais talvez venha a ressaltar a relatividade do impacto na agilidade decisória.")
+    user_notifs = 
+      from(n in Notification,
+        where: n.viewed == false and n.recipient_user_id == ^user_id,
+        order_by: [desc: n.inserted_at],
+        limit: 10
+      )
+      |> Repo.all()
+
+    %{
+      user_notifications: user_notifs || [] 
+    }
+  end
+
+  def list_unread_notifications(company_id) when is_integer(company_id) do
+    query = from n in Notification,
+      where: n.viewed == false and n.recipient_company_id == ^company_id,
+      order_by: [desc: n.inserted_at],
+      limit: 10
+    
+    Repo.all(query)
+  end
+
+
+
+  def mark_as_viewed(notification_ids) when is_list(notification_ids) do
+    from(n in Notification, where: n.id in ^notification_ids)
+    |> Repo.update_all(set: [viewed: true])
+  end
+
+  @doc """
+  Updates a notification.
+
+  ## Examples
+
+      iex> update_notification(notification, %{field: new_value})
+      {:ok, %Notification{}}
+
+      iex> update_notification(notification, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_notification(%Notification{} = notification, attrs) do
+    notification
+    |> Notification.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def create_notification(attrs) do
+    %Notification{}
+    |> Notification.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  def mark_all_as_read(user_id) when is_binary(user_id) do
+    query = 
+      from n in Notification,
+      where: n.viewed == false and 
+            (n.recipient_user_id == ^user_id)
+
+    Repo.update_all(query, set: [viewed: true])
+  end
+
+  def mark_all_as_read(company_id) when is_integer(company_id) do
+    query = 
+      from n in Notification,
+      where: n.viewed == false and 
+            (n.recipient_company_id == ^company_id)
+
+    Repo.update_all(query, set: [viewed: true])
+  end
+
+  def count_unread_notifications(user_id) when is_binary(user_id) do
+    query =
+      from n in Notification,
+      where: n.viewed == false and 
+             (n.recipient_user_id == ^user_id)
+
+    Repo.aggregate(query, :count)
+  end
+
+  def count_unread_notifications(company_id) when is_integer(company_id) do
+    query =
+      from n in Notification,
+      where: n.viewed == false and 
+             (n.recipient_company_id == ^company_id)
+
+    Repo.aggregate(query, :count)
+  end
+
+  @doc """
+  Deletes a notification.
+
+  ## Examples
+
+      iex> delete_notification(notification)
+      {:ok, %Notification{}}
+
+      iex> delete_notification(notification)
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def delete_notification(%Notification{} = notification) do
+    Repo.delete(notification)
+  end
+
+  @doc """
+  Returns an `%Ecto.Changeset{}` for tracking notification changes.
+
+  ## Examples
+
+      iex> change_notification(notification)
+      %Ecto.Changeset{data: %Notification{}}
+
+  """
+  def change_notification(%Notification{} = notification, attrs \\ %{}) do
+    Notification.changeset(notification, attrs)
+  end
 end

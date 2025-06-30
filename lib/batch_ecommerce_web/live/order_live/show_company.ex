@@ -6,6 +6,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
 
   @impl true
   def mount(%{"order_id" => order_id}, session, socket) do
+    IO.inspect(socket)
     user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
 
@@ -24,7 +25,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
   @impl true
   def render(assigns) do
     ~H"""
-    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart} company={@current_user} id="HeaderWithCart"/>
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@current_user} company={@current_company} id="HeaderDefault"/>
 
     <.live_component
       module={OrderMainContent}
@@ -76,7 +77,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
       _ -> current_status
     end
 
-    order = Orders.update_order_product_status(order_id, new_status)
+    order = Orders.update_order_product_status(order_id, new_status, Orders.get_order(socket.assigns.order.order_id).user_id)
     {:noreply, assign(socket, order: order)}
   end
 end

@@ -111,7 +111,7 @@ defmodule BatchEcommerceWeb.Live.ProductLive.Show do
     ~H"""
 
       <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
-    <div class="bg-white mt-[1px]">
+    <div class="bg-white mt-[5px]">
       <div class="mx-auto max-w-2xl px-4 py-10 sm:px-6 sm:py-10 lg:max-w-7xl lg:px-8">
         <div class="lg:grid lg:grid-cols-[3fr_1fr] lg:items-start lg:gap-x-8">
           <!-- Coluna da esquerda - Imagem e informações básicas -->

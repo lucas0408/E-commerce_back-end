@@ -7,6 +7,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderDefault do
       |> assign_new(:notification_count, fn -> 0 end)
       |> assign_new(:cart_count, fn -> 0 end)
       |> assign_new(:user, fn -> nil end)
+      |> assign_new(:company, fn -> nil end)
       |> assign_new(:search_query, fn -> "" end)
 
     ~H"""
@@ -20,6 +21,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderDefault do
         notification_count={@notification_count}
         cart_count={@cart_count}
         user={@user}
+        company={@company}
         search_query={@search_query}
       />
     </div>

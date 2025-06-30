@@ -143,25 +143,27 @@ defmodule BatchEcommerceWeb.CoreComponents do
   """
   attr :count, :integer, default: 0
   attr :click_event, :string, required: true
-  attr :rest, :global
+  attr :current_user, :global
 
-  def notification_badge(assigns) do
+  def notification_badge_user(assigns) do
     ~H"""
-    <button
-      class="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none"
-      phx-click={@click_event}
-      aria-label="Notificações"
-      {@rest}
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-      </svg>
-      <%= if @count > 0 do %>
-        <span class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full">
-          <%= @count %>
-        </span>
-      <% end %>
-    </button>
+    <.live_component
+      module={BatchEcommerceWeb.Live.Notification}
+      id="notifications"
+      current_user={@current_user}
+    />
+    """
+  end
+
+  attr :current_company, :global
+
+  def notification_badge_company(assigns) do
+    ~H"""
+    <.live_component
+      module={BatchEcommerceWeb.Live.Notification}
+      id="notifications"
+      current_company={@current_company}
+    />
     """
   end
 
@@ -277,7 +279,7 @@ def product_card(assigns) do
       <img
         src={@product.filename || "https://via.placeholder.com/300"}
         alt={@product.name}
-        class="absolute top-0 left-0 w-full h-full object-contain"
+        class="absolute top-0 left-0 w-full h-full object-cover object-top"
       />
     </div>
     <div class="p-4">
@@ -353,6 +355,27 @@ end
                 d="M4 6h16M4 12h16M4 18h16" />
         </svg>
       </button>
+      """
+    end
+
+    @doc """
+    Botão de voltar estilizado.
+    """
+    attr :to, :any, required: true, doc: "Path ou URL para navegar"
+    attr :text, :string, default: "Voltar", doc: "Texto do botão"
+    attr :class, :string, default: "inline-flex items-center text-gray-400 hover:text-gray-700"
+    attr :icon_class, :string, default: "h-5 w-5 mr-1"
+
+    def back_link(assigns) do
+      ~H"""
+      <div class="mb-4">
+        <.link navigate={@to} class={@class}>
+          <svg xmlns="http://www.w3.org/2000/svg" class={@icon_class} viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+          </svg>
+          <%= @text %>
+        </.link>
+      </div>
       """
     end
 

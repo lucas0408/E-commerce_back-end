@@ -30,11 +30,11 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
 
         <!-- Logo ou Barra de Pesquisa -->
         <div class="flex-1 flex justify-center mx-4">
-            <%= if @show_search do %>
-              <.search_bar query={@search_query} target="#product-live-view" />
-            <% else %>
-            <a href="/products" class="text-xl font-bold text-gray-800">
-              <span class="text-indigo-600">Batch</span>Ecommerce
+          <%= if @show_search do %>
+            <.search_bar query={@search_query} target="#product-live-view" />
+          <% else %>
+            <a href="/products" class="block w-[200px]">
+              <img src="/images/logo.webp" alt="Warejeira" class="h-10 object-contain mx-auto" />
             </a>
           <% end %>
         </div>
@@ -52,7 +52,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
             <%= if @show_cart do %>
               <.cart_icon count={@cart_count} />
             <% end %>
-            <.user_profile name={@user.name} id={@user.id} avatar={"/images/default-avatar.png"} />
+            <.user_profile name={@user.name} id={@user.id} avatar={@user.profile_filename} />
           <% else %>
             <div class="flex items-center space-x-2">
               <!-- Ícone com fundo cinza e borda circular -->

@@ -340,7 +340,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
                   phx-value-cart_product_id={@cart_product.id}
                   phx-value-quantity={@cart_product.quantity - 1}
                   disabled={@cart_product.quantity <= 1}
-                  class="!rounded-none !rounded-l-md px-3 py-1.5 text-sm"
+                  class="!rounded-none !rounded-l-md bg-indigo-600 hover:bg-indigo-800 px-3 py-1.5 text-sm"
                 >
                   <.icon name="hero-minus" class="h-4 w-4" />
                 </.button>
@@ -353,7 +353,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
                   phx-click="update_quantity"
                   phx-value-cart_product_id={@cart_product.id}
                   phx-value-quantity={@cart_product.quantity + 1}
-                  class="!rounded-none !rounded-r-md px-3 py-1.5 text-sm"
+                  class="!rounded-none !rounded-r-md bg-indigo-600 hover:bg-indigo-800 px-3 py-1.5 text-sm"
                   disabled={@cart_product.quantity >= (@cart_product.product.stock_quantity || 0)}
                 >
                   <.icon name="hero-plus" class="h-4 w-4" />
@@ -392,7 +392,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
               phx-click="remove_item"
               phx-value-cart_product_id={@cart_product.id}
               data-confirm="Tem certeza que deseja remover este item do carrinho?"
-              class="text-red-600 border-red-300 hover:bg-red-50"
+              class="text-red-600 bg-red-600  hover:bg-red-800"
             >
               <.icon name="hero-trash" class="mr-1.5 h-4 w-4" />
               Remover

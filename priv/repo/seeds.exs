@@ -1,3 +1,4 @@
+
 # Limpar dados existentes
 BatchEcommerce.Repo.delete_all(BatchEcommerce.Catalog.Product)
 BatchEcommerce.Repo.delete_all(BatchEcommerce.Catalog.Category)
@@ -385,3 +386,8 @@ BatchEcommerce.Repo.preload(lego, :categories)
 |> BatchEcommerce.Catalog.Product.changeset(%{})
 |> Ecto.Changeset.put_assoc(:categories, [toys])
 |> BatchEcommerce.Repo.update!()
+
+alias BatchEcommerce.Catalog.Minio
+
+Minio.create_public_bucket("users")
+Minio.create_public_bucket("companies")

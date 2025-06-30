@@ -223,9 +223,9 @@ end
     product = get_product(product_id)
 
     IO.inspect(product.stock_quantity)
-    
+
     new_stock = product.stock_quantity + return_quantity
-    
+
     update_product(product, %{stock_quantity: new_stock})
   end
 
@@ -233,9 +233,9 @@ end
     product = get_product(product_id)
 
     IO.inspect(product.stock_quantity)
-    
+
     new_stock = product.stock_quantity - add_quantity
-    
+
     new_sales_quantity = product.sales_quantity + add_quantity
 
     update_product(product, %{stock_quantity: new_stock, sales_quantity: new_sales_quantity})
@@ -271,7 +271,7 @@ end
   end
 
   def upload_image(socket, company_name) do
-    Minio.upload_images(socket, company_name, :image)
+    Minio.upload_images(socket, company_name, :image, :catalog)
   end
 
   @doc """

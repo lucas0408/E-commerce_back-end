@@ -19,6 +19,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowUser do
       |> assign(selected_rating: 0)  # Inicia com 0 estrelas selecionadas
       |> load_review_data()
 
+
     {:ok, socket}
   end
 
@@ -161,4 +162,25 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowUser do
     <% end %>
     """
   end
+<<<<<<< HEAD
 end
+=======
+
+  @impl true
+  def handle_event("cancel_order", %{"order_id" => order_id, "order_product_id" => order_product_id, "price" => price}, socket) do
+    order = Orders.get_order(order_id)
+    order_product = Orders.update_order_product_status(order_product_id, "Cancelado", BatchEcommerce.Catalog.get_product(socket.assigns.order.product_id).company_id)
+    Orders.update_order(order_id, %{
+      total_price: Decimal.sub(order.total_price, price),
+      status_payment: "Estornado"
+    })
+
+    {:noreply, assign(socket, order: order_product)}
+  end
+
+  def handle_event("confirm_delivery", %{"order_id" => order_id}, socket) do
+    order = Orders.update_order_product_status(order_id, "Entregue", BatchEcommerce.Catalog.get_product(socket.assigns.order.product_id).company_id)
+    {:noreply, assign(socket, order: order)}
+  end
+end
+>>>>>>> 9be736c528ef2cf80b6e9dcb249cf014e93cc297

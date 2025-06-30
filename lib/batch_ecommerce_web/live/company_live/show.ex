@@ -44,14 +44,19 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
         <div>
           <!-- Nome da empresa em destaque -->
           <div class="bg-white p-5 rounded-lg">
-            <h1 class="text-3xl font-bold text-gray-800">
-              <%= @company.name %>
-            </h1>
-            <p class="text-lg text-gray-600 mt-2">
-              Painel Administrativo
-            </p>
+            <div class="flex items-center space-x-4">
+              <img src={@company.profile_filename} alt="Logo da Empresa"
+                  class="w-16 h-16 rounded-full object-cover border border-gray-300" />
+              <div>
+                <h1 class="text-3xl font-bold text-gray-800">
+                  <%= @company.name %>
+                </h1>
+                <p class="text-lg text-gray-600 mt-1">
+                  Painel Administrativo
+                </p>
+              </div>
+            </div>
           </div>
-
           <!-- Tabela de produtos -->
           <div class="px-[15px] py-[7px] mt-[10px] bg-white rounded-lg">
             <.table id="top-products" rows={@top_products}>

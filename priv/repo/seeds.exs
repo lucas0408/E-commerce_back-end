@@ -104,177 +104,148 @@ company = BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.Company, name: "Te
 
 # Inserindo categorias
 categories = [
-  %{type: "Eletrônicos"},
-  %{type: "Vestuário"},
-  %{type: "Livros"},
-  %{type: "Casa e Decoração"},
-  %{type: "Esportes"},
-  %{type: "Brinquedos"}
+  %{"type" => "Eletrônicos"},
+  %{"type" => "Vestuário"},
+  %{"type" => "Livros"},
+  %{"type" => "Casa e Decoração"},
+  %{"type" => "Esportes"},
+  %{"type" => "Brinquedos"}
 ]
 
-Enum.each(categories, fn category ->
+categories = Enum.each(categories, fn category ->
   BatchEcommerce.Repo.insert!(%BatchEcommerce.Catalog.Category{
-    type: category.type
+    type: category["type"]
   })
 end)
 categories = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Category)
 category_ids = Enum.map(categories, & &1.id)
 
-products = [
-  %{
-    name: "Smartphone Galaxy S21",
-    price: Decimal.new("3499.99"),
-    description: "Celular potente",
-    stock_quantity: 50,
-    sales_quantity: 1,
-    company_id: company.id,
-    filename: "https://example.com/images/galaxy-s21.jpg",
-    discount: 12
-  },
-  %{
-    name: "Camiseta Básica",
-    price: Decimal.new("59.90"),
-    stock_quantity: 200,
-    description: "Camiseta grande",
-    sales_quantity: 3,
-    company_id: company.id,
-    filename: "https://example.com/images/camiseta.jpg",
-    discount: 0
-  },
-  %{
-    name: "O Senhor dos Anéis",
-    price: Decimal.new("89.90"),
-    description: "Ótimo livro",
-    stock_quantity: 30,
-    sales_quantity: 1,
-    company_id: company.id,
-    filename: "https://example.com/images/lotr.jpg",
-    discount: 8
-  },
-  %{
-    name: "Luminária de Mesa",
-    price: Decimal.new("129.90"),
-    description: "Luminária fluorescente",
-    stock_quantity: 45,
-    sales_quantity: 2,
-    company_id: company.id,
-    filename: "https://example.com/images/luminaria.jpg",
-    discount: 18
-  },
-  %{
-    name: "Bola de Futebol",
-    price: Decimal.new("149.90"),
-    description: "Bola redonda",
-    stock_quantity: 100,
-    company_id: company.id,
-    sales_quantity: 1,
-    filename: "https://example.com/images/bola.jpg",
-    discount: 35
-  },
-  %{
-    name: "LEGO Star Wars",
-    price: Decimal.new("499.90"),
-    description: "Jogo bom",
-    stock_quantity: 25,
-    company_id: company.id,
-    sales_quantity: 1,
-    filename: "https://example.com/images/lego.jpg",
-    discount: 22
-  },
-  %{
-    name: "Notebook Dell Inspiron",
-    price: Decimal.new("2799.99"),
-    description: "Laptop para trabalho e estudos",
-    stock_quantity: 35,
-    sales_quantity: 1,
-    company_id: company.id,
-    filename: "https://example.com/images/notebook-dell.jpg",
-    discount: 15
-  },
-  %{
-    name: "Tênis Nike Air Max",
-    price: Decimal.new("349.90"),
-    description: "Tênis esportivo confortável",
-    stock_quantity: 80,
-    sales_quantity: 1,
-    company_id: company.id,
-    filename: "https://example.com/images/nike-air-max.jpg",
-    discount: 25
-  },
-  %{
-    name: "Cafeteira Elétrica",
-    price: Decimal.new("199.90"),
-    description: "Cafeteira automática 12 xícaras",
-    stock_quantity: 40,
-    sales_quantity: 1,
-    company_id: company.id,
-    filename: "https://example.com/images/cafeteira.jpg",
-    discount: 10
-  },
-  %{
-    name: "Fone de Ouvido Bluetooth",
-    price: Decimal.new("179.90"),
-    description: "Fone sem fio com cancelamento de ruído",
-    stock_quantity: 65,
-    sales_quantity: 1,
-    company_id: company.id,
-    filename: "https://example.com/images/fone-bluetooth.jpg",
-    discount: 20
-  },
-  %{
-    name: "Mochila Escolar",
-    price: Decimal.new("89.90"),
-    description: "Mochila resistente com vários compartimentos",
-    stock_quantity: 120,
-    sales_quantity: 2,
-    company_id: company.id,
-    filename: "https://example.com/images/mochila.jpg",
-    discount: 5
-  },
-  %{
-    name: "Panela de Pressão Elétrica",
-    price: Decimal.new("249.90"),
-    description: "Panela elétrica multifuncional 6L",
-    stock_quantity: 30,
-    sales_quantity: 1,
-    company_id: company.id,
-    filename: "https://example.com/images/panela-eletrica.jpg",
-    discount: 30
-  }
+products = [ 
+  %{ 
+    "name" => "Smartphone Galaxy S21", 
+    "price" => Decimal.new("3499.99"), 
+    "description" => "Celular potente", 
+    "stock_quantity" => 50, 
+    "sales_quantity" => 1, 
+    "company_id" => company.id, 
+    "discount" => 12 
+  }, 
+  %{ 
+    "name" => "Camiseta Básica", 
+    "price" => Decimal.new("59.90"), 
+    "stock_quantity" => 200, 
+    "description" => "Camiseta grande", 
+    "sales_quantity" => 3, 
+    "company_id" => company.id, 
+    "discount" => 0 
+  }, 
+  %{ 
+    "name" => "O Senhor dos Anéis", 
+    "price" => Decimal.new("89.90"), 
+    "description" => "Ótimo livro", 
+    "stock_quantity" => 30, 
+    "sales_quantity" => 1, 
+    "company_id" => company.id, 
+    "discount" => 8 
+  }, 
+  %{ 
+    "name" => "Luminária de Mesa", 
+    "price" => Decimal.new("129.90"), 
+    "description" => "Luminária fluorescente", 
+    "stock_quantity" => 45, 
+    "sales_quantity" => 2, 
+    "company_id" => company.id, 
+    "discount" => 18 
+  }, 
+  %{ 
+    "name" => "Bola de Futebol", 
+    "price" => Decimal.new("149.90"), 
+    "description" => "Bola redonda", 
+    "stock_quantity" => 100, 
+    "company_id" => company.id, 
+    "sales_quantity" => 1, 
+    "discount" => 35 
+  }, 
+  %{ 
+    "name" => "LEGO Star Wars", 
+    "price" => Decimal.new("499.90"), 
+    "description" => "Jogo bom", 
+    "stock_quantity" => 25, 
+    "company_id" => company.id, 
+    "sales_quantity" => 1, 
+    "discount" => 22 
+  }, 
+  %{ 
+    "name" => "Notebook Dell Inspiron", 
+    "price" => Decimal.new("2799.99"), 
+    "description" => "Laptop para trabalho e estudos", 
+    "stock_quantity" => 35, 
+    "sales_quantity" => 1, 
+    "company_id" => company.id, 
+    "discount" => 15 
+  }, 
+  %{ 
+    "name" => "Tênis Nike Air Max", 
+    "price" => Decimal.new("349.90"), 
+    "description" => "Tênis esportivo confortável", 
+    "stock_quantity" => 80, 
+    "sales_quantity" => 1, 
+    "company_id" => company.id, 
+    "discount" => 25 
+  }, 
+  %{ 
+    "name" => "Cafeteira Elétrica", 
+    "price" => Decimal.new("199.90"), 
+    "description" => "Cafeteira automática 12 xícaras", 
+    "stock_quantity" => 40, 
+    "sales_quantity" => 1, 
+    "company_id" => company.id, 
+    "discount" => 10 
+  }, 
+  %{ 
+    "name" => "Fone de Ouvido Bluetooth", 
+    "price" => Decimal.new("179.90"), 
+    "description" => "Fone sem fio com cancelamento de ruído", 
+    "stock_quantity" => 65, 
+    "sales_quantity" => 1, 
+    "company_id" => company.id, 
+    "discount" => 20 
+  }, 
+  %{ 
+    "name" => "Mochila Escolar", 
+    "price" => Decimal.new("89.90"), 
+    "description" => "Mochila resistente com vários compartimentos", 
+    "stock_quantity" => 120, 
+    "sales_quantity" => 2, 
+    "company_id" => company.id, 
+    "discount" => 5 
+  }, 
+  %{ 
+    "name" => "Panela de Pressão Elétrica", 
+    "price" => Decimal.new("249.90"), 
+    "description" => "Panela elétrica multifuncional 6L", 
+    "stock_quantity" => 30, 
+    "sales_quantity" => 1, 
+    "company_id" => company.id, 
+    "discount" => 30 
+  } 
 ]
 
 products_with_categories =
   Enum.map(products, fn product ->
     selected_categories = Enum.take_random(categories, Enum.random(1..3))
+    category_ids = Enum.map(selected_categories, & &1.id)
 
-    Map.put(product, :categories, selected_categories)
+    Map.put(product, "categories", category_ids)
   end)
 
 Enum.each(products_with_categories, fn product ->
-  BatchEcommerce.Catalog.create_product(product)
+  BatchEcommerce.Catalog.create_product(product, "https://example.com/images/panela-eletrica.jpg")
 end)
 
 products = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Product)
 
 users = BatchEcommerce.Repo.all(BatchEcommerce.Accounts.User)
-
-Enum.each(products, fn product ->
-
-  number_of_reviews = Enum.random(5..20)
-
-  Enum.each(users, fn user ->
-    user_id = BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.User, name: "João da Silva").id
-    random_review = Enum.random(1..5)
-
-    %BatchEcommerce.Catalog.ProductReview{}
-    |> BatchEcommerce.Catalog.ProductReview.changeset(%{
-      review: random_review,
-      product_id: product.id,
-      user_id: user.id
-    })
-    |> BatchEcommerce.Repo.insert!()
-  end)
-end)
 
 
 # Buscar usuários e produtos existentes

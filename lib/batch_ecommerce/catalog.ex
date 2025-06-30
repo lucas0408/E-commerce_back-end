@@ -271,7 +271,7 @@ end
   end
 
   def upload_image(socket, company_name) do
-    Minio.upload_images(socket, comp any_name, :image)
+    Minio.upload_images(socket, company_name, :image)
   end
 
   @doc """
@@ -356,6 +356,23 @@ end
       nil ->
         nil
     end
+  end
+
+  def create_review(attrs) do
+    %ProductReview{}
+    |> ProductReview.changeset(attrs)
+    |> Repo.insert()
+  end
+
+
+  def update_review(%ProductReview{} = review, attrs) do
+    review
+    |> ProductReview.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def get_review_by_user_and_product(user_id, product_id) do
+    Repo.get_by(ProductReview, user_id: user_id, product_id: product_id)
   end
 
   def get_product_rating(product_id) do

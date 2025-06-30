@@ -82,5 +82,9 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
 
     order = Orders.update_order_product_status(order_id, new_status, Orders.get_order(socket.assigns.order.order_id).user_id)
     {:noreply, assign(socket, order: order)}
+
+    if(new_status == "Enviado") do
+      Orders.update_order(order_id, %{status_payment: "Aceito"})
+    end
   end
 end

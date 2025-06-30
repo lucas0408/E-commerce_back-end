@@ -239,8 +239,6 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
                   field={@form[:active]}
                   type="checkbox"
                   label="Produto disponível para venda"
-                  checked_value={true}
-                  unchecked_value={false}
                   class="h-4 w-4 text-indigo-600 focus:ring-indigo-600 border-gray-300 rounded"
                 />
               </div>

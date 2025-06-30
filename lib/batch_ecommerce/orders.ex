@@ -21,31 +21,31 @@ defmodule BatchEcommerce.Orders do
       })
       |>Repo.insert!()
 
-    order_products =
-      Enum.map(cart_products, fn item ->
-        BatchEcommerce.Catalog.remove_stock(item.quantity, item.product_id)
-        %OrderProduct{}
-        |> OrderProduct.changeset(%{
-          product_id: item.product_id,
-          price: item.price_when_carted,
-          quantity: item.quantity,
-          order_id: order.id,
-          status: "Preparando Pedido",
 
-        })
-        |>Repo.insert!()
-        product = BatchEcommerce.Catalog.get_product(item.product_id)
-        case BatchEcommerce.Accounts.create_notification(%{
-          title: "Novo pedido",
-          body: "#{item.quantity} #{product.name} foram pedidos",
-          recipient_company_id: product.company_id,
-        }) do
-          {:ok, _notification} ->
-            {:ok, _notification}
-          error ->
-            {:error, error}
-        end
-      end)
+    Enum.map(cart_products, fn item ->
+      BatchEcommerce.Catalog.remove_stock(item.quantity, item.product_id)
+      %OrderProduct{}
+      |> OrderProduct.changeset(%{
+        product_id: item.product_id,
+        price: item.price_when_carted,
+        quantity: item.quantity,
+        order_id: order.id,
+        status: "Preparando Pedido",
+
+      })
+      |>Repo.insert!()
+      product = BatchEcommerce.Catalog.get_product(item.product_id)
+      case BatchEcommerce.Accounts.create_notification(%{
+        title: "Novo pedido",
+        body: "#{item.quantity} #{product.name} foram pedidos",
+        recipient_company_id: product.company_id,
+      }) do
+        {:ok, _notification} ->
+          {:ok, _notification}
+        error ->
+          {:error, error}
+      end
+    end)
 
 
       case BatchEcommerce.ShoppingCart.prune_cart_items(user_id) do

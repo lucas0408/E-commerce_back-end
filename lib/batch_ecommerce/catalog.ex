@@ -358,6 +358,23 @@ end
     end
   end
 
+  def create_review(attrs) do
+    %ProductReview{}
+    |> ProductReview.changeset(attrs)
+    |> Repo.insert()
+  end
+
+
+  def update_review(%ProductReview{} = review, attrs) do
+    review
+    |> ProductReview.changeset(attrs)
+    |> Repo.update()
+  end
+
+  def get_review_by_user_and_product(user_id, product_id) do
+    Repo.get_by(ProductReview, user_id: user_id, product_id: product_id)
+  end
+
   def get_product_rating(product_id) do
     query = from r in ProductReview,
             where: r.product_id == ^product_id,

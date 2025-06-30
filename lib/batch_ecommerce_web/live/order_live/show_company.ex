@@ -6,13 +6,14 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
 
   @impl true
   def mount(%{"order_id" => order_id}, session, socket) do
-    IO.inspect(socket)
     user_id = Map.get(session, "user_id")
     current_user = Accounts.get_user(user_id)
 
     order =
       order_id
       |> Orders.get_order_product()
+
+    IO.inspect(order)
 
     socket =
       socket
@@ -39,8 +40,8 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
         <!-- Botão de Cancelar com Estorno -->
         <.button
           phx-click="cancel_and_refund"
-          phx-value-order_product_id={@order.id}
           phx-value-order_id={@order.order_id}
+          phx-value-order_product_id={@order.id}
           phx-value-price={@order.price}
           class="bg-red-600 hover:bg-red-700"
         >
@@ -50,7 +51,8 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
         <!-- Botão para Avançar Status -->
         <.button
           phx-click="advance_status"
-          phx-value-order_id={@order.id}
+          phx-value-order_product_id={@order.id}
+          phx-value-order_id={@order.order_id}
           phx-value-current_status={@order.status}
           class="bg-blue-600 hover:bg-blue-700"
         >
@@ -68,7 +70,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
     {:noreply, assign(socket, order: order_product)}
   end
 
-  def handle_event("advance_status", %{"order_id" => order_id, "current_status" => current_status}, socket) do
+  def handle_event("advance_status", %{"order_id" => order_id, "order_product_id" => order_product_id, "current_status" => current_status}, socket) do
     # Lógica para avançar para o próximo status
     new_status = case current_status do
       "Preparando Pedido" -> "Enviado"
@@ -77,11 +79,13 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
       _ -> current_status
     end
 
+    IO.inspect(new_status)
+
     if(new_status == "Enviado") do
       Orders.update_order(order_id, %{status_payment: "Aprovado"})
     end
 
-    order = Orders.update_order_product_status(order_id, new_status, Orders.get_order(socket.assigns.order.order_id).user_id)
+    order = Orders.update_order_product_status(order_product_id, new_status, Orders.get_order(order_id).user_id)
     {:noreply, assign(socket, order: order)}
   end
 end

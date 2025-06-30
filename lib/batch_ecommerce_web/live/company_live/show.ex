@@ -12,7 +12,8 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
       nil ->
         {:ok, assign(socket,
           has_company: false,
-          user: user
+          user: user,
+          company: nil
         )}
 
       company ->

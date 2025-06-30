@@ -17,6 +17,7 @@ defmodule BatchEcommerce.ShoppingCart do
   end
 
   def create_cart_prodcut(user_id, cart_item_params) do
+
     case Map.get(cart_item_params, "product_id") do
       nil ->
         {:error, :not_found}   
@@ -32,6 +33,12 @@ defmodule BatchEcommerce.ShoppingCart do
           product.price
           |> Decimal.mult(quantity)
           |> Decimal.mult(discount_multiplier)
+          
+        IO.inspect("00000000000000000000000000000000000000000000000000000000000000000000")
+
+        IO.inspect(price_when_carted)
+
+        IO.inspect("00000000000000000000000000000000000000000000000000000000000000000000")
 
         attrs = %{
           quantity: quantity,
@@ -102,9 +109,7 @@ defmodule BatchEcommerce.ShoppingCart do
     |> preload_product()
     total_price = Enum.reduce(cart_products, Decimal.new("0"), fn cart_product, acc ->
       price = Decimal.new(cart_product.price_when_carted)
-      discount = cart_product.product.discount || 0
-      discounted_price = calculate_discounted_price(price, discount)
-      Decimal.add(acc, discounted_price)
+      Decimal.add(acc, price)
     end)
     |> Decimal.round(2)
     total_price

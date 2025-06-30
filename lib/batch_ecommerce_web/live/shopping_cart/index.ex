@@ -365,7 +365,7 @@ defmodule BatchEcommerceWeb.Live.ShoppingCart.Index do
             <!-- Preço unitário -->
             <div class="text-right">
               <%
-                price = @cart_product.price_when_carted
+                price = @cart_product.product.price
                 discount = @cart_product.product.discount || 0
                 discounted_price = calculate_discounted_price(price, discount)
               %>

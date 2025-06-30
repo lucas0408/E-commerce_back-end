@@ -26,7 +26,7 @@ defmodule BatchEcommerce.Accounts.Company do
   def changeset(company, attrs) do
     company
     |> cast(attrs, [:cnpj, :name, :email, :phone_number, :user_id, :minio_bucket_name, :profile_filename])
-    |> validate_required([:cnpj, :name, :email, :phone_number, :minio_bucket_name, :profile_filename], message: "O campo não pode estar em branco")
+    |> validate_required([:cnpj, :name, :email, :phone_number, :minio_bucket_name], message: "O campo não pode estar em branco")
     |> validate_name()
     |> validate_cnpj()
     |> validate_email(:email, message: "Endereço de e-mail inválido")

@@ -53,6 +53,23 @@ defmodule BatchEcommerceWeb.Router do
     live "/sobre", Live.AboutLive
   end
 
+  #scope de usuário logado e com empresa
+  scope "/", BatchEcommerceWeb.Live do
+    pipe_through [:browser]
+
+    live_session :require_authenticated_and_has_company,
+      on_mount: {BatchEcommerceWeb.UserAuth, :require_authenticated_and_has_company} do
+      live "/companies/", CompanyLive.Show, :show
+      live "/companies/:id/edit", CompanyLive.Edit, :edit
+      live "/companies/:company_id/products", CompanyLive.ProductIndex, :product_index
+      live "/companies/:company_id/orders", CompanyLive.OrderIndex, :order_index
+      live "/products/new", ProductLive.New, :new
+      live "/products/:product_id/edit", ProductLive.Edit, :edit
+      live "/companies/:company_id/orders/:order_id", OrderLive.ShowCompany, :order_index
+      #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
+    end
+  end
+
   #scope de usuarios logados com o liveview
   scope "/", BatchEcommerceWeb.Live do
     pipe_through [:browser, :require_authenticated_user]
@@ -61,30 +78,13 @@ defmodule BatchEcommerceWeb.Router do
       on_mount: [{BatchEcommerceWeb.UserAuth, :ensure_authenticated}] do
       live "/users", UserLive.Index, :index
       live "/users/:id/edit", UserLive.Edit, :edit
-      live "/products/new", ProductLive.New, :new
       live "/products/:product_id", ProductLive.Show, :edit
-      live "/products/:product_id/edit", ProductLive.Edit, :edit
       live "/users/:id", UserLive.Show, :show
       live "/companies/new", CompanyLive.New, :new
       live "/address/new", AddressLive.Form, :new
       live "/cart_products", ShoppingCart.Index, :index
       live "/orders", OrderLive.Index, :index
       live "/orders/:order_id", OrderLive.ShowUser, :show
-    end
-  end
-
-  #scope de usuário logado e com empresa
-  scope "/companies", BatchEcommerceWeb.Live do
-    pipe_through [:browser]
-
-    live_session :require_authenticated_and_has_company,
-      on_mount: {BatchEcommerceWeb.UserAuth, :require_authenticated_and_has_company} do
-      live "/", CompanyLive.Show, :show
-      live "/:id/edit", CompanyLive.Edit, :edit
-      live "/:company_id/products", CompanyLive.ProductIndex, :product_index
-      live "/:company_id/orders", CompanyLive.OrderIndex, :order_index
-      live "/:company_id/orders/:order_id", OrderLive.ShowCompany, :order_index
-      #live "/companies/:id/orders", OrderLive.Index, :index REVIEW: rota duplicada
     end
   end
 

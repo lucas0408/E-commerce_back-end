@@ -12,7 +12,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Edit do
 
     def render(assigns) do
     ~H"""
-    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} company={@current_company} id="HeaderDefault"/>
     <div class="pt-10 px-4 mb-20">
     <!-- Botão Voltar -->
       <div class="mb-4 ml-[275px]">

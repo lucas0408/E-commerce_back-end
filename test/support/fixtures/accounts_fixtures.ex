@@ -68,4 +68,18 @@ defmodule BatchEcommerce.AccountsFixtures do
 
     company
   end
+
+  @doc """
+  Generate a notification.
+  """
+  def notification_fixture(attrs \\ %{}) do
+    {:ok, notification} =
+      attrs
+      |> Enum.into(%{
+
+      })
+      |> BatchEcommerce.Accounts.create_notification()
+
+    notification
+  end
 end

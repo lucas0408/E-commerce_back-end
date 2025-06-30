@@ -7,6 +7,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
 
   @impl true
   def mount(%{"company_id" => company_id}, session, socket) do
+    IO.inspect(socket)
     user_id = Map.get(session, "user_id")
     {:ok,
      socket
@@ -75,7 +76,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
   @impl true
   def render(assigns) do
     ~H"""
-    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} company={@current_company} id="HeaderDefault"/>
     <div class="max-w-7xl mx-auto px-4 py-20">
     <!-- Botão Voltar -->
       <div class="mb-4">

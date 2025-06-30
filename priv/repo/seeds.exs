@@ -184,7 +184,7 @@ products = [
     description: "Bola redonda",
     stock_quantity: 100,
     company_id: company.id,
-    sales_quantity: 98,
+    sales_quantity: 1,
     filename: "https://example.com/images/bola.jpg",
     discount: 35
   },
@@ -194,7 +194,7 @@ products = [
     description: "Jogo bom",
     stock_quantity: 25,
     company_id: company.id,
-    sales_quantity: 45,
+    sales_quantity: 1,
     filename: "https://example.com/images/lego.jpg",
     discount: 22
   },

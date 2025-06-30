@@ -21,31 +21,30 @@ defmodule BatchEcommerce.Orders do
       })
       |>Repo.insert!()
 
-    order_products =
-      Enum.map(cart_products, fn item ->
-        BatchEcommerce.Catalog.remove_stock(item.quantity, item.product_id)
-        %OrderProduct{}
-        |> OrderProduct.changeset(%{
-          product_id: item.product_id,
-          price: item.price_when_carted,
-          quantity: item.quantity,
-          order_id: order.id,
-          status: "Preparando Pedido",
+    Enum.map(cart_products, fn item ->
+      BatchEcommerce.Catalog.remove_stock(item.quantity, item.product_id)
+      %OrderProduct{}
+      |> OrderProduct.changeset(%{
+        product_id: item.product_id,
+        price: item.price_when_carted,
+        quantity: item.quantity,
+        order_id: order.id,
+        status: "Preparando Pedido",
 
-        })
-        |>Repo.insert!()
-        product = BatchEcommerce.Catalog.get_product(item.product_id)
-        case BatchEcommerce.Accounts.create_notification(%{
-          title: "Novo pedido",
-          body: "#{item.quantity} #{product.name} foram pedidos",
-          recipient_company_id: product.company_id,
-        }) do
-          {:ok, _notification} ->
-            {:ok, _notification}
-          error ->
-            {:error, error}
-        end
-      end)
+      })
+      |>Repo.insert!()
+      product = BatchEcommerce.Catalog.get_product(item.product_id)
+      case BatchEcommerce.Accounts.create_notification(%{
+        title: "Novo pedido",
+        body: "#{item.quantity} #{product.name} foram pedidos",
+        recipient_company_id: product.company_id,
+      }) do
+        {:ok, notification} ->
+          {:ok, notification}
+        error ->
+          {:error, error}
+      end
+    end)
 
 
       case BatchEcommerce.ShoppingCart.prune_cart_items(user_id) do
@@ -55,7 +54,7 @@ defmodule BatchEcommerce.Orders do
           {:error, error}
       end
 
-      
+
   end
 
   def list_company_orders_paginated(company_id, page, per_page, opts \\ []) do
@@ -118,8 +117,8 @@ defmodule BatchEcommerce.Orders do
       body: "Peido nº #{order_product_id} #{new_status}",
       recipient_company_id: company_id,
     }) do
-      {:ok, _notification} ->
-        {:ok, _notification}
+      {:ok, notification} ->
+        {:ok, notification}
       error ->
         {:error, error}
     end

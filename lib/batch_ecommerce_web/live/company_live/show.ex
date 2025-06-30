@@ -46,6 +46,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
             <h1 class="text-3xl font-bold text-gray-800">
               <%= @company.name %>
             </h1>
+            <img src={@company.profile_filename} />
             <p class="text-lg text-gray-600 mt-2">
               Painel Administrativo
             </p>

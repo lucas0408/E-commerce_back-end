@@ -167,7 +167,6 @@ defmodule BatchEcommerce.Accounts do
 
   def get_company_by_user_id(user_id), do: Repo.get_by(Company, user_id: user_id)
 
-
   def get_company!(id), do: Repo.get(Company, id) |> companies_preload_address()
 
   @doc """
@@ -231,6 +230,22 @@ defmodule BatchEcommerce.Accounts do
   end
 
   defp ensure_min_length(string), do: string
+
+  def upload_image(socket, company_name, :user) do
+    Minio.upload_images(socket, company_name, :image, :user)
+  end
+
+  def upload_image(socket, company_name, :company) do
+    Minio.upload_images(socket, company_name, :image, :company)
+  end
+
+  def normalize_filename(name) do
+    name
+    |> String.downcase()
+    |> String.normalize(:nfd)
+    |> String.replace(~r/[̀-ͯ]/, "")
+    |> String.replace(~r/[^a-z0-9\._-]/, "_")
+  end
 
   def company_exists_with_field?(field, value) do
     query = from u in Company, where: field(u, ^field) == ^value
@@ -379,8 +394,7 @@ defmodule BatchEcommerce.Accounts do
 
   # Função para listar notificações não lidas por user_id (UUID)
   def list_unread_notifications(user_id) when is_binary(user_id) do
-    IO.inspect("Não obstante, a mobilidade dos capitais internacionais talvez venha a ressaltar a relatividade do impacto na agilidade decisória.")
-    user_notifs = 
+    user_notifs =
       from(n in Notification,
         where: n.viewed == false and n.recipient_user_id == ^user_id,
         order_by: [desc: n.inserted_at],
@@ -389,7 +403,7 @@ defmodule BatchEcommerce.Accounts do
       |> Repo.all()
 
     %{
-      user_notifications: user_notifs || [] 
+      user_notifications: user_notifs || []
     }
   end
 
@@ -398,7 +412,7 @@ defmodule BatchEcommerce.Accounts do
       where: n.viewed == false and n.recipient_company_id == ^company_id,
       order_by: [desc: n.inserted_at],
       limit: 10
-    
+
     Repo.all(query)
   end
 
@@ -427,25 +441,19 @@ defmodule BatchEcommerce.Accounts do
     |> Repo.update()
   end
 
-  def create_notification(attrs) do
-    %Notification{}
-    |> Notification.changeset(attrs)
-    |> Repo.insert()
-  end
-
   def mark_all_as_read(user_id) when is_binary(user_id) do
-    query = 
+    query =
       from n in Notification,
-      where: n.viewed == false and 
+      where: n.viewed == false and
             (n.recipient_user_id == ^user_id)
 
     Repo.update_all(query, set: [viewed: true])
   end
 
   def mark_all_as_read(company_id) when is_integer(company_id) do
-    query = 
+    query =
       from n in Notification,
-      where: n.viewed == false and 
+      where: n.viewed == false and
             (n.recipient_company_id == ^company_id)
 
     Repo.update_all(query, set: [viewed: true])
@@ -454,7 +462,7 @@ defmodule BatchEcommerce.Accounts do
   def count_unread_notifications(user_id) when is_binary(user_id) do
     query =
       from n in Notification,
-      where: n.viewed == false and 
+      where: n.viewed == false and
              (n.recipient_user_id == ^user_id)
 
     Repo.aggregate(query, :count)
@@ -463,7 +471,7 @@ defmodule BatchEcommerce.Accounts do
   def count_unread_notifications(company_id) when is_integer(company_id) do
     query =
       from n in Notification,
-      where: n.viewed == false and 
+      where: n.viewed == false and
              (n.recipient_company_id == ^company_id)
 
     Repo.aggregate(query, :count)

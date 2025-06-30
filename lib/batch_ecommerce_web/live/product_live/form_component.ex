@@ -122,11 +122,13 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
       product_params
       |> Map.put("rating", 4)
       |> Map.put("company_id", socket.assigns.company_id)
+
     company = Accounts.get_company!(socket.assigns.company_id)
 
     with {:ok, filename} <- Catalog.upload_image(socket, company.minio_bucket_name),
         {:ok, product} <- Catalog.create_product(product_params_with_rating, filename) do
         notify_parent({:saved, product})
+
         {:noreply,
          socket
          |> put_flash(:info, "Produto criado com sucesso")
@@ -135,6 +137,12 @@ defmodule BatchEcommerceWeb.Live.ProductLive.FormComponent do
       {:error, %Ecto.Changeset{} = changeset} ->
         IO.inspect(changeset, label: "Changeset Error")
         {:noreply, assign(socket, form: to_form(changeset))}
+      {:error, error} ->
+        IO.inspect(error, label: "Upload Error")
+        {:noreply,
+          socket
+          |> put_flash(:error, "Erro ao fazer upload da imagem")
+          |> assign(form: to_form(Catalog.change_product(%Catalog.Product{})))}
     end
   end
 

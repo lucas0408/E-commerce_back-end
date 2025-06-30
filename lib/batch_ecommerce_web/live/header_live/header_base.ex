@@ -52,7 +52,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
             <%= if @show_cart do %>
               <.cart_icon count={@cart_count} />
             <% end %>
-            <.user_profile name={@user.name} id={@user.id} avatar={"/images/default-avatar.png"} />
+            <.user_profile name={@user.name} id={@user.id} avatar={@user.profile_filename} />
           <% else %>
             <div class="flex items-center space-x-2">
               <!-- Ícone com fundo cinza e borda circular -->

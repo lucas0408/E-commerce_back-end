@@ -2,8 +2,9 @@ defmodule BatchEcommerce.Catalog.Minio do
   alias BatchEcommerce.Accounts
   #@behaviour BatchEcommerce.Catalog.MinioBehaviour
 
+  def upload_images(socket, bucket, upload_name \\ :image, type)
 
-  def upload_images(socket, bucket, upload_name \\ :image) do
+  def upload_images(socket, bucket, upload_name, :catalog) do
     uploaded_files =
       Phoenix.LiveView.consume_uploaded_entries(socket, upload_name, fn %{path: path}, entry ->
         new_filename = "#{UUID.uuid4()}-#{entry.client_name}"
@@ -18,6 +19,56 @@ defmodule BatchEcommerce.Catalog.Minio do
       end)
 
     filename_with_host = build_preview_url(bucket, uploaded_files)
+    errors = Enum.filter(uploaded_files, &match?({:error, _}, &1))
+
+    case errors do
+      [] ->
+        {:ok, filename_with_host}
+      _ ->
+        {:error, "Upload failed: #{inspect(errors)}"}
+    end
+  end
+
+  def upload_images(socket, user_name, upload_name, :user) do
+    uploaded_files =
+      Phoenix.LiveView.consume_uploaded_entries(socket, upload_name, fn %{path: path}, entry ->
+        new_filename = "#{UUID.uuid4()}-#{user_name}"
+
+        case ExAws.S3.put_object("users", new_filename, File.read!(path), [
+          {:content_type, entry.client_type},
+          {:acl, :public_read}
+        ]) |> ExAws.request() do
+          {:ok, _msg} -> {:ok, new_filename}
+          {:error, reason} -> {:error, reason}
+        end
+      end)
+
+    filename_with_host = build_preview_url("users", uploaded_files)
+    errors = Enum.filter(uploaded_files, &match?({:error, _}, &1))
+
+    case errors do
+      [] ->
+        {:ok, filename_with_host}
+      _ ->
+        {:error, "Upload failed: #{inspect(errors)}"}
+    end
+  end
+
+  def upload_images(socket, user_name, upload_name, :company) do
+    uploaded_files =
+      Phoenix.LiveView.consume_uploaded_entries(socket, upload_name, fn %{path: path}, entry ->
+        new_filename = "#{UUID.uuid4()}-#{user_name}"
+
+        case ExAws.S3.put_object("companies", new_filename, File.read!(path), [
+          {:content_type, entry.client_type},
+          {:acl, :public_read}
+        ]) |> ExAws.request() do
+          {:ok, _msg} -> {:ok, new_filename}
+          {:error, reason} -> {:error, reason}
+        end
+      end)
+
+    filename_with_host = build_preview_url("companies", uploaded_files)
     errors = Enum.filter(uploaded_files, &match?({:error, _}, &1))
 
     case errors do

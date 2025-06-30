@@ -16,7 +16,7 @@ defmodule BatchEcommerceWeb.UserLoginLive do
         <:subtitle>
           Não tem uma conta?
           <.link navigate={~p"/register"} class="font-semibold text-brand hover:text-indigo-800 text-indigo-500">
-            Registra-se
+            Registre-se
           </.link>
           e crie uma conta agora.
         </:subtitle>

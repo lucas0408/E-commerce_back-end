@@ -426,7 +426,7 @@ end
                 <!-- Mostra a foto do usuário se existir -->
                 <img
                   class="w-10 h-10 rounded-full object-cover"
-                  src={"/images/default-avatar.png"}
+                  src={@user.profile_filename}
                   alt="Foto do usuário"
                 />
               <% else %>

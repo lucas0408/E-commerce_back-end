@@ -16,7 +16,7 @@ defmodule BatchEcommerceWeb.UserLoginLive do
         <:subtitle>
           Não tem uma conta?
           <.link navigate={~p"/register"} class="font-semibold text-brand hover:text-indigo-800 text-indigo-500">
-            Inscreva-se
+            Registra-se
           </.link>
           e crie uma conta agora.
         </:subtitle>
@@ -27,7 +27,7 @@ defmodule BatchEcommerceWeb.UserLoginLive do
         <.input field={@form[:password]} type="password" label="Senha" required />
 
         <:actions>
-          <.input field={@form[:remember_me]} type="checkbox" label="Me manter logado" />
+          <.input field={@form[:remember_me]} type="checkbox" label="Manter-me logado" />
           <.link href={~p"/users/reset_password"} class="text-sm text-gray-500 hover:text-gray-800 font-semibold">
             Esqueceu a senha?
           </.link>

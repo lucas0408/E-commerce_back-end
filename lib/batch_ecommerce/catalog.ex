@@ -236,7 +236,9 @@ end
     
     new_stock = product.stock_quantity - add_quantity
     
-    update_product(product, %{stock_quantity: new_stock})
+    new_sales_quantity = product.sales_quantity + add_quantity
+
+    update_product(product, %{stock_quantity: new_stock, sales_quantity: new_sales_quantity})
   end
 
   @doc """

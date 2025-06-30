@@ -8,7 +8,6 @@ defmodule BatchEcommerceWeb.Live.UserLive.Show do
     {:ok, assign(socket, user: user)}
   end
 
-  #review
   @impl true
   def render(assigns) do
     ~H"""
@@ -53,7 +52,7 @@ defmodule BatchEcommerceWeb.Live.UserLive.Show do
       <div class="mt-4 px-[350px]">
 
         <.link
-          patch={~p"/users/#{@user}/addresses/new"}
+          patch={~p"/address/new"}
           class="block w-full w-full mb-3 text-center py-2 bg-white hover:scale-105 transition duration-200 px-4 rounded-md shadow-sm text-sm font-medium text-gray-700"
         >
          + Adicionar Novo Endereço

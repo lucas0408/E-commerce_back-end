@@ -61,12 +61,9 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
     """
   end
 
-  #review
   @impl true
-  def handle_event("cancel_and_refund", %{"order_id" => _order_id, "order_product_id" => order_product_id, "price" => _price}, socket) do
-    # Lógica para cancelar e fazer estorno
-    #order = Orders.get_order(order_id) REVIEW
-    order_product = Orders.update_order_product_status(order_product_id, "Cancelado", socket.assigns.current_company.id)
+  def handle_event("cancel_and_refund", %{"order_id" => order_id, "order_product_id" => order_product_id, "price" => _price}, socket) do
+    order_product = Orders.update_order_product_status(order_id, "Cancelado", Orders.get_order(order_id).user_id)
 
     {:noreply, assign(socket, order: order_product)}
   end
@@ -78,6 +75,10 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowCompany do
       "Enviado" -> "A Caminho"
       "A Caminho" -> "Entregue"
       _ -> current_status
+    end
+
+    if(new_status == "Enviado") do
+      Orders.update_order(order_id, %{status_payment: "Aprovado"})
     end
 
     order = Orders.update_order_product_status(order_id, new_status, Orders.get_order(socket.assigns.order.order_id).user_id)

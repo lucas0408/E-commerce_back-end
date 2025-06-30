@@ -20,7 +20,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
           <.input field={@form[:name]} type="text" label="Nome" />
 
           <%= if @action == :new do %>
-            <.input field={@form[:cnpj]} type="text" label="CNPJ" />
+            <.input field={@form[:cnpj]} type="text" label="CNPJ" phx-hook="CnpjMask" />
           <% else %>
             <div class="flex flex-col">
               <label class="block text-sm font-medium text-gray-700">CNPJ</label>
@@ -32,7 +32,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
           <!-- Linha 2: email e telefone -->
           <.input field={@form[:email]} type="email" label="Email" />
-          <.input field={@form[:phone_number]} type="text" label="Telefone" />
+          <.input field={@form[:phone_number]} type="text" label="Telefone" phx-hook="PhoneMask" />
 
           <!-- Campos de endereço -->
           <.inputs_for :let={af} field={@form[:addresses]}>
@@ -41,7 +41,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
               <div class="max-w-[85px]">
                 <.input field={af[:home_number]} label="Número"/>
               </div>
-              <.input field={af[:cep]} label="CEP" />
+              <.input field={af[:cep]} label="CEP" phx-hook="CepMask"/>
             </div>
             <.input field={af[:complement]} label="Complemento" />
             <.input field={af[:district]} label="Bairro" />

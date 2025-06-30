@@ -110,7 +110,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.ProductIndex do
       </.simple_form>
 
         <div class="flex space-x-8">
-          <a href={~p"/api/orders/export-stream"}
+          <a href={~p"/orders/export-stream"}
             class="btn btn-primary font-bold text-green-600 hover:scale-105 transition duration-200"
             download>
             Exportar relatório

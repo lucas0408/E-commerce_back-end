@@ -31,6 +31,7 @@ defmodule BatchEcommerceWeb.Router do
 
     post "/login", SessionController, :create
     delete "/logout", SessionController, :delete
+    get "/orders/export-stream", OrderController, :export_stream
   end
 
   scope "/", BatchEcommerceWeb do

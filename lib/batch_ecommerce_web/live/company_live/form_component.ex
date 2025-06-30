@@ -85,7 +85,6 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.FormComponent do
 
   @impl true
   def handle_event("save", %{"company" => company_params}, socket) do
-    IO.puts("ou ta vindo pra ca")
     save_company(socket, socket.assigns.action, company_params)
   end
 

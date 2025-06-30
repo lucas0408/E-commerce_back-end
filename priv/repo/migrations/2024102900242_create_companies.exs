@@ -9,6 +9,7 @@ defmodule BatchEcommerce.Repo.Migrations.CreateCompanies do
       add :email, :string, null: false
       add :phone_number, :string, null: false
       add :profile_filename, :string
+      add :minio_bucket_name, :string
 
       timestamps()
     end

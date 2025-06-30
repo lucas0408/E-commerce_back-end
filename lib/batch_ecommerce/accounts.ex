@@ -183,18 +183,54 @@ defmodule BatchEcommerce.Accounts do
 
   """
   def create_company(attrs \\ %{}) do
+    minio_bucket_name = normalize_bucket_name(attrs["name"])
+    attrs = Map.put(attrs, "minio_bucket_name", minio_bucket_name)
+
     changeset =
       %Company{}
       |> Company.changeset(attrs)
 
     with {:ok, company} <- Repo.insert(changeset),
-        {:ok, _msg} <- Minio.create_public_bucket(company.name) do
+         {:ok, _msg} <- Minio.create_public_bucket(company.name) do
         {:ok, companies_preload_address(company)}
     else
       {:error, changeset} ->
         {:error, changeset}
     end
   end
+
+  @min_length 3
+  @max_length 63
+
+  def normalize_bucket_name(name) do
+    name
+    |> String.downcase()
+    |> remove_accents()
+    |> String.replace(~r/[\s_]+/, "-")
+    |> String.replace(~r/[^a-z0-9.-]/, "")
+    |> String.trim_leading(".")
+    |> String.trim_trailing(".")
+    |> truncate_to_max()
+    |> ensure_min_length()
+  end
+
+  defp remove_accents(string) do
+    string
+    |> :unicode.characters_to_nfd_binary()
+    |> String.replace(~r/[\p{Mn}]/u, "")
+  end
+
+  defp truncate_to_max(string) when byte_size(string) > @max_length do
+    String.slice(string, 0, @max_length)
+  end
+
+  defp truncate_to_max(string), do: string
+
+  defp ensure_min_length(string) when byte_size(string) < @min_length do
+    string <> "-bucket"
+  end
+
+  defp ensure_min_length(string), do: string
 
   def company_exists_with_field?(field, value) do
     query = from u in Company, where: field(u, ^field) == ^value

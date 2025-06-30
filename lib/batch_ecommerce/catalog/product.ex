@@ -60,6 +60,7 @@ defmodule BatchEcommerce.Catalog.Product do
         message: "O desconto deve ser entre 0 e 100"
       )
 
+
   defp validate_description(changeset),
     do:
       validate_length(changeset, :description,

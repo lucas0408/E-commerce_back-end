@@ -11,7 +11,39 @@
     <script defer phx-track-static type="text/javascript" src={~p"/assets/app.js"}>
     </script>
   </head>
-  <body class="bg-gray-900 overflow-y-scroll h-[300px]">
-    {@inner_content}
+
+  <body class="bg-gray-900 overflow-y-scroll h-[300px] flex flex-col min-h-screen">
+
+    <!-- Conteúdo principal -->
+    <main class="flex-grow">
+      {@inner_content}
+    </main>
+
+    <!-- Rodapé -->
+    <footer class="bg-gray-900 text-gray-400 border-t border-gray-800">
+      <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col md:flex-row justify-between items-center gap-6 md:gap-0">
+
+        <!-- Branding -->
+        <div class="text-center md:text-left">
+          <h2 class="text-indigo-400 font-bold text-lg">BatchEcommerce</h2>
+          <p class="text-sm text-gray-500 mt-1">E-commerce em grandes quantidades</p>
+        </div>
+
+        <!-- Links úteis com mais espaço -->
+        <div class="flex flex-wrap justify-center gap-x-10 gap-y-2 text-sm text-center">
+          <a href="/sobre" class="hover:text-indigo-300 transition">Sobre</a>
+          <a href="mailto:support@batchecommerce.com" class="hover:text-indigo-300 transition">Contato</a>
+          <a href="https://github.com/donutsguy/batch_ecommerce/branches" target="_blank" class="hover:text-indigo-300 transition">GitHub</a>
+        </div>
+
+        <!-- Info adicional -->
+        <div class="text-center md:text-right text-xs text-gray-500">
+          <p>© 2025 Warejeira</p>
+          <p>Versão 2.0.0</p>
+        </div>
+
+      </div>
+    </footer>
+
   </body>
 </html>

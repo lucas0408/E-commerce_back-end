@@ -50,6 +50,7 @@ defmodule BatchEcommerceWeb.Router do
     live "/login", UserLoginLive, :new
     live "/products", Live.ProductLive.Index, :index
     live "/register", UserLive.New, :new
+    live "/sobre", Live.AboutLive
   end
 
   #scope de usuário logado e com empresa

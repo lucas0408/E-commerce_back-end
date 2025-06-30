@@ -34,7 +34,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
             <.search_bar query={@search_query} target="#product-live-view" />
           <% else %>
             <a href="/products" class="block w-[200px]">
-              <img src="/images/logo-Warejeira.png" alt="Warejeira" class="h-10 object-contain mx-auto" />
+              <img src="/images/logo.webp" alt="Warejeira" class="h-10 object-contain mx-auto" />
             </a>
           <% end %>
         </div>

@@ -271,7 +271,7 @@ end
   end
 
   def upload_image(socket, company_name) do
-    Minio.upload_images(socket, company_name, :image)
+    Minio.upload_images(socket, comp any_name, :image)
   end
 
   @doc """

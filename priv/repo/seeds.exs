@@ -6,7 +6,7 @@ BatchEcommerce.Repo.delete_all(BatchEcommerce.Accounts.User)
 # Insere User
 users = [
   %{
-    cpf: "12345678901",
+    cpf: Brcpfcnpj.cpf_generate(),
     name: "João da Silva",
     email: "joao.silva@exemplo.com",
     phone_number: "11987654321",
@@ -37,7 +37,7 @@ users = [
     ]
   },
   %{
-    cpf: "12345674901",
+    cpf: Brcpfcnpj.cpf_generate(),
     name: "Lucas da Silva",
     email: "lucas.silva@exemplo.com",
     phone_number: "11983654321",
@@ -70,52 +70,35 @@ users = [
 ]
 
 Enum.each(users, fn user ->
-  %BatchEcommerce.Accounts.User{}
-  |> BatchEcommerce.Accounts.User.insert_changeset(%{
-    cpf: user.cpf,
-    name: user.name,
-    email: user.email,
-    phone_number: user.phone_number,
-    birth_date: user.birth_date,
-    password: user.password,
-    addresses: user.addresses
-  })
-  |> BatchEcommerce.Repo.insert!()
+  BatchEcommerce.Accounts.create_user(user)
 end)
 
 # inserindo empresa
 
 companies = [
   %{
-    name: "Tech Solutions LTDA",
-    cnpj: "98765432000121",
-    email: "contato@techsolutions.com.br",
-    phone_number: "11987654322",
-    user_id: BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.User, name: "João da Silva").id,
-    addresses: [
+    "name" => "Tech Solutions LTDA",
+    "cnpj" => Brcpfcnpj.cnpj_generate(),
+    "email" => "contato@techsolutions.com.br",
+    "phone_number" => "11987654322",
+    "user_id" => BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.User, name: "João da Silva").id,
+    "addresses" => [
       %{
-        cep: "01311-000",
-        uf: "SP",
-        city: "São Paulo",
-        district: "Bela Vista",
-        address: "Avenida Paulista",
-        complement: "Próximo ao MASP",
-        home_number: "1000"
+        "cep" => "01311-000",
+        "uf" => "SP",
+        "city" => "São Paulo",
+        "district" => "Bela Vista",
+        "address" => "Avenida Paulista",
+        "complement" => "Próximo ao MASP",
+        "home_number" => "1000"
       }
     ]
   }
 ]
 
 Enum.each(companies, fn company ->
-  BatchEcommerce.Repo.insert!(%BatchEcommerce.Accounts.Company{
-      name: company.name,
-      cnpj: company.cnpj,
-      email: company.email,
-      phone_number: company.phone_number,
-      user_id: company.user_id,
-      addresses: company.addresses
-    })
-  end)
+  BatchEcommerce.Accounts.create_company(company)
+end)
 
 company = BatchEcommerce.Repo.get_by!(BatchEcommerce.Accounts.Company, name: "Tech Solutions LTDA")
 
@@ -268,19 +251,7 @@ products_with_categories =
   end)
 
 Enum.each(products_with_categories, fn product ->
-  %BatchEcommerce.Catalog.Product{}
-  |> BatchEcommerce.Catalog.Product.changeset(%{
-    name: product.name,
-    price: product.price,
-    stock_quantity: product.stock_quantity,
-    description: product.description,
-    company_id: product.company_id,
-    discount: product.discount,
-    sales_quantity: product.sales_quantity,
-    filename: product.filename
-  })
-  |> Ecto.Changeset.put_assoc(:categories, product.categories)
-  |> BatchEcommerce.Repo.insert!()
+  BatchEcommerce.Catalog.create_product(product)
 end)
 
 products = BatchEcommerce.Repo.all(BatchEcommerce.Catalog.Product)

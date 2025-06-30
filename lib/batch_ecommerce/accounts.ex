@@ -60,6 +60,7 @@ defmodule BatchEcommerce.Accounts do
         {:ok, Repo.preload(user, :addresses)}
 
       {:error, changeset} ->
+        IO.inspect(changeset)
         {:error, changeset}
     end
   end

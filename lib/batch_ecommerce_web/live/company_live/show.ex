@@ -36,7 +36,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.Show do
   @impl true
   def render(assigns) do
     ~H"""
-    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} company={@company} id="HeaderDefault"/>
 
     <%= if @has_company do %>
       <div class="mx-20 mt-[70px] grid grid-cols-[3fr_1fr] pl-[250px] py-8">

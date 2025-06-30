@@ -9,6 +9,7 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
   attr :notification_count, :integer, default: 0
   attr :cart_count, :integer, default: 0
   attr :user, :map, default: nil
+  attr :company, :map, default: nil
   attr :search_query, :string, default: ""
 
   def render(assigns) do
@@ -42,7 +43,11 @@ defmodule BatchEcommerceWeb.Live.HeaderLive.HeaderBase do
         <div class="flex justify-end items-center space-x-4">
 
           <%= if @user do %>
-            <.notification_badge count={@notification_count} click_event="show_notifications" />
+            <%= if @company do %>
+              <.notification_badge_company current_company={@company} click_event="show_notifications" />
+            <% else %>
+              <.notification_badge_user current_user={@user} click_event="show_notifications" />
+            <% end %>
 
             <%= if @show_cart do %>
               <.cart_icon count={@cart_count} />

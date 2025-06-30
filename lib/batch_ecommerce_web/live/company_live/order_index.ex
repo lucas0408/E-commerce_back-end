@@ -102,7 +102,7 @@ defmodule BatchEcommerceWeb.Live.CompanyLive.OrderIndex do
   @impl true
   def render(assigns) do
     ~H"""
-    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} id="HeaderDefault"/>
+    <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderDefault} user={@user} company={@current_company} id="HeaderDefault"/>
     <div class="max-w-7xl mx-auto px-4 py-8">
 
 

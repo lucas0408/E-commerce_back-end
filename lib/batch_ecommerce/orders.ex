@@ -34,6 +34,17 @@ defmodule BatchEcommerce.Orders do
 
         })
         |>Repo.insert!()
+        product = BatchEcommerce.Catalog.get_product(item.product_id)
+        case BatchEcommerce.Accounts.create_notification(%{
+          title: "Novo pedido",
+          body: "#{item.quantity} #{product.name} foram pedidos",
+          recipient_company_id: product.company_id,
+        }) do
+          {:ok, _notification} ->
+            {:ok, _notification}
+          error ->
+            {:error, error}
+        end
       end)
 
 
@@ -43,6 +54,8 @@ defmodule BatchEcommerce.Orders do
         error ->
           {:error, error}
       end
+
+      
   end
 
   def list_company_orders_paginated(company_id, page, per_page, opts \\ []) do
@@ -98,7 +111,37 @@ defmodule BatchEcommerce.Orders do
     end
   end
 
-  def update_order_product_status(order_product_id, new_status) do
+  def update_order_product_status(order_product_id, new_status, company_id)  when is_integer(company_id) do
+    order_product = update_order_status(order_product_id, new_status)
+    case BatchEcommerce.Accounts.create_notification(%{
+      title: "Pedido",
+      body: "Peido nº #{order_product_id} #{new_status}",
+      recipient_company_id: company_id,
+    }) do
+      {:ok, _notification} ->
+        {:ok, _notification}
+      error ->
+        {:error, error}
+    end
+    order_product
+  end
+
+  def update_order_product_status(order_product_id, new_status, user_id) when is_binary(user_id) do
+    order_product = update_order_status(order_product_id, new_status)
+    case BatchEcommerce.Accounts.create_notification(%{
+      title: "Pedido",
+      body: "Pedido nº #{order_product_id} #{new_status}",
+      recipient_user_id: user_id,
+    }) do
+      {:ok, _notification} ->
+        {:ok, _notification}
+      error ->
+        {:error, error}
+    end
+    order_product
+  end
+
+  def update_order_status(order_product_id, new_status) do
     case Repo.get(OrderProduct, order_product_id) do
       nil ->
         {:error, :not_found}
@@ -118,7 +161,6 @@ defmodule BatchEcommerce.Orders do
           end
     end
   end
-
 
   def list_orders do
     Repo.all(OrderProduct) |> Repo.preload(:product)

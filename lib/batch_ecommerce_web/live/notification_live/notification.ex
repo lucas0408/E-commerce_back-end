@@ -81,10 +81,6 @@ defmodule BatchEcommerceWeb.Live.Notification do
     # Busca notificações não lidas da empresa
     company_notifs = Accounts.list_unread_notifications(company_id)
 
-    IO.inspect(Accounts.list_notifications())
-
-    IO.inspect(company_notifs)
-
     # Ordena por data
     all_notifications = 
       company_notifs

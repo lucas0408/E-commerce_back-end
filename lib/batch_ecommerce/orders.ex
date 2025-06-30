@@ -99,7 +99,10 @@ defmodule BatchEcommerce.Orders do
   end
 
   def update_order(order_id, attrs) do
-    case Repo.get(Order, order_id) do
+    IO.inspect("000000000000000000000000000000000000")
+    IO.inspect(order_id)
+    IO.inspect("000000000000000000000000000000000000")
+    case get_order(order_id) do
       nil ->
         {:error, :not_found}
 

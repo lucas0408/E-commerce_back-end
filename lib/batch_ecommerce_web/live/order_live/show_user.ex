@@ -14,11 +14,11 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowUser do
       order_id
       |> Orders.get_order_product()
 
-    socket = 
+    socket =
       socket
       |> assign(order: order)
       |> assign(:current_user, current_user)
-    
+
     {:ok, socket}
   end
 
@@ -26,12 +26,21 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowUser do
   def render(assigns) do
     ~H"""
     <.live_component module={BatchEcommerceWeb.Live.HeaderLive.HeaderWithCart} user={@current_user} id="HeaderWithCart"/>
-    
-    <.live_component 
-      module={OrderMainContent} 
-      id="order-main-content" 
-      order={@order} 
+
+    <.live_component
+      module={OrderMainContent}
+      id="order-main-content"
+      order={@order}
     />
+    <!-- Botão Voltar -->
+      <div class="mb-4 mx-[500px]">
+        <.link navigate={~p"/orders"} class="inline-flex items-center text-gray-400 hover:text-gray-700">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+          </svg>
+          Voltar
+        </.link>
+      </div>
 
     <%= if @order.status not in ["Entregue", "Cancelado"] do %>
       <div class="max-w-4xl mx-auto p-6 flex justify-end space-x-4">
@@ -67,7 +76,7 @@ defmodule BatchEcommerceWeb.Live.OrderLive.ShowUser do
       total_price: Decimal.sub(order.total_price, price),
       status_payment: "Estornado"
     })
-    
+
     {:noreply, assign(socket, order: order_product)}
   end
 

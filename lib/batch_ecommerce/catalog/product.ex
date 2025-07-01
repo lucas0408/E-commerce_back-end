@@ -73,7 +73,7 @@ defmodule BatchEcommerce.Catalog.Product do
     do: validate_number(changeset, :price, greater_than: 0)
 
   defp validate_stock_quantity(changeset),
-    do: validate_number(changeset, :stock_quantity, greater_than: 0)
+    do: validate_number(changeset, :stock_quantity, greater_than: -1)
 
   def image_filename_changeset(product, attrs) do
     product

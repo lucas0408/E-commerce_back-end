@@ -232,13 +232,16 @@ end
   def remove_stock(add_quantity, product_id) when add_quantity > 0 do
     product = get_product(product_id)
 
-    IO.inspect(product.stock_quantity)
-
     new_stock = product.stock_quantity - add_quantity
 
     new_sales_quantity = product.sales_quantity + add_quantity
 
-    update_product(product, %{stock_quantity: new_stock, sales_quantity: new_sales_quantity})
+    IO.inspect(00000000000000000000000000000000000000000000000000000000000)
+    IO.inspect(new_stock)
+    IO.inspect(00000000000000000000000000000000000000000000000000000000000)
+
+    update_product = update_product(product, %{stock_quantity: new_stock, sales_quantity: new_sales_quantity})
+    IO.inspect(update_product)
   end
 
   @doc """

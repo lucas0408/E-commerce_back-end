@@ -1,5 +1,6 @@
 defmodule BatchEcommerceWeb.ProductJSON do
   alias BatchEcommerce.Catalog.Product
+  alias BatchEcommerce.Catalog
 
   @doc """
   Renders a list of products.
@@ -15,13 +16,13 @@ defmodule BatchEcommerceWeb.ProductJSON do
     %{data: data(product)}
   end
 
-  defp data(%Product{} = product) do
+  def data(%Product{} = product) do
     %{
       id: product.id,
       name: product.name,
       price: product.price,
       stock_quantity: product.stock_quantity,
-      categories: BatchEcommerceWeb.CategoryJSON.index(%{categories: product.categories})
+      category: BatchEcommerceWeb.CategoryJSON.data(Catalog.preload_category(product).category)
     }
   end
 end

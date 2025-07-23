@@ -4,8 +4,7 @@ defmodule BatchEcommerce.Accounts.User do
   import EctoCommons.{EmailValidator, PhoneNumberValidator, DateValidator}
   alias BatchEcommerce.Accounts
 
-  @required_fields_insert [:cpf, :name, :email, :phone_number, :birth_date, :password]
-  @required_fields_update [:cpf, :name, :email, :phone_number, :birth_date]
+  @required_fields [:cpf, :name, :email, :phone_number, :birth_date, :password]
   @unique_fields [:email, :cpf, :phone_number]
 
   @primary_key {:id, :binary_id, autogenerate: true}
@@ -19,13 +18,9 @@ defmodule BatchEcommerce.Accounts.User do
     field :password_hash, :string
     field :password, :string, virtual: true
 
-    many_to_many :addresses, BatchEcommerce.Accounts.Address,
-      join_through: "users_addresses",
-      on_replace: :delete
+    has_one :address, BatchEcommerce.Accounts.Address, on_replace: :update, on_delete: :delete_all
 
     has_one :cart, BatchEcommerce.ShoppingCart.Cart, on_replace: :update, on_delete: :delete_all
-
-    has_one :company, BatchEcommerce.Accounts.Company, on_replace: :update, on_delete: :delete_all
 
     timestamps(type: :utc_datetime)
   end
@@ -33,8 +28,8 @@ defmodule BatchEcommerce.Accounts.User do
   @doc false
   def insert_changeset(user, attrs) do
     user
-    |> cast(attrs, [:password_hash | @required_fields_insert])
-    |> validate_required(@required_fields_insert)
+    |> cast(attrs, [:password_hash | @required_fields])
+    |> validate_required(@required_fields)
     |> validate_cpf()
     |> validate_name()
     |> validate_email(:email, message: "E-mail inválido")
@@ -45,7 +40,8 @@ defmodule BatchEcommerce.Accounts.User do
       message: "Data inválida"
     )
     |> validate_confirmation(:password, message: "As senhas não correspondem")
-    |> cast_assoc(:addresses)
+    |> cast_assoc(:address)
+    |> cast_assoc(:cart)
     |> unique_constraint(:email)
     |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)
@@ -55,18 +51,18 @@ defmodule BatchEcommerce.Accounts.User do
 
   def update_changeset(user, attrs) do
     user
-    |> cast(attrs, @required_fields_update)
-    |> validate_required(@required_fields_update)
+    |> cast(attrs, @required_fields)
+    |> validate_required(@required_fields)
     |> validate_cpf()
     |> validate_name()
-    |> validate_email(:email, message: "Invalid email")
-    |> validate_phone_number(:phone_number, country: "br", message: "Invalid phone number")
+    |> validate_email(:email, message: "E-mail inválido")
+    |> validate_phone_number(:phone_number, country: "br", message: "Número de telefone inválido")
     |> validate_date(:birth_date,
       before: validate_date_before(),
       after: validate_date_after(),
       message: "Data inválida"
     )
-    |> cast_assoc(:addresses)
+    |> cast_assoc(:address)
     |> unique_constraint(:email)
     |> unique_constraint(:cpf)
     |> unique_constraint(:phone_number)
@@ -83,7 +79,7 @@ defmodule BatchEcommerce.Accounts.User do
       changes = get_change(acc_changeset, field)
 
       if changes && Accounts.user_exists_with_field?(field, changes) do
-        add_error(acc_changeset, field, "Already in use")
+        add_error(acc_changeset, field, "Já esta em uso")
       else
         acc_changeset
       end
@@ -91,10 +87,10 @@ defmodule BatchEcommerce.Accounts.User do
   end
 
   defp validate_cpf(changeset),
-    do: changeset |> validate_length(:cpf, is: 11, message: "Enter a valid CPF")
+    do: changeset |> validate_length(:cpf, is: 11, message: "Insira um CPF válido")
 
   defp validate_name(changeset),
-    do: changeset |> validate_length(:name, min: 2, max: 60, message: "Enter a valid name")
+    do: changeset |> validate_length(:name, min: 2, max: 60, message: "Insira um nome válido")
 
   defp validate_date_before(), do: Date.utc_today() |> Date.shift(year: -18)
 

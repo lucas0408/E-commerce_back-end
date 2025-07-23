@@ -1,4 +1,5 @@
 defmodule BatchEcommerceWeb.ProductControllerTest do
+<<<<<<< HEAD
   @moduledoc """
   The Product controller test module.
   """
@@ -19,14 +20,36 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
     description: "some description"
   }
   @invalid_attrs %{name: nil, price: nil, stock_quantity: nil, categories: nil, image_url: nil}
+=======
+  use BatchEcommerceWeb.ConnCase
+
+  import BatchEcommerce.CatalogFixtures
+
+  alias BatchEcommerce.Catalog.Product
+
+  @create_attrs %{
+    name: "some name",
+    price: "120.5",
+    stock_quantity: 42
+  }
+  @update_attrs %{
+    name: "some updated name",
+    price: "456.7",
+    stock_quantity: 43
+  }
+  @invalid_attrs %{name: nil, price: nil, stock_quantity: nil}
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
   end
 
   describe "index" do
+<<<<<<< HEAD
     setup [:create_session]
 
+=======
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
     test "lists all products", %{conn: conn} do
       conn = get(conn, ~p"/api/products")
       assert json_response(conn, 200)["data"] == []
@@ -34,14 +57,20 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
   end
 
   describe "create product" do
+<<<<<<< HEAD
     setup [:create_session, :create_product_params]
 
     test "renders product when data is valid", %{conn: conn, product: product} do
       conn = post(conn, ~p"/api/products", product: product)
+=======
+    test "renders product when data is valid", %{conn: conn} do
+      conn = post(conn, ~p"/api/products", product: @create_attrs)
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
       assert %{"id" => id} = json_response(conn, 201)["data"]
 
       conn = get(conn, ~p"/api/products/#{id}")
 
+<<<<<<< HEAD
       %Product{} = product_preloaded = Catalog.get_product(id)
 
       response_data = json_response(conn, 200)["data"]
@@ -57,6 +86,14 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
         assert Map.has_key?(category, "id")
         assert Map.has_key?(category, "type")
       end)
+=======
+      assert %{
+               "id" => ^id,
+               "name" => "some name",
+               "price" => "120.5",
+               "stock_quantity" => 42
+             } = json_response(conn, 200)["data"]
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
     end
 
     test "renders errors when data is invalid", %{conn: conn} do
@@ -66,7 +103,11 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
   end
 
   describe "update product" do
+<<<<<<< HEAD
     setup [:create_session, :create_product]
+=======
+    setup [:create_product]
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
 
     test "renders product when data is valid", %{conn: conn, product: %Product{id: id} = product} do
       conn = put(conn, ~p"/api/products/#{product}", product: @update_attrs)
@@ -89,18 +130,29 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
   end
 
   describe "delete product" do
+<<<<<<< HEAD
     setup [:create_session, :create_product]
+=======
+    setup [:create_product]
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
 
     test "deletes chosen product", %{conn: conn, product: product} do
       conn = delete(conn, ~p"/api/products/#{product}")
       assert response(conn, 204)
 
+<<<<<<< HEAD
       conn = get(conn, ~p"/api/products/#{product}")
       assert conn.status == 404
+=======
+      assert_error_sent 404, fn ->
+        get(conn, ~p"/api/products/#{product}")
+      end
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
     end
   end
 
   defp create_product(_) do
+<<<<<<< HEAD
     product = BatchEcommerce.CatalogFixtures.product_fixture()
     %{product: product}
   end
@@ -128,4 +180,9 @@ defmodule BatchEcommerceWeb.ProductControllerTest do
     {:ok, token, _claims} = Guardian.encode_and_sign(user)
     %{conn: put_req_header(conn, "authorization", "Bearer #{token}"), user: user}
   end
+=======
+    product = product_fixture()
+    %{product: product}
+  end
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
 end

@@ -2,6 +2,7 @@ defmodule BatchEcommerce.Catalog do
   @moduledoc """
   The Catalog context.
   """
+
   import Ecto.Query, warn: false
   alias BatchEcommerce.Repo
 
@@ -35,9 +36,7 @@ defmodule BatchEcommerce.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_category(id) do
-    Repo.get(Category, id)
-  end
+  def get_category(id), do: Repo.get(Category, id)
 
   @doc """
   Creates a category.
@@ -55,6 +54,11 @@ defmodule BatchEcommerce.Catalog do
     %Category{}
     |> Category.changeset(attrs)
     |> Repo.insert()
+  end
+
+  def category_exists_with_field?(field, value) do
+    query = from u in Category, where: field(u, ^field) == ^value
+    Repo.exists?(query)
   end
 
   @doc """
@@ -115,12 +119,10 @@ defmodule BatchEcommerce.Catalog do
       [%Product{}, ...]
 
   """
-  def list_products() do
-    Repo.all(Product)
-    |> Repo.preload(:categories)
+  def list_products do
+    Repo.preload(Repo.all(Product), :category)
   end
 
-  @spec get_product(any()) :: nil | [%{optional(atom()) => any()}] | %{optional(atom()) => any()}
   @doc """
   Gets a single product.
 
@@ -135,10 +137,8 @@ defmodule BatchEcommerce.Catalog do
       ** (Ecto.NoResultsError)
 
   """
-  def get_product(id) do
-    Repo.get(Product, id)
-    |> Repo.preload(:categories)
-  end
+
+  def get_product(id), do: Repo.preload(Repo.get(Product, id), :category)
 
   @doc """
   Creates a product.
@@ -154,15 +154,15 @@ defmodule BatchEcommerce.Catalog do
   """
   def create_product(attrs \\ %{}) do
     %Product{}
-    |> change_product(attrs)
+    |> Product.changeset(attrs)
     |> Repo.insert()
-    |> case do
-      {:ok, product} ->
-        {:ok, Repo.preload(product, :categories)}
+  end
 
-      {:error, changeset} ->
-        {:error, changeset}
-    end
+  def preload_category(product), do: Repo.preload(product, :category)
+
+  def product_exists_with_field?(field, value) do
+    query = from u in Product, where: field(u, ^field) == ^value
+    Repo.exists?(query)
   end
 
   @doc """
@@ -179,15 +179,9 @@ defmodule BatchEcommerce.Catalog do
   """
   def update_product(%Product{} = product, attrs) do
     product
-    |> change_product(attrs)
+    |> Product.changeset(attrs)
     |> Repo.update()
-    |> case do
-      {:ok, product_updated} ->
-        {:ok, Repo.preload(product_updated, :categories)}
-
-      {:error, changeset} ->
-        {:error, changeset}
-    end
+    |> preload_category()
   end
 
   @doc """
@@ -216,36 +210,6 @@ defmodule BatchEcommerce.Catalog do
 
   """
   def change_product(%Product{} = product, attrs \\ %{}) do
-    category_ids =
-      Map.get(attrs, "category_ids", [])
-
-    categories =
-      list_categories_by_id(category_ids)
-
-    product
-    |> Repo.preload(:categories)
-    |> Product.changeset(attrs)
-    |> Ecto.Changeset.put_assoc(:categories, categories)
-  end
-
-  def list_categories_by_id(nil), do: []
-
-  def list_categories_by_id(category_ids) do
-    Repo.all(from c in Category, where: c.id in ^category_ids)
-  end
-
-  def put_image_url(product_id, image_url) do
-    case Repo.get(Product, product_id) do
-      %Product{} = product ->
-        product_with_image =
-          product
-          |> Product.image_url_changeset(%{image_url: image_url})
-          |> Repo.update()
-
-        product_with_image
-
-      nil ->
-        nil
-    end
+    Product.changeset(product, attrs)
   end
 end

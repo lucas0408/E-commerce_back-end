@@ -1,7 +1,10 @@
 defmodule BatchEcommerce.ShoppingCartFixtures do
+<<<<<<< HEAD
   import BatchEcommerce.CatalogFixtures
   alias BatchEcommerce.ShoppingCart
 
+=======
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
   @moduledoc """
   This module defines test helpers for creating
   entities via the `BatchEcommerce.ShoppingCart` context.
@@ -11,7 +14,11 @@ defmodule BatchEcommerce.ShoppingCartFixtures do
   Generate a unique cart user_uuid.
   """
   def unique_cart_user_uuid do
+<<<<<<< HEAD
     UUID.uuid4()
+=======
+    raise "implement the logic to generate a unique cart user_uuid"
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
   end
 
   @doc """
@@ -31,6 +38,7 @@ defmodule BatchEcommerce.ShoppingCartFixtures do
   @doc """
   Generate a cart_item.
   """
+<<<<<<< HEAD
   def cart_item_fixture(attrs, conn) when not is_nil(conn) do
     cart_item_params =
       attrs
@@ -61,6 +69,16 @@ defmodule BatchEcommerce.ShoppingCartFixtures do
         ShoppingCart.get_cart_by_user_uuid(BatchEcommerce.AccountsFixtures.user_fixture().id),
         cart_item_params
       )
+=======
+  def cart_item_fixture(attrs \\ %{}) do
+    {:ok, cart_item} =
+      attrs
+      |> Enum.into(%{
+        price_when_carted: "120.5",
+        quantity: 42
+      })
+      |> BatchEcommerce.ShoppingCart.create_cart_item()
+>>>>>>> dac2a36e6514df7d84a6025e1707caff2be550c9
 
     cart_item
   end

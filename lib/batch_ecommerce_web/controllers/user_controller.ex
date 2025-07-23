@@ -10,7 +10,9 @@ defmodule BatchEcommerceWeb.UserController do
   action_fallback BatchEcommerceWeb.FallbackController
 
   def index(conn, _params) do
-    users = Accounts.list_users()
+    case Accounts.list_users() do
+      [] ->
+        {:error, :not_found}
 
     conn
     |> put_status(:ok)
@@ -18,9 +20,11 @@ defmodule BatchEcommerceWeb.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    with {:ok, %User{} = user} <- Accounts.create_user(user_params),
-         {:ok, token, _claims} <- Guardian.encode_and_sign(user),
-         {:ok, %Cart{}} <- ShoppingCart.create_cart(%{user_id: user.id}) do
+
+    with {:ok, user} <- Accounts.create_user(user_params),
+         {:ok, token, _claims} = Guardian.encode_and_sign(user) do
+
+      BatchEcommerce.ShoppingCart.create_cart(%{user_id: user.id})
       conn
       |> put_status(:created)
       |> put_resp_header("location", ~p"/api/users/#{user}")
@@ -59,6 +63,7 @@ defmodule BatchEcommerceWeb.UserController do
       {:error, %Ecto.Changeset{} = changeset} ->
         {:error, changeset}
     end
+
   end
 
   def delete(conn, %{"id" => id}) do
@@ -66,11 +71,8 @@ defmodule BatchEcommerceWeb.UserController do
          {:ok, %User{}} <- Accounts.delete_user(user) do
       send_resp(conn, :no_content, "")
     else
-      nil ->
-        {:error, :bad_request}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:error, changeset}
+      nil -> {:error, :not_found}
+      _unkown_error -> {:error, :internal_server_error}
     end
   end
 end

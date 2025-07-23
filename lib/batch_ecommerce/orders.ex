@@ -57,6 +57,9 @@ defmodule BatchEcommerce.Orders do
     |> Enum.with_index()
     |> Enum.reduce(multi, fn {item, index}, acc_multi ->
       Ecto.Multi.insert(acc_multi, {:order_product, index}, fn %{order: order} ->
+        IO.inspect(item, label: "item")
+        IO.inspect(index, label: "index")
+        IO.inspect(acc_multi, label: "acc_multi")
         %OrderProduct{}
         |> OrderProduct.changeset(%{
           product_id: item.product_id,

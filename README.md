@@ -1,18 +1,37 @@
-# BatchEcommerce
+# E-commerce Platform
 
-To start your Phoenix server:
+Uma plataforma de e-commerce moderna desenvolvida com Phoenix LiveView, reunindo os melhores aspectos das principais plataformas do setor como Shopee, Mercado Livre e Amazon.
 
-  * Run `mix setup` to install and setup dependencies
-  * Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+## 🚀 Tecnologias Utilizadas
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+### Backend
+- **[Elixir](https://elixir-lang.org/)** - Linguagem funcional, concorrente e distribuída
+- **[Phoenix](https://phoenixframework.org/)** - Web framework escalável e tolerante a falhas
+- **[Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view)** - Interface reativa sem JavaScript
+- **[Ecto](https://github.com/elixir-ecto/ecto)** - Camada de abstração para banco de dados
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+### Autenticação & Autorização
+- **[Guardian](https://github.com/ueberauth/guardian)** - Gerenciamento de autenticação baseada em JWT
+- **[JWT](https://jwt.io/)** - Padrão para transmissão segura de informações
 
-## Learn more
+### Banco de Dados & Armazenamento
+- **[PostgreSQL](https://www.postgresql.org/)** - Banco de dados relacional ACID-compliant
+- **[MinIO](https://min.io/)** - Servidor de armazenamento de objetos compatível com S3
 
-  * Official website: https://www.phoenixframework.org/
-  * Guides: https://hexdocs.pm/phoenix/overview.html
-  * Docs: https://hexdocs.pm/phoenix
-  * Forum: https://elixirforum.com/c/phoenix-forum
-  * Source: https://github.com/phoenixframework/phoenix
+### Infraestrutura
+- **[Docker](https://www.docker.com/)** - Containerização e deploy
+- **[NGINX](https://nginx.org/)** - Servidor web e proxy reverso
+
+### Testes
+- **[ExUnit](https://hexdocs.pm/ex_unit/ExUnit.html)** - Framework de testes nativo do Elixir
+- **[Hammox](https://github.com/msz/hammox)** - Biblioteca de mocking com segurança de tipos
+
+## 📋 Pré-requisitos
+
+- Elixir 1.14+ e Erlang/OTP 25+
+- Node.js 18+ (para assets)
+- Docker e Docker Compose
+- PostgreSQL 14+
+
+
+Desenvolvido com ❤️ usando Elixir e Phoenix LiveView
